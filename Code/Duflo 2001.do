@@ -51,7 +51,7 @@ set tracedepth 1
     label var en71new "Population 5+ enrollment rate, 1971, nch71new denominator"
     label var nen71newish "Population non-enrollment rate, 1971, ch71new denominator"
     label var nen71new "Population 5+ non-enrollment rate, 1971, nch71new denominator"
-    saveold "Public\\Regency-level vars\Regency-level vars", replace ver(11)
+    saveold "Public\Regency-level vars\Regency-level vars", replace ver(11)
   }
 
   scatter ninnew nen71new, msym(Oh) || lfit ninnew nen71new, legend(off) scheme(plottig) xtitle("Non-enrollment rate, ages 5 and up, 1971") ytitle("Planned new schools 1973/74–78/79 per 1,000 children") graphregion(margin(zero)) name(targeting, replace)
