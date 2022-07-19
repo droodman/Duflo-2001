@@ -1,5 +1,5 @@
 # Duflo-2001
-This archive contains the shareable code and data used in the reanalysis of Duflo (2001), "[Schooling and Labor Market Consequences of School Construction in Indonesia: Evidence from an Unusual Policy Experiment](https://doi.org/10.1257/aer.91.4.795)."
+This archive contains the shareable data and code used in the reanalysis of Duflo (2001), "[Schooling and Labor Market Consequences of School Construction in Indonesia: Evidence from an Unusual Policy Experiment](https://doi.org/10.1257/aer.91.4.795)."
 
 Most of the data used in the original study and the reanalysis cannot be shared because of restrictions in the licenses from Badan Pusat Statistik (BPS). The NBER has licensed 1995 intercensal (SUPAS) data and makes it available to NBER affiliates. At this writing, BPS does not make the 1995 SUPAS and other older data sets available to researchers. IPUMS makes freely available a [large subset of the 1995 SUPAS data](https://international.ipums.org/international-action/sample_details/country/id#tab_id1995a), which is missing many smaller regencies, or perhaps the most heavily weights observations in general. The posted code is written to work with the IPUMS subset as well, but produces different results from it.
 
