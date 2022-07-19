@@ -21,36 +21,38 @@ set tracedepth 1
 ***
 {
   cap noi odbc load, clear dsn("Duflo 2001") table("Regency-level vars")
-  gen nen71new = 1 - en71new
-  gen nen71newish = 1 - en71newish
-  label var birthpl "Birth province & regency code, 1995"
-  label var nin "Number of new schools, Duflo"
-  label var recp "High treatment dummy, Duflo"
-  label var ch71 "Number of children 5-14, 1971, Duflo"
-  label var en71 "Population enrollment rate, 1971, Duflo"
-  label var wsppc "Water & sanitation spending per capita, Duflo"
-  label var dens71 "Population density, 1971, Duflo"
-  label var dens71 "Population density, 1971, Duflo"
-  label var moldyed "Average education among old, Duflo"
-  label var birthlat "Birth regency centroid latitude"
-  label var birthlong "Birth regency centroid longitude"
-  label var Schools73new "Number of new schools, 1973/74"
-  label var Schools74new "Number of new schools, 1974/75"
-  label var Schools75new "Number of new schools, 1975/76"
-  label var Schools76new "Number of new schools, 1976/77"
-  label var Schools77new "Number of new schools, 1977/78"
-  label var Schools78new "Number of new schools, 1978/79"
-  label var pop71new "Regency population, 1971"
-  label var ch71new "Population 5-14, 1971"
-  label var totinnew "Number of new schools"
-  label var ninnew "Number of new schools per 5-14 population"
-  label var nch71new "Population 5+, 1971, same source as for attendance"
-  label var atsc71new "Population 5+ attending school, 1971"
-  label var en71newish "Population enrollment rate, 1971, ch71new denominator"
-  label var en71new "Population 5+ enrollment rate, 1971, nch71new denominator"
-  label var nen71newish "Population non-enrollment rate, 1971, ch71new denominator"
-  label var nen71new "Population 5+ non-enrollment rate, 1971, nch71new denominator"
-  saveold "Regency-level vars", replace ver(11)
+  if !_rc {
+    gen nen71new = 1 - en71new
+    gen nen71newish = 1 - en71newish
+    label var birthpl "Birth province & regency code, 1995"
+    label var nin "Number of new schools, Duflo"
+    label var recp "High treatment dummy, Duflo"
+    label var ch71 "Number of children 5-14, 1971, Duflo"
+    label var en71 "Population enrollment rate, 1971, Duflo"
+    label var wsppc "Water & sanitation spending per capita, Duflo"
+    label var dens71 "Population density, 1971, Duflo"
+    label var dens71 "Population density, 1971, Duflo"
+    label var moldyed "Average education among old, Duflo"
+    label var birthlat "Birth regency centroid latitude"
+    label var birthlong "Birth regency centroid longitude"
+    label var Schools73new "Number of new schools, 1973/74"
+    label var Schools74new "Number of new schools, 1974/75"
+    label var Schools75new "Number of new schools, 1975/76"
+    label var Schools76new "Number of new schools, 1976/77"
+    label var Schools77new "Number of new schools, 1977/78"
+    label var Schools78new "Number of new schools, 1978/79"
+    label var pop71new "Regency population, 1971"
+    label var ch71new "Population 5-14, 1971"
+    label var totinnew "Number of new schools"
+    label var ninnew "Number of new schools per 5-14 population"
+    label var nch71new "Population 5+, 1971, same source as for attendance"
+    label var atsc71new "Population 5+ attending school, 1971"
+    label var en71newish "Population enrollment rate, 1971, ch71new denominator"
+    label var en71new "Population 5+ enrollment rate, 1971, nch71new denominator"
+    label var nen71newish "Population non-enrollment rate, 1971, ch71new denominator"
+    label var nen71new "Population 5+ non-enrollment rate, 1971, nch71new denominator"
+    saveold "Public\\Regency-level vars\Regency-level vars", replace ver(11)
+  }
 
   scatter ninnew nen71new, msym(Oh) || lfit ninnew nen71new, legend(off) scheme(plottig) xtitle("Non-enrollment rate, ages 5 and up, 1971") ytitle("Planned new schools 1973/74–78/79 per 1,000 children") graphregion(margin(zero)) name(targeting, replace)
   graph save Public\output\targeting, replace
