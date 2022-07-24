@@ -248,6 +248,25 @@ log using Public\Output\duflo2001, text replace
 
 
 ***
+*** cross-survey, regency-level correlations in key variables
+***
+{
+preserve
+gen _year = cond(year<2013, year, 2014)
+collapse ninnew ch71new en71new pop71new year part yeduc primary lhwage lwage IS (rawsum) wt [aw=wt] if young<., by(young birthplnew _year)
+gen _lwage = cond(inlist(year,1995,2010), lhwage, cond(year==2005, IS, lwage))
+reshape wide ninnew ch71new en71new pop71new year part yeduc primary lhwage lwage IS _lwage wt, i(birthplnew young) j(_year)
+
+foreach depvar in primary yeduc part lhwage IS lwage _lwage {
+  graph matrix `depvar'*, scheme(plotplain) msym(Oh) msize(tiny) name(mat`depvar', replace)
+  graph matrix `depvar'*, scheme(plotplain) msym(Oh) msize(tiny) name(matby`depvar', replace) by(young)
+  pwcorr `depvar'*
+  bysort young: pwcorr `depvar'*
+}
+restore
+}
+
+***
 *** replicate most of original
 ***
 {
@@ -354,55 +373,54 @@ eststo Eyeduc : reg yeduc  young##recp                                [aw=wt]
 eststo Elhwage: reg lhwage young##recp                                [aw=wt]
 eststo EWald  : ivregress 2sls lhwage young recp (yeduc = young#recp) [aw=wt], small
 
-eststo Cyeduc : reg yeduc  old##recp                              if reallyold | old [aw=wt]
-eststo Clhwage: reg lhwage old##recp                              if reallyold | old [aw=wt]
-eststo CWald  : ivregress 2sls lhwage old recp (yeduc = old#recp) if reallyold | old [aw=wt], small
+eststo Pyeduc : reg yeduc  old##recp                              if reallyold | old [aw=wt]
+eststo Plhwage: reg lhwage old##recp                              if reallyold | old [aw=wt]
+eststo PWald  : ivregress 2sls lhwage old recp (yeduc = old#recp) if reallyold | old [aw=wt], small
 
 eststo Eyeducnew : reg yeduc  young##recpnew                                   [aw=wt]
 eststo Elhwagenew: reg lhwage young##recpnew                                   [aw=wt]
 eststo EWaldnew  : ivregress 2sls lhwage young recpnew (yeduc = young#recpnew) [aw=wt], small
 
-eststo Cyeducnew : reg yeduc  old##recpnew                                 if reallyold | old [aw=wt]
-eststo Clhwagenew: reg lhwage old##recpnew                                 if reallyold | old [aw=wt]
-eststo CWaldnew  : ivregress 2sls lhwage old recpnew (yeduc = old#recpnew) if reallyold | old [aw=wt], small
+eststo Pyeducnew : reg yeduc  old##recpnew                                 if reallyold | old [aw=wt]
+eststo Plhwagenew: reg lhwage old##recpnew                                 if reallyold | old [aw=wt]
+eststo PWaldnew  : ivregress 2sls lhwage old recpnew (yeduc = old#recpnew) if reallyold | old [aw=wt], small
 
 eststo Eyeducnewcl : reg yeduc  young##recpnew                                   [aw=wt], cluster(birthplnew)
 eststo Elhwagenewcl: reg lhwage young##recpnew                                   [aw=wt], cluster(birthplnew)
 eststo EWaldnewcl  : ivregress 2sls lhwage young recpnew (yeduc = young#recpnew) [aw=wt], cluster(birthplnew) small
 
-eststo Cyeducnewcl : reg yeduc  old##recpnew                                 if reallyold | old [aw=wt], cluster(birthplnew)
-eststo Clhwagenewcl: reg lhwage old##recpnew                                 if reallyold | old [aw=wt], cluster(birthplnew)
-eststo CWaldnewcl  : ivregress 2sls lhwage old recpnew (yeduc = old#recpnew) if reallyold | old [aw=wt], cluster(birthplnew) small
+eststo Pyeducnewcl : reg yeduc  old##recpnew                                 if reallyold | old [aw=wt], cluster(birthplnew)
+eststo Plhwagenewcl: reg lhwage old##recpnew                                 if reallyold | old [aw=wt], cluster(birthplnew)
+eststo PWaldnewcl  : ivregress 2sls lhwage old recpnew (yeduc = old#recpnew) if reallyold | old [aw=wt], cluster(birthplnew) small
 
 * tests that experiment and control experiment yield different results
-cmp setup
 cmp (experiment: yeduc = young##recp) (placebo: yeduc = old##recp), ind("young | old" "old | reallyold") covariance(independent) nolr qui  // like suest but classical errors
 test _b[experiment:1.young#1.recp] = _b[placebo:1.old#1.recp]
-estadd scalar ECp = r(p): Cyeduc
+estadd scalar EPp = r(p): Pyeduc
 cmp (experiment: lhwage = young##recp) (placebo: lhwage = old##recp), ind("young | old" "old | reallyold") cov(ind) nolr qui
 test _b[experiment:1.young#1.recp] = _b[placebo:1.old#1.recp]
-estadd scalar ECp = r(p): Clhwage
+estadd scalar EPp = r(p): Plhwage
 
 cmp (experiment: yeduc = young##recpnew) (placebo: yeduc = old##recpnew), ind("young | old" "old | reallyold") cov(ind) nolr qui
 test _b[experiment:1.young#1.recpnew] = _b[placebo:1.old#1.recpnew]
-estadd scalar ECp = r(p): Cyeducnew
+estadd scalar EPp = r(p): Pyeducnew
 cmp (experiment: lhwage = young##recpnew) (placebo: lhwage = old##recpnew), ind("young | old" "old | reallyold") cov(ind) nolr qui
 test _b[experiment:1.young#1.recpnew] = _b[placebo:1.old#1.recpnew]
-estadd scalar ECp = r(p): Clhwagenew
+estadd scalar EPp = r(p): Plhwagenew
 
 cmp (experiment: yeduc = young##recpnew) (placebo: yeduc = old##recpnew), ind("young | old" "old | reallyold") cov(ind) nolr qui cluster(birthplnew)
 test _b[experiment:1.young#1.recpnew] = _b[placebo:1.old#1.recpnew]
-estadd scalar ECpcl = r(p): Cyeducnew
+estadd scalar EPpcl = r(p): Pyeducnew
 cmp (experiment: lhwage = young##recpnew) (placebo: lhwage = old##recpnew), ind("young | old" "old | reallyold") cov(ind) nolr qui cluster(birthplnew)
 test _b[experiment:1.young#1.recpnew] = _b[placebo:1.old#1.recpnew]
-estadd scalar ECpcl = r(p): Clhwagenew
+estadd scalar EPpcl = r(p): Plhwagenew
 
 esttab Eyeduc*  using Public\Output\DID2x2.rtf, replace b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(DID) rename(1.young#1.recp DID 1.young#1.recpnew DID)
-esttab Cyeduc*  using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(DID) rename(1.old#1.recp DID 1.old#1.recpnew DID) stat(ECp ECpcl, fmt(2) layout(@ "[@]"))
+esttab Pyeduc*  using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(DID) rename(1.old#1.recp DID 1.old#1.recpnew DID) stat(ECp ECpcl, fmt(2) layout(@ "[@]"))
 esttab Elhwage* using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(DID) rename(1.young#1.recp DID 1.young#1.recpnew DID)
-esttab Clhwage* using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(DID) rename(1.old#1.recp DID 1.old#1.recpnew DID) stat(ECp ECpcl, fmt(2) layout(@ "[@]"))
+esttab Plhwage* using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(DID) rename(1.old#1.recp DID 1.old#1.recpnew DID) stat(ECp ECpcl, fmt(2) layout(@ "[@]"))
 esttab EWald*   using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(yeduc)
-esttab CWald*   using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(yeduc)
+esttab PWald*   using Public\Output\DID2x2.rtf, append  b(3) se(3) nogap nonotes nonumbers nomtitles noobs msign("–") fonttbl(\f0\fnil Cambria;) keep(yeduc)
 restore
 }
 
@@ -413,6 +431,45 @@ restore
 {
 areg yeduc  wt birthyr##c.(nin ch71 en71) if 24>=age74 & age74>=2 & year==1995 & lhwage<., a(birthpl) cluster(birthpl)
 areg lhwage wt birthyr##c.(nin ch71 en71) if 24>=age74 & age74>=2 & year==1995           , a(birthpl) cluster(birthpl)
+}
+
+
+***
+*** reduced form/OLS
+***
+{
+cap erase Public\Output\RF.rtf
+preserve
+keep if young==1 | old | reallyold
+forvalues y=1/4 {
+  local years: word `y' of 1995 2005 2010 2013,2014
+  local wagevar: word `y' of lhwage IS lhwage lwage
+  local depvars : word `y' of "primary yeduc part lhwage" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage"
+  local Ndepvars: word count `depvars'
+  forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
+    local ests
+    local controls: word `=`c'+1' of "" ch71new "ch71new en71new" "ch71new en71new wsppc"
+    forvalues d=1/`Ndepvars' {
+      local depvar: word `d' of `depvars'
+      foreach wt in 1 wt {
+        if `y'==1 {
+          eststo RF`depvar'c`c'w`wt'y`y': cmp (experiment: `depvar' = 1.young#c.ninnew ib1974.birthyr##c.(`controls') i.birthplnew) ///
+                                              (placebo   : `depvar' =   1.old#c.ninnew ib1974.birthyr##c.(`controls') i.birthplnew) ///
+                                              [pw=`wt'] if ("`depvar'"=="part" | `wagevar'<.) & inlist(year,`years'), ind("young | old" "old | reallyold") cluster(birthplnew) cov(ind) qui
+          test _b[experiment:1.young#c.ninnew] = _b[placebo:1.old#c.ninnew]
+          estadd scalar EPp = r(p)
+        }
+        else {
+          eststo RF`depvar'c`c'w`wt'y`y': areg `depvar' 1.young#c.ninnew ib1974.birthyr##c.(`controls') [pw=wt] if ("`depvar'"=="part" | `wagevar'<.) & inlist(year,`years') & young<., cluster(birthplnew) a(birthplnew)
+        }
+        local ests `ests' RF`depvar'c`c'w`wt'y`y'
+      }
+    }
+    esttab `ests' using Public\Output\RF.rtf, append keep(*#c.ninnew) se nostar nolines nonotes noeqlines varwidth(22) nonumber msign("–") ///
+       stat(N1 N2 EPp, label("Experiment observations" "Placebo observations" "Experiment=placebo (p)") fmt(%7.0fc %7.0fc %4.2f))
+  }
+}
+restore
 }
 
 
@@ -458,52 +515,51 @@ eststo IS05     : reg IS     c.age74##c.age74 c.yeduc##c.yeduc c.age74#c.yeduc [
 esttab lhwage95 IS95 IS05 using "Public\Output\wage compression.rtf", replace b(a2) se(a2) nonumber nocons nostar stats(N, fmt(%7.0fc)) msign("–") nogaps fonttbl(\f0\fnil Cambria;)
 esttab lhwage95 lhwage953 lhwage954, varwidth(30)  // quadratic vs cubic model, not reported in text
 
-regress lhwage ibn.age age#c.yeduc if age>=15 & age<=65 & year==1995 [pw=wt], nocons  // Slopes of linear fits of log hourly wage to years of schooling, by age
+regress lhwage ibn.age age#c.yeduc if year==1995 [pw=wt], nocons cluster(birthplnew) // Slopes of linear fits of log hourly wage to years of schooling, by age
 coefplot, keep(*age#c.yeduc) rename(([0-9]+)[ob]?.age#c.yeduc = \1, regex) vertical omitted at(_coef) ///
           xline(23 45, lpat(dash)) text(0 23 "Age 2 in 1974", place(se)) text(0 45 "Age 24 in 1974", place(se)) ///
           xtitle(Age in 1995) graphregion(margin(zero)) xlab(15(10)65) name(gradlhwageyeduc1995, replace)
 
-regress IS ibn.age age#c.yeduc if age>=15 & age<=65 & year==2005 [pw=wt], nocons  // Slopes of linear fits of log hourly wage to years of schooling, by age
-coefplot, keep(*age#c.yeduc) rename(([0-9]+)[ob]?.age#c.yeduc = \1, regex) vertical omitted at(_coef) ///
-          xline(33 55, lpat(dash)) text(-.05 33 "Age 2 in 1974", place(nw)) text(-.05 55 "Age 24 in 1974", place(nw)) ///
-          xtitle(Age in 2005) graphregion(margin(zero)) ylab(-.05(.05).25) xlab(15(10)65) ytitle("Imputed log hourly wage, 2005") name(gradlhwageyeduc2005, replace) gen replace
-global graph `r(graph)'
-replace __ll1 = clip(__ll1, -.05, .25)
-replace __ul1 = clip(__ul1, -.05, .25)
-replace __b = . if __b<-.05 | __b>.25
-$graph
-
-regress lhwage ibn.age age#c.yeduc if age>=15 & age<=65 & year==2010 [pw=wt], nocons  // Slopes of linear fits of log hourly wage to years of schooling, by age
-coefplot, keep(*age#c.yeduc) rename(([0-9]+)[ob]?.age#c.yeduc = \1, regex) vertical omitted at(_coef) ///
-          xline(38 60, lpat(dash)) text(-.05 38 "Age 2 in 1974", place(nw)) text(-.05 60 "Age 24 in 1974", place(nw)) ///
-          xtitle(Age in 2010) graphregion(margin(zero)) ylab(-.05(.05).25) xlab(15(10)65) ytitle("Log hourly wage, 2010") name(gradlhwageyeduc2010, replace)  gen replace
-global graph `r(graph)'
-replace __ll1 = clip(__ll1, -.05, .25)
-replace __ul1 = clip(__ul1, -.05, .25)
-replace __b = . if __b<-.05 | __b>.25
-$graph
-
-regress lwage ibn.age age#c.yeduc if age>=15 & age<=65 & inlist(year,2013,2014) [pw=wt], nocons  // Slopes of linear fits of log hourly wage to years of schooling, by age
-coefplot, keep(*age#c.yeduc) rename(([0-9]+)[ob]?.age#c.yeduc = \1, regex) vertical omitted at(_coef) ///
-          xline(41.5 63.5, lpat(dash)) text(-.05 41.5 "Age 2 in 1974", place(nw)) text(-.05 63.5 "Age 24 in 1974", place(nw)) ///
-          xtitle(Age in 2013–14) graphregion(margin(zero)) ylab(-.05(.05).25) xlab(15(10)65) ytitle("Log typical monthly earnings, 2013–14") name(gradlhwageyeduc201314, replace)  gen replace
-global graph `r(graph)'
-replace __ll1 = clip(__ll1, -.05, .25)
-replace __ul1 = clip(__ul1, -.05, .25)
-replace __b = . if __b<-.05 | __b>.25
-$graph
-
-graph combine gradlhwageyeduc2005 gradlhwageyeduc2010 gradlhwageyeduc201314, cols(1) imargin(0 0 1 0) xcommon xsize(2) ysize(4) graphregion(margin(zero)) iscale(*1.25) name(gradlhwageyeduc2005_14, replace)
-graph save Public\Output\gradlhwageyeduc2005_14, replace
 graph save Public\Output\gradlhwageyeduc1995, replace
+
+eststo WSDlhwage95E : areg lhwage c.yeduc##c.age74 i.birthyr##c.ch71 [aw=wt] if year==1995 & young<., cluster(birthplnew) a(birthplnew)
+eststo WSDlhwage95P : areg lhwage c.yeduc##c.age74 i.birthyr##c.ch71 [aw=wt] if year==1995 & (old | reallyold), cluster(birthplnew) a(birthplnew)
+eststo WSDIS05     : areg IS     c.yeduc##c.age74 i.birthyr##c.ch71 [aw=wt] if year==2005 & young<., cluster(birthplnew) a(birthplnew)
+eststo WSDlhwage10 : areg lhwage c.yeduc##c.age74 i.birthyr##c.ch71 [aw=wt] if year==2010 & young<., cluster(birthplnew) a(birthplnew)
+eststo WSDlwage1314: areg lwage c.yeduc##c.age74 i.birthyr##c.ch71 [aw=wt] if inlist(year,2013,2014) & young<., cluster(birthplnew) a(birthplnew)
+esttab WSDlhwage95E WSDlhwage95P WSDIS05 WSDlhwage10 WSDlwage1314 using "Public\Output\wage compression.rtf", replace keep(c.yeduc#c.age74 yeduc) se nonumber nocons nostar stats(N, fmt(%7.0fc)) msign("–") nogaps
+
 
 restore
 }
+
 qui est dir
 qui foreach est in `r(names)' {
   est restore `est'
   est save Public\Output\`est', replace
 }
+
+
+***
+*** Figure with wage scale dilation and OLS reduced-form impacts, all follow-ups
+***
+{
+cap drop lab
+gen lab = ""
+coefplot (RFprimaryc1wwty1, rename(1.young#c.ninnew=1995)) (RFprimaryc1wwty2, rename(1.young#c.ninnew=2005)) (RFprimaryc1wwty3, rename(1.young#c.ninnew=2010)) (RFprimaryc1wwty4, rename(1.young#c.ninnew=2013–14)), bylabel(Primary school completion) || ///
+         (RFyeducc1wwty1, rename(1.young#c.ninnew=1995)) (RFyeducc1wwty2, rename(1.young#c.ninnew=2005)) (RFyeducc1wwty3, rename(1.young#c.ninnew=2010)) (RFyeducc1wwty4, rename(1.young#c.ninnew=2013–14)), bylabel(Years of schooling) || ///
+         (WSDlhwage95E, rename(c.yeduc#c.age74=1995)) (WSDIS05, rename(c.yeduc#c.age74=2005)) (WSDlhwage10, rename(c.yeduc#c.age74=2010)) (WSDlwage1314, rename(c.yeduc#c.age74=2013–14)), bylabel(Wage scale dilation) || ///
+         (RFpartc1wwty1, rename(1.young#c.ninnew=1995)) (RFpartc1wwty2, rename(1.young#c.ninnew=2005)) (RFpartc1wwty3, rename(1.young#c.ninnew=2010)), bylabel(Wage sector participation) || ///
+         (RFlhwagec1wwty1, rename(1.young#c.ninnew=1995)) (RFISc1wwty2, rename(1.young#c.ninnew=2005)) (RFlhwagec1wwty3, rename(1.young#c.ninnew=2010)) (RFlwagec1wwty4, rename(1.young#c.ninnew=2013–14)), bylabel(Log earnings) ///
+           keep(c.yeduc#c.age74 1.young#c.ninnew) scheme(plottig) cismooth(n(20)) grid(none) mlab(lab) mlabpos(12) mlabcolor(black) ///
+           byopts(xrescale legend(off) rows(2) holes(1) style(econ) iscale(*1.25)) ///
+           ysize(4) xsize(7) addplot(scatteri .5 0, msym(none)) graphregion(margin(zero)) plotregion(color(gs14)) xlab(,labcolor(black)) ylab(,labcolor(black)) ///
+           gen replace
+local graph `r(graph)'
+replace lab = subinstr(strofreal(__b, "%6.4f") + " (" + strofreal(__se, "%6.4f") + ")", "-", "−", .) if __b<.
+`graph'
+}
+
 
 
 ***
@@ -518,9 +574,8 @@ mata dots = st_matrix("e(b)")'[|.\22|] \ 0
 coefplot, keep(*.birthyr#c.nin) omitted rename(([0-9]+)[ob]?.birthyr#c.nin = \1, regex) vertical xlab(2(2)24) at(_coef, transform(1974 - @)) xscale(reverse) msym(smcircle) msize(small) gen replace
 global graph `r(graph)'
 
-* with linear spline fit
-gen t1 = 24 - age74  // spline components -1974 + birth year
-gen t2 = max(0, 12 - age74)  // 12-year-olds in '74 couldn't benefit
+gen t1 = 24 - age74
+gen t2 = max(0, 12 - age74)
 
 areg yeduc c.t?#c.nin  birthyr##c.(ch71 en71), absorb(birthpl)
 mata segmentfit = `=_b[c.t1#c.nin]' * (24 :- (24::2)) + `=_b[c.t2#c.nin]' * (J(24-12,1,0) \ 12 :- (12::2))
@@ -570,8 +625,6 @@ keep if 24>=age74 & age74>=2
 gen t1 = 24 - age74  // spline components -1974 + birth year
 gen t2 = max(0, 12 - age74)  // 12-year-olds in '74 couldn't benefit
 
-local alldepvars primary yeduc part lwage lhwage IS
-
 twoway scatteri 0 0, msym(none) yscale(off) ylab(,nogrid) nodraw xscale(off) xlab(,nogrid) name(hole1, replace)
 twoway scatteri 0 0, msym(none) yscale(off) ylab(,nogrid) nodraw xscale(reverse) xlab(2(2)24,nogrid) xtitle("") name(hole2, replace)
 
@@ -581,7 +634,7 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
   forvalues y=1/4 {
     local years   : word `y' of 1995 2005 2010 2013,2014
     local yearname: word `y' of "Survey: Intercensal, 1995" "Intercensal, 2005" "Labor, 2010" "Socioeconomic, 2013–14"
-    local depvars : word `y' of "`alldepvars'" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage"
+    local depvars : word `y' of "primary yeduc part lwage lhwage IS" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage"
     local Ndepvars: word count `depvars'
 
     foreach wt in 1 wt {
@@ -629,9 +682,9 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
   foreach wt in 1 wt {
     graph combine RFprimary`wt'y1 RFprimary`wt'y2 RFprimary`wt'y3 RFprimary`wt'y4, cols(4) graphregion(margin(zero)) name(RFprimary, replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label primary', size(small))
     graph combine RFyeduc`wt'y1   RFyeduc`wt'y2   RFyeduc`wt'y3   RFyeduc`wt'y4  , cols(4) graphregion(margin(zero)) name(RFyeduc  , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label yeduc  ', size(small))
-    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1            , cols(4) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part   ', size(small))
-    graph combine RFlhwage`wt'y1  hole1             RFlhwage`wt'y3  RFlwage`wt'y4  , cols(4) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage ', size(small))
-    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2             hole2            , cols(4) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS     ', size(small)) fysize(25)
+    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1          , cols(4) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part   ', size(small))
+    graph combine RFlhwage`wt'y1  hole1           RFlhwage`wt'y3  RFlwage`wt'y4  , cols(4) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage ', size(small))
+    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2           hole2          , cols(4) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS     ', size(small)) fysize(25)
 
     graph combine RFprimary RFyeduc RFpart RFlhwage RFIS, cols(1) graphregion(margin(zero)) name(RFc`c'w`wt', replace) xsize(7.5) ysize(8.34) imargin(1 1 0 0) b1title(Age in 1974, xoffset(4) size(vsmall))
     graph save Public\Output\RFc`c'w`wt'pwlspline, replace
@@ -650,8 +703,6 @@ keep if 24>=age74 & age74>=2
 gen t1 = 24 - age74  // spline components -1974 + birth year
 gen t2 = max(0, 12 - age74)  // 12-year-olds in '74 couldn't benefit
 
-local alldepvars primary yeduc part lhwage IS
-
 twoway scatteri 0 0, msym(none) yscale(off) ylab(,nogrid) nodraw xscale(off) xlab(,nogrid) name(hole1, replace)
 twoway scatteri 0 0, msym(none) yscale(off) ylab(,nogrid) nodraw xscale(reverse) xlab(2(2)24,nogrid) xtitle("") name(hole2, replace)
 
@@ -661,7 +712,7 @@ forvalues c=1/1 {
   forvalues y=1/4 {
     local years   : word `y' of 1995 2005 2010 2013,2014
     local yearname: word `y' of "Survey: Intercensal, 1995" "Intercensal, 2005" "Labor, 2010" "Socioeconomic, 2013–14"
-    local depvars : word `y' of "`alldepvars'" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage"
+    local depvars : word `y' of "primary yeduc part lhwage IS" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage"
     local Ndepvars: word count `depvars'
 
     foreach wt in 1 wt {
@@ -710,9 +761,9 @@ forvalues c=1/1 {
   foreach wt in 1 wt {
     graph combine RFprimary`wt'y1 RFprimary`wt'y2 RFprimary`wt'y3 RFprimary`wt'y4, cols(4) graphregion(margin(zero)) name(RFprimary, replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label primary', size(small))
     graph combine RFyeduc`wt'y1   RFyeduc`wt'y2   RFyeduc`wt'y3   RFyeduc`wt'y4  , cols(4) graphregion(margin(zero)) name(RFyeduc  , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label yeduc'  , size(small))
-    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1            , cols(4) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part'   , size(small))
-    graph combine RFlhwage`wt'y1  hole1             RFlhwage`wt'y3  RFlwage`wt'y4  , cols(4) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage' , size(small))
-    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2             hole2            , cols(4) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS'     , size(small)) fysize(25)
+    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1          , cols(4) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part'   , size(small))
+    graph combine RFlhwage`wt'y1  hole1           RFlhwage`wt'y3  RFlwage`wt'y4  , cols(4) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage' , size(small))
+    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2           hole2          , cols(4) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS'     , size(small)) fysize(25)
 
     graph combine RFprimary RFyeduc RFpart RFlhwage RFIS, cols(1) graphregion(margin(zero)) name(RFc`c'w`wt'poly, replace) xsize(7.5) ysize(8.34) imargin(1 1 0 0) b1title(Age in 1974, xoffset(4) size(vsmall))
     graph save Public\Output\RFc`c'w`wt'qspline, replace
@@ -744,9 +795,8 @@ forvalues c=1/1 /*3*/ {
       forvalues d=1/`Ndepvars' {
         local depvar: word `d' of `depvars'
         foreach wt in 1 wt {
-          eststo   OLS`depvar'`edvar'c`c'w`wt'y`y'   : areg     `depvar'  `edvar'            `controls' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) a(birthplnew)
           forvalues i=1/2 {
-            local insts: word `i' of _IdumXnin* _IyouXninne_1  // instruments by birth year or young/old
+            local insts: word `i' of _IyouXninne_1 _IdumXnin*  // instruments by birth year or young/old
             eststo TSLS`depvar'`edvar'c`c'`i'w`wt'y`y': xtivreg2 `depvar' (`edvar' = `insts') `controls' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) partial(`controls') small fe
             boottest, ar reps(99999) gridmin(-.8) gridmax(1.1) format(%4.2f) ///
                       graphopt(xlab(-.8(.2)1.1) ylab(.05 .2(.2)1, nogrid) nodraw ///
@@ -756,10 +806,11 @@ forvalues c=1/1 /*3*/ {
             est save Public\Output\TSLS`depvar'`edvar'c`c'`i'w`wt'y`y', replace
           }
         }
-        esttab OLS`depvar'`edvar'c`c'*y`y' TSLS`depvar'`edvar'c`c'1*y`y' TSLS`depvar'`edvar'c`c'2*y`y' ///
+        esttab TSLS`depvar'`edvar'c`c'1w1y`y' TSLS`depvar'`edvar'c`c'1wwty`y' TSLS`depvar'`edvar'c`c'2w1y`y' TSLS`depvar'`edvar'c`c'2wwty`y' ///
                using "Public\Output\c`c' `edvar' y`y'.rtf", `=cond(`d'==1,"replace","append")' ///
                keep(`edvar') b se msign("–") nonotes nonumber nogaps nomtitles nostar ///
                stat(CIstr jp widstat N, labels("Bootstrap CI" "Hanson p" "KP F" Observations) fmt(%~1s %4.2f %4.2f %7.0fc)) fonttbl(\f0\fnil Cambria;)
+
         graph combine `depvar'`edvar'c`c'2SLS1w1y`y' `depvar'`edvar'c`c'2SLS1wwty`y', ///
               rows(1) imargin(1 0 0 0) `=cond(`d'==1, "title(Instruments by birth year)", "")' name(g1, replace) nodraw
         graph combine `depvar'`edvar'c`c'2SLS2w1y`y' `depvar'`edvar'c`c'2SLS2wwty`y', ///
@@ -813,9 +864,9 @@ forvalues c=1/1 /*3*/ {
             est save Public\Output\TSLSPWL`depvar'`edvar'c`c'`i'`wt'y`y', replace
           }
         }
-        esttab /*OLS`depvar'`edvar'c`c'*y`y'*/ TSLSPWL`depvar'`edvar'c`c'1*y`y' TSLSPWL`depvar'`edvar'c`c'2*y`y' ///
+        esttab TSLSPWL`depvar'`edvar'c`c'2w1y`y' TSLSPWL`depvar'`edvar'c`c'2wwty`y' TSLSPWL`depvar'`edvar'c`c'1w1y`y' TSLSPWL`depvar'`edvar'c`c'1wwty`y' ///
                using "Public\Output\spline c`c' `edvar' y`y'.rtf", `=cond(`d'==1,"replace","append")' ///
-               keep(`edvar') b se msign("–") nonotes nonumber nogaps nomtitles nostar ///
+               rename(t2_nin `edvar') keep(`edvar') b se msign("–") nonotes nonumber nogaps nomtitles nostar ///
                stat(CIstr widstat N, labels("Bootstrap CI" "KP F" Observations) fmt(%~1s %4.2f %7.0fc)) fonttbl(\f0\fnil Cambria;)
 
         graph combine `depvar'`edvar'c`c'2SLS1w1y`y' `depvar'`edvar'c`c'2SLS1wwty`y', ///
