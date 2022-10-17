@@ -1,0 +1,2498 @@
+StataFileTM:00001:01000:LiveGPH:                       :
+00007:00007:
+*! classname: twowaygraph_g
+*! family: twoway
+*! command: twoway (rspike __ll1 __ul1 __at if __plot==1,  pstyle(p1) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==1,  pstyle(p1) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==1,  pstyle(p1) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==1,  pstyle(p1) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==1,  pstyle(p1) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==1,  pstyle(p1) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==1,  pstyle(p1) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==1,  pstyle(p1) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==1,  pstyle(p1) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==1,  pstyle(p1) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==1,  pstyle(p1) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==1,  pstyle(p1) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==1,  pstyle(p1) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==1,  pstyle(p1) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==1,  pstyle(p1) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==1,  pstyle(p1) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==1,  pstyle(p1) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==1,  pstyle(p1) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==1,  pstyle(p1) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==1,  pstyle(p1) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==1,  pstyle(p1)       ) (rspike __ll1 __ul1 __at if __plot==2,  pstyle(p2) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==2,  pstyle(p2) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==2,  pstyle(p2) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==2,  pstyle(p2) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==2,  pstyle(p2) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==2,  pstyle(p2) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==2,  pstyle(p2) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==2,  pstyle(p2) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==2,  pstyle(p2) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==2,  pstyle(p2) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==2,  pstyle(p2) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==2,  pstyle(p2) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==2,  pstyle(p2) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==2,  pstyle(p2) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==2,  pstyle(p2) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==2,  pstyle(p2) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==2,  pstyle(p2) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==2,  pstyle(p2) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==2,  pstyle(p2) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==2,  pstyle(p2) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==2,  pstyle(p2)       ) (rspike __ll1 __ul1 __at if __plot==3,  pstyle(p3) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==3,  pstyle(p3) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==3,  pstyle(p3) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==3,  pstyle(p3) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==3,  pstyle(p3) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==3,  pstyle(p3) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==3,  pstyle(p3) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==3,  pstyle(p3) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==3,  pstyle(p3) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==3,  pstyle(p3) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==3,  pstyle(p3) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==3,  pstyle(p3) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==3,  pstyle(p3) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==3,  pstyle(p3) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==3,  pstyle(p3) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==3,  pstyle(p3) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==3,  pstyle(p3) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==3,  pstyle(p3) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==3,  pstyle(p3) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==3,  pstyle(p3) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==3,  pstyle(p3)       ) (rspike __ll1 __ul1 __at if __plot==4,  pstyle(p4) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==4,  pstyle(p4) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==4,  pstyle(p4) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==4,  pstyle(p4) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==4,  pstyle(p4) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==4,  pstyle(p4) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==4,  pstyle(p4) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==4,  pstyle(p4) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==4,  pstyle(p4) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==4,  pstyle(p4) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==4,  pstyle(p4) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==4,  pstyle(p4) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==4,  pstyle(p4) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==4,  pstyle(p4) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==4,  pstyle(p4) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==4,  pstyle(p4) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==4,  pstyle(p4) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==4,  pstyle(p4) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==4,  pstyle(p4) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==4,  pstyle(p4) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==4,  pstyle(p4)       ),    ylabel(1 `"q9"' 2 `"q8"' 3 `"q7"' 4 `"q6"' 5 `"q5"' 6 `"q4"' 7 `"q3"' 8 `"q2"' 9 `"q1"', nogrid angle(horizontal) )  ytick(1.5 1.5 2.5 2.5 3.5 3.5 4.5 4.5 5.5 5.5 6.5 6.5 7.5 7.5 8.5 8.5, notick tlstyle(none) grid ) yscale(range(.5 9.5)) yscale(reverse) yti("") xti("") legend(label(21 `"cic1"') label(42 `"cic2"') label(63 `"cic3"') label(84 `"cic4"') all order(21 42 63 84)) legend(rowgap(zero) lab(21 "Log hourly wage, 1995") lab(42 "Imputed log hourly wage, 2005") lab(63 "Log hourly wage, 2010") lab(84 "Log typical monthly earnings, 2013‚Äì14") pos(4) region( margin(zero)) size(vsmall)) plotregion(margin(t=0 b=0))  scheme(plottig)  graphregion(margin(zero)) ylabel(1 "10" 2 "20" 3 "30" 4 "40" 5 "50" 6 "60" 7 "70" 8 "80" 9 "90") ytitle(Percentile) xtitle("Changes-in-changes impact estimate") || scatter __at x, msym(none) mlab(label) mlabcolor(black) mlabsize(vsmall) mlabpos(9) xscale(range(-.2 .5)) xlab(-.3(.1).1) xline(0, lcolor(gs10) lpat(solid)) xsize(5.5) ysize(5) name(cic, replace)
+*! command_date: 26 Jul 2022
+*! command_time: 13:07:24
+*! datafile: 
+*! datafile_date: 
+*! scheme: plottig
+*! naturallywhite: 1
+*! xsize: 5.5
+*! ysize: 5
+*! end
+<BeginItem> serset K38d37888 
+<BeginSerset>
+<BeginSeries>
+.name = `"__ll1"'
+.label = `"CI1: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1029691398143768
+.max =  -.0377018190920353
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul1"'
+.label = `"CI1: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .0173092167824507
+.max =  .1064599975943565
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__at"'
+.label = `"plot position (category axis)"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .699999988079071
+.max =  8.699999809265137
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll2"'
+.label = `"CI2: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.043670792132616
+.max =  .0129572711884975
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul2"'
+.label = `"CI2: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0419891327619553
+.max =  .0145627120509744
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll3"'
+.label = `"CI3: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0906016826629639
+.max =  -.027145067229867
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul3"'
+.label = `"CI3: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .0049417582340539
+.max =  .0864000841975212
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll4"'
+.label = `"CI4: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0453557670116425
+.max =  .0114764356985688
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul4"'
+.label = `"CI4: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0403041578829288
+.max =  .0161713156849146
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll5"'
+.label = `"CI5: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0839920192956924
+.max =  -.0215031206607819
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul5"'
+.label = `"CI5: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0016679032705724
+.max =  .0756792724132538
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll6"'
+.label = `"CI6: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0470507703721523
+.max =  .0100295953452587
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul6"'
+.label = `"CI6: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0386091507971287
+.max =  .0177894961088896
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll7"'
+.label = `"CI7: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0792212262749672
+.max =  -.0174308121204376
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul7"'
+.label = `"CI7: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0064386995509267
+.max =  .0679410770535469
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll8"'
+.label = `"CI8: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0487628094851971
+.max =  .0085682161152363
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul8"'
+.label = `"CI8: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0368971154093742
+.max =  .0194239355623722
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll9"'
+.label = `"CI9: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0753851309418678
+.max =  -.0141563592478633
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul9"'
+.label = `"CI9: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0102747911587358
+.max =  .061718974262476
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll10"'
+.label = `"CI10: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0504993721842766
+.max =  .0070859016850591
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul10"'
+.label = `"CI10: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0351605527102947
+.max =  .0213544797152281
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll11"'
+.label = `"CI11: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0721192806959152
+.max =  -.0113686546683311
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul11"'
+.label = `"CI11: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0135406460613012
+.max =  .0564217828214169
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll12"'
+.label = `"CI12: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0522687025368214
+.max =  .0055756159126759
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul12"'
+.label = `"CI12: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0333912186324596
+.max =  .0242243204265833
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll13"'
+.label = `"CI13: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0692380145192146
+.max =  -.0089092347770929
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul13"'
+.label = `"CI13: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0164219085127115
+.max =  .0517483986914158
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll14"'
+.label = `"CI14: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.054080106317997
+.max =  .0040294197387993
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul14"'
+.label = `"CI14: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0315798185765743
+.max =  .0271623991429806
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll15"'
+.label = `"CI15: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0666330307722092
+.max =  -.0066856448538601
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul15"'
+.label = `"CI15: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.019026892259717
+.max =  .0475231409072876
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll16"'
+.label = `"CI16: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0559443458914757
+.max =  .0024381224066019
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul16"'
+.label = `"CI16: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0297155790030956
+.max =  .030186178162694
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll17"'
+.label = `"CI17: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0642351508140564
+.max =  -.0046388334594667
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul17"'
+.label = `"CI17: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0214247740805149
+.max =  .0436337925493717
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll18"'
+.label = `"CI18: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0578742101788521
+.max =  .000790805905126
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul18"'
+.label = `"CI18: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0277857128530741
+.max =  .0333164036273956
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll19"'
+.label = `"CI19: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0619971863925457
+.max =  -.0027285297401249
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul19"'
+.label = `"CI19: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0236627366393805
+.max =  .040003839880228
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll20"'
+.label = `"CI20: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0598853044211864
+.max =  -.0009258455247618
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul20"'
+.label = `"CI20: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0257746186107397
+.max =  .0365783832967281
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__b"'
+.label = `"coefficient"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0428299605846405
+.max =  .0137599911540747
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+.weight_id = (.)
+<BeginSersetData>
+sersetreadwrite *   	   ˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛__ll1 0E                                                                                                                                              __ul1 0F                                                                                                                                              __at  03                                                                                                                                              __ll2 06                                                                                                                                              __ul2                                                                                                                                                 __ll3                                                                                                                                                 __ul3                                                                                                                                                 __ll4                                                                                                                                                 __ul4                                                                                                                                                 __ll5                                                                                                                                                 __ul5                                                                                                                                                 __ll6                                                                                                                                                 __ul6                                                                                                                                                 __ll7                                                                                                                                                 __ul7                                                                                                                                                 __ll8                                                                                                                                                 __ul8                                                                                                                                                 __ll9                                                                                                                                                 __ul9                                                                                                                                                 __ll10                                                                                                                                                __ul10                                                                                                                                                __ll11                                                                                                                                                __ul11                                                                                                                                                __ll12                                                                                                                                                __ul12                                                                                                                                                __ll13                                                                                                                                                __ul13                                                                                                                                                __ll14                                                                                                                                                __ul14                                                                                                                                                __ll15                                                                                                                                                __ul15                                                                                                                                                __ll16                                                                                                                                                __ul16                                                                                                                                                __ll17                                                                                                                                                __ul17                                                                                                                                                __ll18                                                                                                                                                __ul18                                                                                                                                                __ll19                                                                                                                                                __ul19                                                                                                                                                __ll20                                                                                                                                                __ul20                                                                                                                                                __b                                                                                                                                                   %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                       Ä/\∫ø   ‡Åπë?   `ffÊ?   †\¶ø   Äô•ø    ¨1∑ø    œ=t?    ﬂ8ßø    ø¢§ø   @ÄÄµø   Ä±S[ø   ‡	®ø    îƒ£ø   †◊G¥ø   @w_zø   `p˜®ø   ¿-‰¢ø   †pL≥ø    Û
+Öø   ¿€©ø   `ê ¢ø   ¿hv≤ø   ¿2ªãø   †ˆ¬™ø   `ß°ø    ïπ±ø   †Á–êø   @c∞´ø   ‡:+†ø   ¿‹±ø    …{ìø   ¿º§¨ø   ¿¬mûø    ∑q∞ø   @`ïø   @∞°≠ø   †€súø   `æØø   `;òø   `I©Æø   `©döø    œÌ•ø    ßM£ø   `ˆ@ª?   `ff!@   ÄWâä?    ”ç?   †ÍÀõø   ‡P∂?    ıÄá?   †6èê?    Íñø   Ä∑_≥?   ÄeäÑ?   ‡h7í?    bŸëø    ñd±?   Ä6åÅ?   @ﬁ„ì?   `˛åø    °ôØ?   @}?   ‡Ú›ï?    sHáø   ‡P„¨?    u÷v?   †BŒò?   @?Çø    ƒ~™?    'Åp?   ¿u–õ?    hb{ø    ÙT®?    ˘c?     Èû?   `+ sø    +W¶?   ¿¬ÈI?    Ÿ°?   @$Zfø    b{§?    éVNø   ‡f∫¢?   ¿2.å? :üΩb`û=333?Of©∫jòe:˚$}Ω*p{=cª«G;‘<ZΩàX=¸&πªvÄ´;À
+AΩ˙U?=æ ºû’Û;u»,Ω•+=Jm%ºö<âΩC‘=πÕJºu˙C<®QΩÿú
+=©qºf>j<á˝ºÂµ˘<¨9åº
+–à<ªÀ„ºb‡<˜õ†ºU2ù<\(Ãº∫æ»<ÂŸµºDp≤<hhZπ≥ÄΩ;U`=öôŸ?ê`öªàAIª,ÃNΩÏ.=v;–ªtª∫Ìc4Ω¬É=84ºç„l9pT!ΩFt=bêº¡}¯:Û ΩëA‰<‰P:ºÈ@k;∞ÙΩ) <vóVºò-Æ;ë„Úº<#≥<$äsºıË;ÁﬁºíRû<~™àºS‘<‡È ºå)ã<)òº©´0<˚πºLèr<¸'®ºOœP<SªÌÕ2Ω\√ë=ÕÃ,@ºJT<qòn<{qΩG*s=¬Ô9<µyÑ<√1—º≠QY=ül<Gªë<&‚´ºﬁ©F=I•<Úü<È·çº¿©7=z˜“;∏≥¨<∞Æhºw‰*=ıùõ;ä∫<âù;º-†=ÁE;µ¥»<©ﬁºvp=ÿá¢:I◊<∫⁄ª=sÈ∫‚`Ê<°∑îªøO=¶M%ªKˆ<ñqa<9mΩCÖ=ÕÃl@>òS<ˆk<U_ﬁº˜‹^=©<<≈VÅ<P'∞ºı¿G=,S$<1ç<Àéº’7=¥a<ø)ô<gºQ©)=⁄0Ë;cN•<òC:º3>=®≥∂;∞≠±<
+¯ºO+=9	Ñ;KXæ<A€ªµ=Ë»;}aÀ<[òªx≠=NO:)‡ÿ<"—2ªæ¥ı<q¥r∫=Ê<öZ_<Ó#dΩÁK*=ffñ@Ñ®˝ª≥—ª+;ΩÈS=Á'ºip§ªºF%Ωj›÷<ìù+º$
+oªÛxΩÿA∑<MBº_Lª”√Ωò◊ù<®OYº9a∫ç‰˚º4à<u¡pºä:øÕËºc;j<˚`Ñºeá;àã◊ºı∂G<ÿ∫êºSVh;í®«º	Ò'<Ñùº›Oß;Ÿ‘∏ºñI
+<ˆ÷™º°õ‹;`ÁªŸ%ßΩâÀ¢<ff∂@ÂZΩ˜ºª∆ëΩ&û<±-ΩvpÎº¿ZÜΩ/˘|;^	Ωπﬂº}8|ΩOo-πÙΩ£„”ºxˆnΩF˜^ªåÙΩ¡‚«º˘¨cΩù«…ª˚Ω„ßªºø∑YΩ∂∏º£T%Ωì"Øºˆ∂PΩŸª0º
+∆+Ωƒ?¢ºimHΩ‚QºÇq2Ω’ËîºZ±@ΩI“pºÿd9Ω)áºÌÂ¸º|·“ΩÃç<ff÷@%‡2ΩÃ¸+Ω`çπΩyÓ°;¯∆9Ω˘%Ω¨Ωåù⁄∫O∏@Ω°$ΩΩ>¢Ω∫˚“ªÉªGΩn!ΩÖcöΩôW(ºnÿNΩÉΩF≥ìΩñŸ]ºµVΩ;≈Ω©ÃçΩ=áÜºÉ]Ω◊YΩÊvàΩIﬁõºÊ%eΩnÛº∏çÉΩÉØºÇmΩ›û„º√}Ω[ÿ¡ºKJuΩK%”ºxn/Ωu
+ºΩ-=ffˆ@G(¯º2›Èºı¬°Ω[•<H=ΩÈä€ºÑ∑ìΩ,±Y<Vq
+ΩÃ"Õº[îâΩÁó<Ï∑Ω°ïæº•mÅΩrƒé;1Ω”ØºA˙tΩ
+·}:û ΩA…†º†ªhΩ…qªÃP(Ω‡cëºí©]ΩR…öª¯<0ΩâãÅº‘xSΩAOÏªäp8Ω HbºˆIΩ©2º{¸@Ω@ººÒºÂÉµΩ≥⁄=33A„m˜;g(<πnåΩáÚ∞=≥ﬂù;ó.U<‹ÛlΩº˝ö=í;ˆÅ<«AMΩ±$ã=ÿ™9∫è‹ó<l≈3Ω	Õ|=ÒgªóÔÆ<ÎΩág=sã—ªr∆<ÖÓ
+Ω!ˆS=ÎËºÆÉﬁ<@Ûº†ßB=ësJºI˜<zc”ºYπ2=±º}º»v=È¶µº€#=5óôº7”=8<
+<EndSersetData>
+<EndSerset>
+<EndItem>
+<BeginItem> serset K629389c8 
+<BeginSerset>
+<BeginSeries>
+.name = `"__ll1"'
+.label = `"CI1: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.3152371048927307
+.max =  -.0208038166165352
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul1"'
+.label = `"CI1: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0124054700136185
+.max =  .1205886676907539
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__at"'
+.label = `"plot position (category axis)"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .8999999761581421
+.max =  8.899999618530273
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll2"'
+.label = `"CI2: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1003709435462952
+.max =  .0152114219963551
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul2"'
+.label = `"CI2: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.094277486205101
+.max =  .0162530280649662
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll3"'
+.label = `"CI3: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.2704239189624786
+.max =  -.0138571318238974
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul3"'
+.label = `"CI3: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0248509999364614
+.max =  .0757754743099213
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll4"'
+.label = `"CI4: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1064764112234116
+.max =  .014167764224112
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul4"'
+.label = `"CI4: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0881720185279846
+.max =  .0172966849058867
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll5"'
+.label = `"CI5: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.246473953127861
+.max =  -.0097631691023707
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul5"'
+.label = `"CI5: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0315023884177208
+.max =  .0518255233764648
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll6"'
+.label = `"CI6: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1126182228326797
+.max =  .0131178945302963
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul6"'
+.label = `"CI6: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.082030214369297
+.max =  .0183465555310249
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll7"'
+.label = `"CI7: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.229187086224556
+.max =  -.0068081831559539
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul7"'
+.label = `"CI7: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0363033004105091
+.max =  .0382726304233074
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll8"'
+.label = `"CI8: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1188217476010323
+.max =  .0120574748143554
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul8"'
+.label = `"CI8: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0758266896009445
+.max =  .0194069743156433
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll9"'
+.label = `"CI9: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.2152871042490005
+.max =  -.0044321436434984
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul9"'
+.label = `"CI9: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0401636064052582
+.max =  .0358965918421745
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll10"'
+.label = `"CI10: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1251141428947449
+.max =  .0109818642958999
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul10"'
+.label = `"CI10: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0695342943072319
+.max =  .0204825848340988
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll11"'
+.label = `"CI11: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.2034533619880676
+.max =  -.0024093037936836
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul11"'
+.label = `"CI11: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0434500798583031
+.max =  .0338737517595291
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll12"'
+.label = `"CI12: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1315252780914307
+.max =  .0098859565332532
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul12"'
+.label = `"CI12: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0634259656071663
+.max =  .0215784925967455
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll13"'
+.label = `"CI13: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1930131763219833
+.max =  -.0006246765842661
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul13"'
+.label = `"CI13: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0463495291769505
+.max =  .0320891253650188
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll14"'
+.label = `"CI14: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1380888372659683
+.max =  .0087639912962914
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul14"'
+.label = `"CI14: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0616031251847744
+.max =  .0227004587650299
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll15"'
+.label = `"CI15: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1835740804672241
+.max =  .0009888256900012
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul15"'
+.label = `"CI15: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0489709563553333
+.max =  .0304756239056587
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll16"'
+.label = `"CI16: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1448438614606857
+.max =  .0076092989183962
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul16"'
+.label = `"CI16: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0597271174192429
+.max =  .0238551497459412
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll17"'
+.label = `"CI17: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1748854070901871
+.max =  .002474051900208
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul17"'
+.label = `"CI17: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.051383975893259
+.max =  .0289903972297907
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll18"'
+.label = `"CI18: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1518366932868958
+.max =  .0064139575697482
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul18"'
+.label = `"CI18: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0577850714325905
+.max =  .0250504910945892
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll19"'
+.label = `"CI19: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1667761951684952
+.max =  .0038602245040238
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul19"'
+.label = `"CI19: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0536360666155815
+.max =  .0276042241603136
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll20"'
+.label = `"CI20: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1591238379478455
+.max =  .0051683047786355
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul20"'
+.label = `"CI20: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.055761281400919
+.max =  .0262961443513632
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__b"'
+.label = `"coefficient"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0973242148756981
+.max =  .0157322250306606
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+.weight_id = (.)
+<BeginSersetData>
+sersetreadwrite *   	   ˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛__ll1 0E                                                                                                                                              __ul1 0F                                                                                                                                              __at  03                                                                                                                                              __ll2 06                                                                                                                                              __ul2                                                                                                                                                 __ll3                                                                                                                                                 __ul3                                                                                                                                                 __ll4                                                                                                                                                 __ul4                                                                                                                                                 __ll5                                                                                                                                                 __ul5                                                                                                                                                 __ll6                                                                                                                                                 __ul6                                                                                                                                                 __ll7                                                                                                                                                 __ul7                                                                                                                                                 __ll8                                                                                                                                                 __ul8                                                                                                                                                 __ll9                                                                                                                                                 __ul9                                                                                                                                                 __ll10                                                                                                                                                __ul10                                                                                                                                                __ll11                                                                                                                                                __ul11                                                                                                                                                __ll12                                                                                                                                                __ul12                                                                                                                                                __ll13                                                                                                                                                __ul13                                                                                                                                                __ll14                                                                                                                                                __ul14                                                                                                                                                __ll15                                                                                                                                                __ul15                                                                                                                                                __ll16                                                                                                                                                __ul16                                                                                                                                                __ll17                                                                                                                                                __ul17                                                                                                                                                __ll18                                                                                                                                                __ul18                                                                                                                                                __ll19                                                                                                                                                __ul19                                                                                                                                                __ll20                                                                                                                                                __ul20                                                                                                                                                __b                                                                                                                                                   %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                       @ÿ,‘ø    
+hâø   ¿ÃÃÏ?    È±πø   ¿ë"∏ø    †N—ø   `ärôø   ¿	Bªø    qí∂ø   `uåœø   ¿!†ø   @å‘ºø   †Óˇ¥ø   † VÕø   †Xñ¢ø    kæø   ¿`i≥ø    áéÀø    Sê§ø   ÄΩ¿ø   ‡ˇÃ±ø   Ä¬
+ ø   ¿?¶ø    “’¿ø    Ø<∞ø   ‡ß¥»ø     ªßø    Â¨¡ø   ‡qäØø    [«ø   †∏©ø   `>ä¬ø   ÄçîÆø    •b∆ø     O™ø   Äbo√ø   @ñ≠ø    ÏX≈ø   ¿/v´ø   Ä+^ƒø    æå¨ø   `=Í∏ø   ÄòMïø    Êﬁæ?   ¿ÃÃ!@   Ä*'è?   @¢§ê?   ¿ aåø   Äf≥?    ˝ç?   ‡8∂ë?   `∂˛Éø    ‡à™?    é›ä?   Äp…í?   ¿Â‚{ø   `xò£?   ‡ñ±à?    lﬂì?   Äp'rø   ¿	a¢?   ‡®}Ü?    c˘î?    ≠ºcø   ÄÊW°?   †?Ñ?    ¨ñ?   ¿*xDø   `¸m†?    €ÚÅ?     >ó?   Äo3P?   Ä 5ü?   †Ì*?    |mò?   ÄvDd?   †®Øù?   †ÖEz?    ÷¶ô?   @züo?    HDú?   @\+u?   ``Ìö?   ¿ê?¬f°æ1˜ˆ=fff?HèÕΩé¡Ωuäæ,0õ=N⁄Ωàì¥Ω´c|æ GT=b§ÊΩuˇßΩ∞jæhx=—XÛΩKõΩ9t\æn©<Ï æˇgéΩVPæáB<êÆæ∑FÅΩ?•EæVV÷∫)gæ´gΩÿ˙;æ:q5ºÛQæﬂˇKΩ)3æÊ°º{æ][/Ωa«*æNT‰º\Ò"æ;ÇΩÎQ«ΩO•æP@Kº33Û?ÛóΩµùìΩîÕ˜ΩSîÀºçöΩ∏$êΩV.ÍΩ¶Ω8ûΩq¶åΩFY‡Ω≈≤Ω|ì°Ω,âΩ\qÿΩòÇ$Ω±'•Ω˜äÖΩN∂—Ω∂¯1Ω0Õ®ΩyÂÅΩ(∆ÀΩŸ=Ω·à¨ΩèS|Ω∆g∆Ω≈ïHΩr`∞Ωl§tΩ®v¡ΩxRΩ§Z¥Ω
+∞lΩÍŸºΩ~±[Ω∞∏ΩÒedΩTYïΩ¶Å§ΩÅW›ªöô9@ir4Ω”;0ΩÑïΩœújº´8Ω,Ω‹ªåΩ
+mñºEÍ<Ω˜√'ΩË¡ÜΩÿTÆºV4AΩÊy#ΩµÛÅΩ§ç¡º#éEΩ Ω¡∏{ΩˆÍ—ºı¸IΩG±ΩƒÄtΩÒZ‡º¡ÜNΩ{'Ω˙˘mΩÖhÌºr2SΩ {Ω¯gΩpl˘º:XΩ¶Ω°\bΩõQΩ]Ω!úΩW2ΩÇåΩx“<öôy@∏ˇ¯ººH_xΩà˜s:hÚ Ω:ÁºÌfΩ¸$Zª∫kΩ_GﬁºtUZΩØœ—ªè	Ω∂=’ºc5PΩhºˆÖΩÁÃº¢ñGΩ„3ºÇ1Ωœª¬º¿˚?Ω¶NRº{˘Ω›+πºç9Ωrœmº(ÂΩÑTØºK«2Ω>êÉº-˝!Ωz$•ºﬂ,Ω•`èºL'Ω™ÜöºjèÙºΩΩBtÛ<ÕÃú@f¨EªÉ
+ª3ÁºFΩ<–yÄªíwû∫4 ºG †<òJûª —úπ\µºoã<hºªÊÇ":»,§º∂Mt<˝Û⁄ª$qÀ:)–ïºxîW<y˙ªä˜#;Å$âº)=><3¯ºe±c;¬_{ºËS'<°]ºé£í;ÕHfºÛ<<”V.ºÒï¥;ÎôRº!˝;Á@ºˆ◊;µ(ªƒl™ºÄ7˚<ÕÃº@'Àï;…_≠;Ë#~º∞‹œ<CU|;N ≈;ùÃOº±∏<5ÃL;÷ƒ‹;ÀY.º¢˜ß<‡»;Ä∆Ù;ütºÖö<È*ÿ:ê<‹˘ª3è<€i:∆˜<∑–ª¯Ñ<Bı8Ù™<˚/¨ªv≠w<w2∫˜º,<Xêäª§›f<ez≈∫≈D:<å]Vª€,W<í#ª]^H<xï°;Ù≈ºãlÎ<ÕÃ‹@a@∫’Åß8œøº¨u∫<8À ∫Hij:Û£•ºäJ†<4ª‘ì‡:ì¿íº*gç<‰NQªöÉ&;éêÉºJn|<∫'Ñª*Ñ];˝Dmº*íb<€,†ª6«ä;utVº£¡K<ã‹ºªÊvß;˜”Aº%!7<pb⁄ªÀ¸ƒ;I◊.ºv$$<fÚ¯ª¡å„;∆ºÛk<’eº≥<'-´πME∞ºÑY=ÕÃ¸@T9y<%Ö<	cº£9=Èh<«±ç<≥ıºKﬁ(=pÏV<ÑKñ<.ﬂª√√=∑åE<`˚û<Ñ;ëªN=GÌ3<Àß<iÂª4ø
+=µ¯!<a≈∞<V¡#∫„o=ÿñ<Pˆπ<|õÅ:®˘<mW˘;‡k√<¥#";E}Ì<-,“;∞6Õ<“˚|;A"‚<‚Z©;k◊<ﬁ‡Ä<˜øÂº%T=ffA:(9<npK<#Ü¢º<i2=Œ÷&<⁄¡]<1}ºmr =xi<0/p<àSIº{=ªÃ<ˆeÅ<`üº	=x◊›;v÷ä<x<¯ªπ- =_∑;ètî<‰ñπª≤<Ñ¸è;3Mû< ÛÄªâ‚<∏ÁN;]o®<<†ª[Ä’<†˜ı:⁄Ï≤<:a∫$V…<£:_€Ω<TLB<
+<EndSersetData>
+<EndSerset>
+<EndItem>
+<BeginItem> serset K6293e148 
+<BeginSerset>
+<BeginSeries>
+.name = `"__ll1"'
+.label = `"CI1: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1249095872044563
+.max =  -.0297444816678762
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul1"'
+.label = `"CI1: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .0459636375308037
+.max =  .1679118573665619
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__at"'
+.label = `"plot position (category axis)"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  1.100000023841858
+.max =  9.100000381469727
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll2"'
+.label = `"CI2: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0312467478215694
+.max =  .0677019357681274
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul2"'
+.label = `"CI2: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0291174985468388
+.max =  .0704654455184937
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll3"'
+.label = `"CI3: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1005517691373825
+.max =  -.0094207357615232
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul3"'
+.label = `"CI3: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .030304467305541
+.max =  .1475881189107895
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll4"'
+.label = `"CI4: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0333801954984665
+.max =  .0649329721927643
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul4"'
+.label = `"CI4: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0269840527325869
+.max =  .0732344090938568
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll5"'
+.label = `"CI5: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.087533988058567
+.max =  .0014410817530006
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul5"'
+.label = `"CI5: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .02193558588624
+.max =  .1367263048887253
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll6"'
+.label = `"CI6: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0355263389647007
+.max =  .062147531658411
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul6"'
+.label = `"CI6: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0248379074037075
+.max =  .0760198533535004
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll7"'
+.label = `"CI7: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0781378597021103
+.max =  .0092810466885567
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul7"'
+.label = `"CI7: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .0158949997276068
+.max =  .128886342048645
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll8"'
+.label = `"CI8: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0376940481364727
+.max =  .0593340992927551
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul8"'
+.label = `"CI8: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0226701963692904
+.max =  .078833281993866
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll9"'
+.label = `"CI9: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0714021474123001
+.max =  .0155849885195494
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul9"'
+.label = `"CI9: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .0110378973186016
+.max =  .1225823909044266
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll10"'
+.label = `"CI10: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.039892815053463
+.max =  .0564803630113602
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul10"'
+.label = `"CI10: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0204714313149452
+.max =  .0816870182752609
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll11"'
+.label = `"CI11: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0672670528292656
+.max =  .02095184661448
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul11"'
+.label = `"CI11: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .0069028064608574
+.max =  .1172155365347862
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll12"'
+.label = `"CI12: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0421330705285072
+.max =  .0535727776587009
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul12"'
+.label = `"CI12: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.018231175839901
+.max =  .0845946073532104
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll13"'
+.label = `"CI13: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0636189132928848
+.max =  .0256866961717606
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul13"'
+.label = `"CI13: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .0032546697184443
+.max =  .1124806851148605
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll14"'
+.label = `"CI14: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0444265939295292
+.max =  .0505960583686829
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul14"'
+.label = `"CI14: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.015937652438879
+.max =  .0875713229179382
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll15"'
+.label = `"CI15: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0603205934166908
+.max =  .0299675278365612
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul15"'
+.label = `"CI15: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0000436533227912
+.max =  .1081998497247696
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll16"'
+.label = `"CI16: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0467870160937309
+.max =  .0475325100123882
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul16"'
+.label = `"CI16: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0135772312059999
+.max =  .0906348749995232
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll17"'
+.label = `"CI17: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0572844929993153
+.max =  .0339080281555653
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul17"'
+.label = `"CI17: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0030797540675849
+.max =  .1042593568563461
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll18"'
+.label = `"CI18: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0492305345833302
+.max =  .0443611107766628
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul18"'
+.label = `"CI18: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0111337127164006
+.max =  .093806266784668
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll19"'
+.label = `"CI19: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0544508770108223
+.max =  .037585724145174
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul19"'
+.label = `"CI19: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0059133693575859
+.max =  .1005816534161568
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll20"'
+.label = `"CI20: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.051776897162199
+.max =  .0410562343895435
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul20"'
+.label = `"CI20: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0085873492062092
+.max =  .0971111506223679
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__b"'
+.label = `"coefficient"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0301821231842041
+.max =  .0690836906433105
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+.weight_id = (.)
+<BeginSersetData>
+sersetreadwrite *   	   ˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛__ll1 0E                                                                                                                                              __ul1 0F                                                                                                                                              __at  03                                                                                                                                              __ll2 06                                                                                                                                              __ul2                                                                                                                                                 __ll3                                                                                                                                                 __ul3                                                                                                                                                 __ll4                                                                                                                                                 __ul4                                                                                                                                                 __ll5                                                                                                                                                 __ul5                                                                                                                                                 __ll6                                                                                                                                                 __ul6                                                                                                                                                 __ll7                                                                                                                                                 __ul7                                                                                                                                                 __ll8                                                                                                                                                 __ul8                                                                                                                                                 __ll9                                                                                                                                                 __ul9                                                                                                                                                 __ll10                                                                                                                                                __ul10                                                                                                                                                __ll11                                                                                                                                                __ul11                                                                                                                                                __ll12                                                                                                                                                __ul12                                                                                                                                                __ll13                                                                                                                                                __ul13                                                                                                                                                __ll14                                                                                                                                                __ul14                                                                                                                                                __ll15                                                                                                                                                __ul15                                                                                                                                                __ll16                                                                                                                                                __ul16                                                                                                                                                __ll17                                                                                                                                                __ul17                                                                                                                                                __ll18                                                                                                                                                __ul18                                                                                                                                                __ll19                                                                                                                                                __ul19                                                                                                                                                __ll20                                                                                                                                                __ul20                                                                                                                                                __b                                                                                                                                                   %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                        ˙øø   ¿ãàß?   †ôôÒ?   ¿%ˇüø   @˙–ùø   ¿¬Ωπø   `"ü?   Ä5°ø    µ°õø   ††h∂ø   @Hvñ?    Ç0¢ø   ¿oôø   ¿◊ ¥ø   `«Fê?   `¢L£ø    €6óø   @iG≤ø   Ä	õÜ?   ¿‘l§ø   Ävˆîø   ‡i8±ø    F|?   @wí•ø   Ä1´íø   @TI∞ø   Äâ©j?    ø¶ø   ¿ıQêø   @W‚Æø   ¿„ø   ¿wÙßø    aŒãø   †dT≠ø   `∂:iø   †æ4©ø   †EÕÜø   @¸‡´ø    û8xø   `ÄÇ™ø   Ä>ñÅø    Ëûø   `Vuûø   ¿"~≈?   @33"@    ÍT±?    
+≤?   ¿-KÉø   ‡*‰¬?   Ärü∞?   Ä}ø≤?   ¿UúW?   `?Ä¡?    Õ—Ø?   Ä	v≥?    ÒÉ?    Y¿?    
+aÆ?    k.¥?   ¿Îè?   @èaø?   Ä˛Í¨?   ¿pÈ¥?   †ftï?   `÷æ?    ‰m´?    ˛ßµ?    ùMö?   ¿àÀº?    ∫Á©?    k∂?   ¿ŒØû?   @¸≤ª?   `.V®?   ‡ÿ3∑?   †d\°?   ¿Ω∞∫?   ‡∂¶?    ∞∏?   †o>£?    ∏øπ?   †R•?   ¿F‹∏?    xØ±?Fi°Ω£~>ÕÃå?M-«<≥"ﬂ<πjΩçﬁ=“+Ø<.$˜<§£;Ω“e«=¬ó<•=éßΩ«g∂='C}<6◊=®¸ºæ®=·«K<6 =∏ Œº.ù=ì]<õ–,=•ºŸí=ÀÄÀ;Á∑9=JÓº…ëâ=5áB;çˇF=õ;ºbÅ=_pÀπ·æT=∑¨˜ªór=U•~ªUc= (”<è‚áΩ·>ff@V˙=™ƒ=l9Ω6gÚ=*=Ôî'=∏
+Ωå;€=ñè<5w3=|ä“ºÇ =Êçÿ<x?=¿úºÜΩ=+4¿<Í§K=YÈ]º´ú±=œdß<ôX=•ºıÇß=n˛ç<…ød=Îàª/aû=≈¥g<œ—q=G!N∏D˘ï=Éï1<üY=A‘w;ﬁ é=.^Ú;ùπÜ=Äﬂ=¯ÄkΩ~·>ffF@+<=’H=Ì,Ω{Ã>r¯/=éT=M«ºì˛Û=b›#=û'`=Ô Éº<ı‚=.£=“al=˛˛º`B’="<=ﬁ»x=Û…rª–ò…=Z2˝<ÈµÇ=πÍ¨:’Nø=ôR„<⁄-â=@¿;l∂=£±»<÷è=Mâ$<Vq≠=≤ ≠<T∫ñ=ixd<ss•=∫fê<—Ëù=ÄB=≥™ÛºÒ+>33É@Pßä=0Pê=nYºW!>î˚Ñ=Ï˚ï=Æ‚º:˚>ié~=L∞õ=à<»˙>Ps=Xs°=.X<z˚=ÙWg=ÜKß=5£´<≥=!o[=?≠=Ël“<F\Ê=–=O=òX≥=v~ı<‚ó›=s±B=«ûπ=%„
+=ÓÖ’=ˇ≥5=Ä¿=}Û=¡˝Õ=ï*(=6‚∆=¿{ç=9jΩ.B>33£@rRK=LU=kñº[÷ı=œSA=±J_=≤eºˆ;‚=ÒE7=èXi=¥ûÒ∫ª‘=6-=JÄs=vBs;,µ»=<—"=DÕ}=rM
+<íø=ÄR= &Ñ=C™N<¯y∂=‚ì=OÖâ=z<Ü<"¿Æ=Ö=ºè=€Æ¢<â£ß=%Ó<˝≈î=é;Ω<\ °=ZI÷<Èºö=@OP=âdΩëÀ=33√@ µ©<6|ª<y,#Ωº‚™=fÊó<öKÕ<Ê= Ωskô=ﬂ˚Ö<!6ﬂ<uŒº–å=É∆g<øNÒ<WÇ•º≠Ç=åC<›‘=<˝Çºût==©<±.=ôIºf›d=ÜºÓ;o¡=Êˇº˙W=ÆÍü;™õ=¸ùæªølJ=•;∞Œ(=3˛?ª„ò>=ˆöVπõo3= ô≤<¬HøΩÉ€@=33„@ó¡≈ºi™µºU≥°Ω©∞=·‡’ºã•ºÀ„ëΩ*#Ã<æÊºBSïºPzÜΩ@}û<RzˆºÆÒÑºoözΩªës<˝ãΩ®hº°˙jΩÑ5<ÛΩ3ÃFºŸ1]Ω«ﬁ˚;p≠ΩA"$ºoªPΩ{+ò;¢òΩxu º™BEΩNïÒ:5‘&ΩY∑ª¬ç:ΩÖJ∫Cs0Ωœ+Tª ∂Ωºo¬ŸΩ^D<=öôA.˘ˇº“áÓºÖ∞πΩA¯<¨πΩ©›º–å®ΩB≤≥<ÑΩﬁxÀºœ-úΩ;6Ç<eΩŸ∂πºJ;íΩLÿ4<¶f#Ω¥≥ßºO√âΩ0‚;∫ì,ΩåYïº¢JÇΩLLU;©¯5ΩÆèÇº∫wΩf7∏æ£?Ω	s^º%£jΩ≥’Iªı•IΩ-j6º‚_Ωƒ¡ªTΩÙ±ºÄ@˜ºô–ˇΩôUÂ=öôAﬁºEîùªÓÕΩs≥=˜l;ºJX√∫E≥Ω ò=Ïrº^7Ú:æ†ΩæãÖ=…Æîº#´;¢çêΩE%l=j≥∞º‘é<YaÉΩ±ÃQ=d?Õº»¶F<^ÑoΩ^é:=!yÍº!çÄ<úÄZΩúä%=çFΩ°û<ç(GΩç2=ÿΩ%ƒΩ<¬5Ω¬$ =X$ΩØ6ﬁ< ÿ”ª
+<EndSersetData>
+<EndSerset>
+<EndItem>
+<BeginItem> serset K629400d8 
+<BeginSerset>
+<BeginSeries>
+.name = `"__ll1"'
+.label = `"CI1: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1944372355937958
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul1"'
+.label = `"CI1: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0362966284155846
+.max =  .1439382880926132
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__at"'
+.label = `"plot position (category axis)"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  1.299999952316284
+.max =  9.300000190734863
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll2"'
+.label = `"CI2: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.116472452878952
+.max =  .035559669137001
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul2"'
+.label = `"CI2: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1142614185810089
+.max =  .0385484546422958
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll3"'
+.label = `"CI3: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1781766414642334
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul3"'
+.label = `"CI3: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0525572225451469
+.max =  .1219578385353088
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll4"'
+.label = `"CI4: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1186878383159637
+.max =  .0325649976730347
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul4"'
+.label = `"CI4: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1120460331439972
+.max =  .0415431261062622
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll5"'
+.label = `"CI5: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1694863438606262
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul5"'
+.label = `"CI5: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.061247531324625
+.max =  .1102106049656868
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll6"'
+.label = `"CI6: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.120916411280632
+.max =  .0295524951070547
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul6"'
+.label = `"CI6: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1098174601793289
+.max =  .044555626809597
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll7"'
+.label = `"CI7: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1632137596607208
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul7"'
+.label = `"CI7: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0675201192498207
+.max =  .1017315611243248
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll8"'
+.label = `"CI8: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.123167373239994
+.max =  .0265097264200449
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul8"'
+.label = `"CI8: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1075664982199669
+.max =  .0475983954966068
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll9"'
+.label = `"CI9: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1581701040267944
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul9"'
+.label = `"CI9: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0725637674331665
+.max =  .0949137508869171
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll10"'
+.label = `"CI10: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1254505813121796
+.max =  .0234233662486076
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul10"'
+.label = `"CI10: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1052832826972008
+.max =  .0506847575306892
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll11"'
+.label = `"CI11: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1538762003183365
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul11"'
+.label = `"CI11: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.076857678592205
+.max =  .089109405875206
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll12"'
+.label = `"CI12: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1277768909931183
+.max =  .0202787648886442
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul12"'
+.label = `"CI12: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1029569879174232
+.max =  .0538293607532978
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll13"'
+.label = `"CI13: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1500879377126694
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul13"'
+.label = `"CI13: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.080645926296711
+.max =  .0839885920286179
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll14"'
+.label = `"CI14: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1301584988832474
+.max =  .0170593950897455
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul14"'
+.label = `"CI14: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1005753725767136
+.max =  .0570487305521965
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll15"'
+.label = `"CI15: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1466629356145859
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul15"'
+.label = `"CI15: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0840709283947945
+.max =  .07935880869627
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll16"'
+.label = `"CI16: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1326095759868622
+.max =  .0137461191043258
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul16"'
+.label = `"CI16: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0981242954730988
+.max =  .0603620037436485
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll17"'
+.label = `"CI17: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1435102373361588
+.max =  0
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul17"'
+.label = `"CI17: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0872236415743828
+.max =  .0750970989465714
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll18"'
+.label = `"CI18: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1351469457149506
+.max =  .0103162033483386
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul18"'
+.label = `"CI18: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0955869257450104
+.max =  .063791923224926
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll19"'
+.label = `"CI19: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1405677795410156
+.max =  .0029885151889175
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul19"'
+.label = `"CI19: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0901660844683647
+.max =  .0711196064949036
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ll20"'
+.label = `"CI20: lower limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1377911120653152
+.max =  .0067419251427054
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__ul20"'
+.label = `"CI20: upper limit"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.0929427668452263
+.max =  .0673661977052689
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"__b"'
+.label = `"coefficient"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  -.1153669357299805
+.max =  .0370540618896484
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+.weight_id = (.)
+<BeginSersetData>
+sersetreadwrite *   	   ˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛˛__ll1 0E                                                                                                                                              __ul1 0F                                                                                                                                              __at  03                                                                                                                                              __ll2 06                                                                                                                                              __ul2                                                                                                                                                 __ll3                                                                                                                                                 __ul3                                                                                                                                                 __ll4                                                                                                                                                 __ul4                                                                                                                                                 __ll5                                                                                                                                                 __ul5                                                                                                                                                 __ll6                                                                                                                                                 __ul6                                                                                                                                                 __ll7                                                                                                                                                 __ul7                                                                                                                                                 __ll8                                                                                                                                                 __ul8                                                                                                                                                 __ll9                                                                                                                                                 __ul9                                                                                                                                                 __ll10                                                                                                                                                __ul10                                                                                                                                                __ll11                                                                                                                                                __ul11                                                                                                                                                __ll12                                                                                                                                                __ul12                                                                                                                                                __ll13                                                                                                                                                __ul13                                                                                                                                                __ll14                                                                                                                                                __ul14                                                                                                                                                __ll15                                                                                                                                                __ul15                                                                                                                                                __ll16                                                                                                                                                __ul16                                                                                                                                                __ll17                                                                                                                                                __ul17                                                                                                                                                __ll18                                                                                                                                                __ul18                                                                                                                                                __ll19                                                                                                                                                __ul19                                                                                                                                                __ll20                                                                                                                                                __ul20                                                                                                                                                __b                                                                                                                                                   %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                    %9.0g                                                       ¿Q„»ø   ¿xï¢ø   ¿ÃÃÙ?   Ä#—Ωø   Ä<@Ωø    ~Œ∆ø   ¿«Ë™ø   ÄSbæø   ÄØºø   Ä∫±≈ø    ÷[Øø   ¿`Ùæø   @ˇºø   @0‰ƒø   †ˇH±ø   †Âáøø   `zâªø    Î>ƒø    äì≤ø   ¿√¿ø   `ÿÛ∫ø    7≤√ø   ‡Ò¨≥ø   @˛Z¿ø   †c[∫ø   ‡6√ø    6•¥ø   †©¿ø   ¿Nøπø   ‡Ÿ≈¬ø    ¨Öµø   ¿Y˘¿ø   Ä¨πø    ã^¬ø   ‡IT∂ø   ¿~L¡ø   Äbx∏ø     ˛¡ø   ‡∑ø   †#£¡ø   ‡À∑ø    ∞àΩø           ‡ël¬?   †ôô"@   Ä‡4¢?   Äüº£?            °8ø?    \¨†?    $E•?            √6º?   `Cû?   ¿˛œ¶?           `∫?   †]%õ?    —^®?           ÄDL∏?   ÄK¸ó?   @ZÛ©?           ¿ﬂœ∂?   ‡Ù√î?   †Öè´?           ¿FÄµ?   †xë?   ¿}5≠?           ‡€P¥?   ‡Ï&å?   ¿ƒÁÆ?           @ê9≥?   `© Ö?   ‡™T∞?   ‡^{h?    Â4≤?   ¿kù{?   @È>±?    ¿¯¢?Õ; æbé≤ªff¶?BááΩ>ÑΩi>ÁΩ\àëº ˜äΩÄ©ÄΩn√ŸΩHt«º¸kéΩ	izΩã–Ω‘_Óº€ÈëΩImsΩ≠5»Ω¶’ΩâtïΩÌWlΩâå¡ΩÓ'ΩSôΩZ eΩ2¨ªΩúËΩ¬úΩÿº]Ω\∂ΩÀà*Ωkè†Ω*"VΩ$x±Ω∑P4Ω§ΩÙBNΩ≠Á¨Ω•q=Ω
+ô®ΩÏFΩ@–ÖΩ.üΩ=Ï^=33@ƒNº<Ω/ºZÉΩD'=ëWlºohº]ıhΩ]Ö	=KmÖº” Âª}SΩ1Ë<÷îºœ'®ª´9BΩWì≈<Qw§º{ESª1á3Ωc.®<d¥ºüæß∫ è&Ωï?é< ±ƒºN9::Æ÷Ωπöm<=y’ºÈ…4;*Ω®pB<Á◊Êºõﬂü;„˘Ωç'<πÒ¯º‰FË; ‡>ºéGæ∆´Ω33S@âÓΩ‰ÍΩs6æ>FWΩúÛΩdxÂΩ‘ç-æ±ﬁzΩ£˜Ω˙Á‡ΩÇ!'æ˝GäΩ-?¸Ω”K‹ΩX˜!æPúîΩv æ√û◊ΩπëæègùΩÚ◊æ€“Ωß∞æ±)•ΩEHæv˙ÕΩœ.æa-¨ΩŒ ædı»ΩYÙæO¢≤Ωˆc
+æ√√Ω Òæˇ®∏Ωæ«XæΩÄEÏΩê ªºêÑñ<öôâ@C–$ªy˛∫Lòº%†g<‘£JªWx≤∫ŸøÖº≤áB<
+±pª◊ªL∫>πpº>¡'<êãªÎ˝Kπ∫1[º∫9<üªl·—9Ä›HºÀˇ;FÍ≤ªÈÉ:◊±8ºÆsﬂ;Y?«ªc=’: *º?6¬;?,‹ª~x;ıùºÎKß;∫’ÒªuÀ?;êº -é;O4º;Òl; ª        öô©@                                                                                                                                                            Ô|Ω≠|=öô…@]vj∫]ˆY:ÓÒHΩÓØH=–Ò+ª–—';)-ΩÁ,=_˘éª_Èå;ˇΩˇÿ=uå»ªu|∆;’˙Ω’∏=ZyºZq <¶Äˆº¶¸ı<á9ºá1<bGﬁºb√›<ÃÆ=ºÃ¶<<æ`»ºæ‹«<Å]ºÅˇ[<◊7¥º◊≥≥<µz}ºµr|<"g°º"„†<»•èº»!è<  ∏º˛Pºº˛P<öôÈ@–;π–;9&º&<Cq∫Cq:ƒºƒ<ö∞j∫ö∞j:ﬁÓ¸ªﬁÓ¸;/Ò§∫/Ò§:RE‚ªRE‚;¢8’∫¢8’:eíÀªeíÀ;ß4ªß4;∆ã∑ª∆ã∑;≤bª≤b;ºp•ªºp•;ƒL6ªƒL6;0∆îª0∆î;` Qª` Q;08Öª08Ö;mªm;    ‘¥€º‘¥€<ÕÃAxòƒπxòƒ9<ÜÆº<ÜÆ<Ï£ì∫Ï£ì:ï`ñºï`ñ<”∑ˆ∫”∑ˆ:πÚÑºπÚÑ<Je-ªJe-;ﬁmºﬁm<.&`ª.&`;VVºVV<ÓâªÓâ;¯Û@º¯Û@<âf§ªâf§;`Î-º`Î-<ú§øªú§ø;)fº)f<2ÿ€ª2ÿ€;º<ß;˘ªß;˘;    èΩèd>ÕÃAß=¸‰=˛CΩ≈˘=‡b= )*=3‡Ω∂·=Ú<ˆ6=çJ‚º£X–=Ì*Ÿ<âˆB=êp™º$b¬=\‚ø<“öO=Û«uº˛~∂=ß¶<-|\=≥·!º6¨=%¿ã<Ó´i=Ì¨ªﬂÜ¢=g7a<&>w=a†Å∫ÇÃô=K)<W•Ç=˜⁄C;(ßë=^Î‹;J˜â= ∆=
+<EndSersetData>
+<EndSerset>
+<EndItem>
+<BeginItem> serset K62944188 
+<BeginSerset>
+<BeginSeries>
+.name = `"__at"'
+.label = `"plot position (category axis)"'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .699999988079071
+.max =  9.300000190734863
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"x"'
+.label = `""'
+.format = `"%9.0g"'
+.type.set numeric
+.min =  .5
+.max =  .5
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+<BeginSeries>
+.name = `"label"'
+.label = `""'
+.format = `"%29s"'
+.type.set string
+.min = (.)
+.max = (.)
+.median = (.)
+.pct25 = (.)
+.pct75 = (.)
+.categories = (.)
+<EndSeries>
+.weight_id = (.)
+<BeginSersetData>
+sersetreadwrite    $   ˛˛__at  0E                                                                                                                                              x ul1 0F                                                                                                                                              label 03                                                                                                                                              %9.0g                                                    %9.0g                                                    %29s                                                        `ffÊ?      ‡?      ‡   †ôô"@      ‡?      ‡333?   ?‚Äì0.000 [‚Äì0.078, 0.077] fff?   ?‚Äì0.097 [‚Äì0.315, 0.121]   ÕÃå?   ?0.026 [‚Äì0.079, 0.130]      ff¶?   ?‚Äì0.065 [‚Äì0.125, ‚Äì0.005]öôŸ?   ?‚Äì0.004 [‚Äì0.063, 0.055] 33Û?   ?‚Äì0.073 [‚Äì0.133, ‚Äì0.012]ff@   ?0.037 [‚Äì0.066, 0.140]      33@   ?‚Äì0.012 [‚Äì0.078, 0.054]   ÕÃ,@   ?0.014 [‚Äì0.044, 0.071] öô9@   ?‚Äì0.044 [‚Äì0.080, ‚Äì0.007]ffF@   ?0.047 [‚Äì0.057, 0.152]      33S@   ?‚Äì0.115 [‚Äì0.194, ‚Äì0.036]ÕÃl@   ?0.014 [‚Äì0.038, 0.065] öôy@   ?‚Äì0.030 [‚Äì0.069, 0.009]   33É@   ?0.069 [‚Äì0.030, 0.168]      öôâ@   ?‚Äì0.002 [‚Äì0.023, 0.018]   ffñ@   ?‚Äì0.007 [‚Äì0.056, 0.042] ÕÃú@   ?‚Äì0.003 [‚Äì0.035, 0.030]   33£@   ?0.051 [‚Äì0.036, 0.138]      öô©@   ?0.000 [0.000, 0.000]         ff∂@   ?‚Äì0.031 [‚Äì0.082, 0.020] ÕÃº@   ?0.005 [‚Äì0.021, 0.031]      33√@   ?0.022 [‚Äì0.056, 0.099]      öô…@   ?‚Äì0.000 [‚Äì0.062, 0.062]   ff÷@   ?‚Äì0.043 [‚Äì0.103, 0.017] ÕÃ‹@   ?‚Äì0.000 [‚Äì0.029, 0.029]   33„@   ?‚Äì0.023 [‚Äì0.093, 0.047]   öôÈ@   ?0.000 [‚Äì0.013, 0.013]      ffˆ@   ?‚Äì0.029 [‚Äì0.092, 0.033] ÕÃ¸@   ?0.016 [‚Äì0.022, 0.053]      öôA   ?‚Äì0.030 [‚Äì0.106, 0.046]   ÕÃA   ?0.000 [‚Äì0.027, 0.027]      33A   ?0.009 [‚Äì0.089, 0.106] ffA   ?0.012 [‚Äì0.028, 0.052]      öôA   ?‚Äì0.006 [‚Äì0.125, 0.112]   ÕÃA   ?0.037 [‚Äì0.070, 0.144]      
+<EndSersetData>
+<EndSerset>
+<EndItem>
+<BeginItem> scheme K38d1e3d8 
+.setscheme , scheme(plottig) naturallywhite(1)
+<EndItem>
+<BeginItem> twowaygraph_g K38d31d98 <UseScheme> K38d1e3d8
+.style.editstyle margin(zero) editcopy
+.sersets[1] = .__Map.K38d37888.ref
+.sersets[2] = .__Map.K629389c8.ref
+.sersets[3] = .__Map.K6293e148.ref
+.sersets[4] = .__Map.K629400d8.ref
+.sersets[5] = .__Map.K62944188.ref
+.insert (plotregion1 = .plotregion.new , style(scheme twoway) graph(`.objkey')) at 1 1
+.plotregion1.style.editstyle margin(t=0 b=0) editcopy
+.plotregion1.Declare plot1 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll1') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p1) ybvar(`.sersets[1].seriesof __ul1')
+.plotregion1.plot1.style.editstyle style(p1) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*2)) area(linestyle(width(*2))) editcopy
+.plotregion1.plot1.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot2 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll2') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p2) ybvar(`.sersets[1].seriesof __ul2')
+.plotregion1.plot2.style.editstyle style(p1) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*11.32075)) area(linestyle(width(*11.32075))) editcopy
+.plotregion1.plot2.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot3 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll3') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p3) ybvar(`.sersets[1].seriesof __ul3')
+.plotregion1.plot3.style.editstyle style(p1) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*2.028353)) area(linestyle(width(*2.028353))) editcopy
+.plotregion1.plot3.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot4 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll4') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p4) ybvar(`.sersets[1].seriesof __ul4')
+.plotregion1.plot4.style.editstyle style(p1) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*6.633663)) area(linestyle(width(*6.633663))) editcopy
+.plotregion1.plot4.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot5 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll5') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p5) ybvar(`.sersets[1].seriesof __ul5')
+.plotregion1.plot5.style.editstyle style(p1) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*2.059839)) area(linestyle(width(*2.059839))) editcopy
+.plotregion1.plot5.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot6 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll6') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p6) ybvar(`.sersets[1].seriesof __ul6')
+.plotregion1.plot6.style.editstyle style(p1) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*4.966443)) area(linestyle(width(*4.966443))) editcopy
+.plotregion1.plot6.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot7 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll7') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p7) ybvar(`.sersets[1].seriesof __ul7')
+.plotregion1.plot7.style.editstyle style(p1) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*2.095006)) area(linestyle(width(*2.095006))) editcopy
+.plotregion1.plot7.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot8 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll8') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p8) ybvar(`.sersets[1].seriesof __ul8')
+.plotregion1.plot8.style.editstyle style(p1) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*4.111675)) area(linestyle(width(*4.111675))) editcopy
+.plotregion1.plot8.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot9 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll9') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p9) ybvar(`.sersets[1].seriesof __ul9')
+.plotregion1.plot9.style.editstyle style(p1) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*2.134541)) area(linestyle(width(*2.134541))) editcopy
+.plotregion1.plot9.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot10 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll10') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p10) ybvar(`.sersets[1].seriesof __ul10')
+.plotregion1.plot10.style.editstyle style(p1) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*3.591837)) area(linestyle(width(*3.591837))) editcopy
+.plotregion1.plot10.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot11 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll11') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p11) ybvar(`.sersets[1].seriesof __ul11')
+.plotregion1.plot11.style.editstyle style(p1) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*2.17931)) area(linestyle(width(*2.17931))) editcopy
+.plotregion1.plot11.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot12 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll12') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p12) ybvar(`.sersets[1].seriesof __ul12')
+.plotregion1.plot12.style.editstyle style(p1) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*3.242321)) area(linestyle(width(*3.242321))) editcopy
+.plotregion1.plot12.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot13 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll13') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p13) ybvar(`.sersets[1].seriesof __ul13')
+.plotregion1.plot13.style.editstyle style(p1) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.230428)) area(linestyle(width(*2.230428))) editcopy
+.plotregion1.plot13.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot14 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll14') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p14) ybvar(`.sersets[1].seriesof __ul14')
+.plotregion1.plot14.style.editstyle style(p1) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.991202)) area(linestyle(width(*2.991202))) editcopy
+.plotregion1.plot14.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot15 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll15') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p15) ybvar(`.sersets[1].seriesof __ul15')
+.plotregion1.plot15.style.editstyle style(p1) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.289348)) area(linestyle(width(*2.289348))) editcopy
+.plotregion1.plot15.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot16 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll16') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p1) ybvar(`.sersets[1].seriesof __ul16')
+.plotregion1.plot16.style.editstyle style(p1) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.802057)) area(linestyle(width(*2.802057))) editcopy
+.plotregion1.plot16.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot17 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll17') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p2) ybvar(`.sersets[1].seriesof __ul17')
+.plotregion1.plot17.style.editstyle style(p1) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.358003)) area(linestyle(width(*2.358003))) editcopy
+.plotregion1.plot17.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot18 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll18') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p3) ybvar(`.sersets[1].seriesof __ul18')
+.plotregion1.plot18.style.editstyle style(p1) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.654462)) area(linestyle(width(*2.654462))) editcopy
+.plotregion1.plot18.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot19 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll19') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p4) ybvar(`.sersets[1].seriesof __ul19')
+.plotregion1.plot19.style.editstyle style(p1) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.439024)) area(linestyle(width(*2.439024))) editcopy
+.plotregion1.plot19.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot20 = .y2xview_g.new , type(rspike) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __ll20') xvariable(`.sersets[1].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p5) ybvar(`.sersets[1].seriesof __ul20')
+.plotregion1.plot20.style.editstyle style(p1) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.536082)) area(linestyle(width(*2.536082))) editcopy
+.plotregion1.plot20.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot21 = .yxview.new , type(scatter) serset(`.sersets[1].objkey') yvariable(`.sersets[1].seriesof __at') xvariable(`.sersets[1].seriesof __b')    plotregion(`.plotregion1.objkey') style(scheme p6) 
+.plotregion1.plot21.style.editstyle style(p1) editcopy
+.plotregion1.Declare plot22 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll1') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p7) ybvar(`.sersets[2].seriesof __ul1')
+.plotregion1.plot22.style.editstyle style(p2) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*2)) area(linestyle(width(*2))) editcopy
+.plotregion1.plot22.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot23 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll2') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p8) ybvar(`.sersets[2].seriesof __ul2')
+.plotregion1.plot23.style.editstyle style(p2) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*11.32075)) area(linestyle(width(*11.32075))) editcopy
+.plotregion1.plot23.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot24 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll3') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p9) ybvar(`.sersets[2].seriesof __ul3')
+.plotregion1.plot24.style.editstyle style(p2) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*2.028353)) area(linestyle(width(*2.028353))) editcopy
+.plotregion1.plot24.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot25 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll4') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p10) ybvar(`.sersets[2].seriesof __ul4')
+.plotregion1.plot25.style.editstyle style(p2) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*6.633663)) area(linestyle(width(*6.633663))) editcopy
+.plotregion1.plot25.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot26 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll5') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p11) ybvar(`.sersets[2].seriesof __ul5')
+.plotregion1.plot26.style.editstyle style(p2) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*2.059839)) area(linestyle(width(*2.059839))) editcopy
+.plotregion1.plot26.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot27 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll6') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p12) ybvar(`.sersets[2].seriesof __ul6')
+.plotregion1.plot27.style.editstyle style(p2) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*4.966443)) area(linestyle(width(*4.966443))) editcopy
+.plotregion1.plot27.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot28 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll7') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p13) ybvar(`.sersets[2].seriesof __ul7')
+.plotregion1.plot28.style.editstyle style(p2) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*2.095006)) area(linestyle(width(*2.095006))) editcopy
+.plotregion1.plot28.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot29 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll8') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p14) ybvar(`.sersets[2].seriesof __ul8')
+.plotregion1.plot29.style.editstyle style(p2) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*4.111675)) area(linestyle(width(*4.111675))) editcopy
+.plotregion1.plot29.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot30 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll9') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p15) ybvar(`.sersets[2].seriesof __ul9')
+.plotregion1.plot30.style.editstyle style(p2) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*2.134541)) area(linestyle(width(*2.134541))) editcopy
+.plotregion1.plot30.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot31 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll10') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p1) ybvar(`.sersets[2].seriesof __ul10')
+.plotregion1.plot31.style.editstyle style(p2) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*3.591837)) area(linestyle(width(*3.591837))) editcopy
+.plotregion1.plot31.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot32 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll11') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p2) ybvar(`.sersets[2].seriesof __ul11')
+.plotregion1.plot32.style.editstyle style(p2) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*2.17931)) area(linestyle(width(*2.17931))) editcopy
+.plotregion1.plot32.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot33 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll12') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p3) ybvar(`.sersets[2].seriesof __ul12')
+.plotregion1.plot33.style.editstyle style(p2) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*3.242321)) area(linestyle(width(*3.242321))) editcopy
+.plotregion1.plot33.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot34 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll13') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p4) ybvar(`.sersets[2].seriesof __ul13')
+.plotregion1.plot34.style.editstyle style(p2) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.230428)) area(linestyle(width(*2.230428))) editcopy
+.plotregion1.plot34.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot35 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll14') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p5) ybvar(`.sersets[2].seriesof __ul14')
+.plotregion1.plot35.style.editstyle style(p2) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.991202)) area(linestyle(width(*2.991202))) editcopy
+.plotregion1.plot35.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot36 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll15') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p6) ybvar(`.sersets[2].seriesof __ul15')
+.plotregion1.plot36.style.editstyle style(p2) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.289348)) area(linestyle(width(*2.289348))) editcopy
+.plotregion1.plot36.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot37 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll16') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p7) ybvar(`.sersets[2].seriesof __ul16')
+.plotregion1.plot37.style.editstyle style(p2) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.802057)) area(linestyle(width(*2.802057))) editcopy
+.plotregion1.plot37.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot38 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll17') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p8) ybvar(`.sersets[2].seriesof __ul17')
+.plotregion1.plot38.style.editstyle style(p2) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.358003)) area(linestyle(width(*2.358003))) editcopy
+.plotregion1.plot38.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot39 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll18') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p9) ybvar(`.sersets[2].seriesof __ul18')
+.plotregion1.plot39.style.editstyle style(p2) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.654462)) area(linestyle(width(*2.654462))) editcopy
+.plotregion1.plot39.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot40 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll19') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p10) ybvar(`.sersets[2].seriesof __ul19')
+.plotregion1.plot40.style.editstyle style(p2) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.439024)) area(linestyle(width(*2.439024))) editcopy
+.plotregion1.plot40.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot41 = .y2xview_g.new , type(rspike) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __ll20') xvariable(`.sersets[2].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p11) ybvar(`.sersets[2].seriesof __ul20')
+.plotregion1.plot41.style.editstyle style(p2) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.536082)) area(linestyle(width(*2.536082))) editcopy
+.plotregion1.plot41.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot42 = .yxview.new , type(scatter) serset(`.sersets[2].objkey') yvariable(`.sersets[2].seriesof __at') xvariable(`.sersets[2].seriesof __b')    plotregion(`.plotregion1.objkey') style(scheme p12) 
+.plotregion1.plot42.style.editstyle style(p2) editcopy
+.plotregion1.Declare plot43 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll1') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p13) ybvar(`.sersets[3].seriesof __ul1')
+.plotregion1.plot43.style.editstyle style(p3) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*2)) area(linestyle(width(*2))) editcopy
+.plotregion1.plot43.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot44 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll2') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p14) ybvar(`.sersets[3].seriesof __ul2')
+.plotregion1.plot44.style.editstyle style(p3) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*11.32075)) area(linestyle(width(*11.32075))) editcopy
+.plotregion1.plot44.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot45 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll3') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p15) ybvar(`.sersets[3].seriesof __ul3')
+.plotregion1.plot45.style.editstyle style(p3) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*2.028353)) area(linestyle(width(*2.028353))) editcopy
+.plotregion1.plot45.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot46 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll4') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p1) ybvar(`.sersets[3].seriesof __ul4')
+.plotregion1.plot46.style.editstyle style(p3) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*6.633663)) area(linestyle(width(*6.633663))) editcopy
+.plotregion1.plot46.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot47 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll5') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p2) ybvar(`.sersets[3].seriesof __ul5')
+.plotregion1.plot47.style.editstyle style(p3) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*2.059839)) area(linestyle(width(*2.059839))) editcopy
+.plotregion1.plot47.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot48 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll6') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p3) ybvar(`.sersets[3].seriesof __ul6')
+.plotregion1.plot48.style.editstyle style(p3) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*4.966443)) area(linestyle(width(*4.966443))) editcopy
+.plotregion1.plot48.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot49 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll7') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p4) ybvar(`.sersets[3].seriesof __ul7')
+.plotregion1.plot49.style.editstyle style(p3) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*2.095006)) area(linestyle(width(*2.095006))) editcopy
+.plotregion1.plot49.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot50 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll8') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p5) ybvar(`.sersets[3].seriesof __ul8')
+.plotregion1.plot50.style.editstyle style(p3) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*4.111675)) area(linestyle(width(*4.111675))) editcopy
+.plotregion1.plot50.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot51 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll9') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p6) ybvar(`.sersets[3].seriesof __ul9')
+.plotregion1.plot51.style.editstyle style(p3) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*2.134541)) area(linestyle(width(*2.134541))) editcopy
+.plotregion1.plot51.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot52 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll10') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p7) ybvar(`.sersets[3].seriesof __ul10')
+.plotregion1.plot52.style.editstyle style(p3) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*3.591837)) area(linestyle(width(*3.591837))) editcopy
+.plotregion1.plot52.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot53 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll11') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p8) ybvar(`.sersets[3].seriesof __ul11')
+.plotregion1.plot53.style.editstyle style(p3) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*2.17931)) area(linestyle(width(*2.17931))) editcopy
+.plotregion1.plot53.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot54 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll12') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p9) ybvar(`.sersets[3].seriesof __ul12')
+.plotregion1.plot54.style.editstyle style(p3) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*3.242321)) area(linestyle(width(*3.242321))) editcopy
+.plotregion1.plot54.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot55 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll13') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p10) ybvar(`.sersets[3].seriesof __ul13')
+.plotregion1.plot55.style.editstyle style(p3) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.230428)) area(linestyle(width(*2.230428))) editcopy
+.plotregion1.plot55.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot56 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll14') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p11) ybvar(`.sersets[3].seriesof __ul14')
+.plotregion1.plot56.style.editstyle style(p3) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.991202)) area(linestyle(width(*2.991202))) editcopy
+.plotregion1.plot56.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot57 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll15') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p12) ybvar(`.sersets[3].seriesof __ul15')
+.plotregion1.plot57.style.editstyle style(p3) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.289348)) area(linestyle(width(*2.289348))) editcopy
+.plotregion1.plot57.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot58 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll16') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p13) ybvar(`.sersets[3].seriesof __ul16')
+.plotregion1.plot58.style.editstyle style(p3) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.802057)) area(linestyle(width(*2.802057))) editcopy
+.plotregion1.plot58.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot59 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll17') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p14) ybvar(`.sersets[3].seriesof __ul17')
+.plotregion1.plot59.style.editstyle style(p3) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.358003)) area(linestyle(width(*2.358003))) editcopy
+.plotregion1.plot59.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot60 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll18') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p15) ybvar(`.sersets[3].seriesof __ul18')
+.plotregion1.plot60.style.editstyle style(p3) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.654462)) area(linestyle(width(*2.654462))) editcopy
+.plotregion1.plot60.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot61 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll19') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p1) ybvar(`.sersets[3].seriesof __ul19')
+.plotregion1.plot61.style.editstyle style(p3) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.439024)) area(linestyle(width(*2.439024))) editcopy
+.plotregion1.plot61.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot62 = .y2xview_g.new , type(rspike) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __ll20') xvariable(`.sersets[3].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p2) ybvar(`.sersets[3].seriesof __ul20')
+.plotregion1.plot62.style.editstyle style(p3) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.536082)) area(linestyle(width(*2.536082))) editcopy
+.plotregion1.plot62.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot63 = .yxview.new , type(scatter) serset(`.sersets[3].objkey') yvariable(`.sersets[3].seriesof __at') xvariable(`.sersets[3].seriesof __b')    plotregion(`.plotregion1.objkey') style(scheme p3) 
+.plotregion1.plot63.style.editstyle style(p3) editcopy
+.plotregion1.Declare plot64 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll1') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p4) ybvar(`.sersets[4].seriesof __ul1')
+.plotregion1.plot64.style.editstyle style(p4) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*2)) area(linestyle(width(*2))) editcopy
+.plotregion1.plot64.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot65 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll2') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p5) ybvar(`.sersets[4].seriesof __ul2')
+.plotregion1.plot65.style.editstyle style(p4) line(color(`"*.3076923"')) area(linestyle(color(`"*.3076923"'))) line(width(*11.32075)) area(linestyle(width(*11.32075))) editcopy
+.plotregion1.plot65.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot66 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll3') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p6) ybvar(`.sersets[4].seriesof __ul3')
+.plotregion1.plot66.style.editstyle style(p4) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*2.028353)) area(linestyle(width(*2.028353))) editcopy
+.plotregion1.plot66.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot67 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll4') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p7) ybvar(`.sersets[4].seriesof __ul4')
+.plotregion1.plot67.style.editstyle style(p4) line(color(`"*.3846154"')) area(linestyle(color(`"*.3846154"'))) line(width(*6.633663)) area(linestyle(width(*6.633663))) editcopy
+.plotregion1.plot67.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot68 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll5') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p8) ybvar(`.sersets[4].seriesof __ul5')
+.plotregion1.plot68.style.editstyle style(p4) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*2.059839)) area(linestyle(width(*2.059839))) editcopy
+.plotregion1.plot68.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot69 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll6') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p9) ybvar(`.sersets[4].seriesof __ul6')
+.plotregion1.plot69.style.editstyle style(p4) line(color(`"*.4615385"')) area(linestyle(color(`"*.4615385"'))) line(width(*4.966443)) area(linestyle(width(*4.966443))) editcopy
+.plotregion1.plot69.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot70 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll7') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p10) ybvar(`.sersets[4].seriesof __ul7')
+.plotregion1.plot70.style.editstyle style(p4) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*2.095006)) area(linestyle(width(*2.095006))) editcopy
+.plotregion1.plot70.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot71 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll8') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p11) ybvar(`.sersets[4].seriesof __ul8')
+.plotregion1.plot71.style.editstyle style(p4) line(color(`"*.5384615"')) area(linestyle(color(`"*.5384615"'))) line(width(*4.111675)) area(linestyle(width(*4.111675))) editcopy
+.plotregion1.plot71.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot72 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll9') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p12) ybvar(`.sersets[4].seriesof __ul9')
+.plotregion1.plot72.style.editstyle style(p4) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*2.134541)) area(linestyle(width(*2.134541))) editcopy
+.plotregion1.plot72.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot73 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll10') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p13) ybvar(`.sersets[4].seriesof __ul10')
+.plotregion1.plot73.style.editstyle style(p4) line(color(`"*.6153846"')) area(linestyle(color(`"*.6153846"'))) line(width(*3.591837)) area(linestyle(width(*3.591837))) editcopy
+.plotregion1.plot73.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot74 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll11') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p14) ybvar(`.sersets[4].seriesof __ul11')
+.plotregion1.plot74.style.editstyle style(p4) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*2.17931)) area(linestyle(width(*2.17931))) editcopy
+.plotregion1.plot74.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot75 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll12') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p15) ybvar(`.sersets[4].seriesof __ul12')
+.plotregion1.plot75.style.editstyle style(p4) line(color(`"*.6923077"')) area(linestyle(color(`"*.6923077"'))) line(width(*3.242321)) area(linestyle(width(*3.242321))) editcopy
+.plotregion1.plot75.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot76 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll13') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p1) ybvar(`.sersets[4].seriesof __ul13')
+.plotregion1.plot76.style.editstyle style(p4) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.230428)) area(linestyle(width(*2.230428))) editcopy
+.plotregion1.plot76.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot77 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll14') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p2) ybvar(`.sersets[4].seriesof __ul14')
+.plotregion1.plot77.style.editstyle style(p4) line(color(`"*.7692308"')) area(linestyle(color(`"*.7692308"'))) line(width(*2.991202)) area(linestyle(width(*2.991202))) editcopy
+.plotregion1.plot77.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot78 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll15') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p3) ybvar(`.sersets[4].seriesof __ul15')
+.plotregion1.plot78.style.editstyle style(p4) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.289348)) area(linestyle(width(*2.289348))) editcopy
+.plotregion1.plot78.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot79 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll16') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p4) ybvar(`.sersets[4].seriesof __ul16')
+.plotregion1.plot79.style.editstyle style(p4) line(color(`"*.8461538"')) area(linestyle(color(`"*.8461538"'))) line(width(*2.802057)) area(linestyle(width(*2.802057))) editcopy
+.plotregion1.plot79.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot80 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll17') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p5) ybvar(`.sersets[4].seriesof __ul17')
+.plotregion1.plot80.style.editstyle style(p4) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.358003)) area(linestyle(width(*2.358003))) editcopy
+.plotregion1.plot80.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot81 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll18') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p6) ybvar(`.sersets[4].seriesof __ul18')
+.plotregion1.plot81.style.editstyle style(p4) line(color(`"*.9230769"')) area(linestyle(color(`"*.9230769"'))) line(width(*2.654462)) area(linestyle(width(*2.654462))) editcopy
+.plotregion1.plot81.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot82 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll19') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p7) ybvar(`.sersets[4].seriesof __ul19')
+.plotregion1.plot82.style.editstyle style(p4) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.439024)) area(linestyle(width(*2.439024))) editcopy
+.plotregion1.plot82.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot83 = .y2xview_g.new , type(rspike) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __ll20') xvariable(`.sersets[4].seriesof __at')    plotregion(`.plotregion1.objkey') style(scheme p8) ybvar(`.sersets[4].seriesof __ul20')
+.plotregion1.plot83.style.editstyle style(p4) line(color(`"*1"')) area(linestyle(color(`"*1"'))) line(width(*2.536082)) area(linestyle(width(*2.536082))) editcopy
+.plotregion1.plot83.bar_drop_to.setstyle , style(y)
+.plotregion1.Declare plot84 = .yxview.new , type(scatter) serset(`.sersets[4].objkey') yvariable(`.sersets[4].seriesof __at') xvariable(`.sersets[4].seriesof __b')    plotregion(`.plotregion1.objkey') style(scheme p9) 
+.plotregion1.plot84.style.editstyle style(p4) editcopy
+.plotregion1.Declare plot85 = .yxview.new , type(scatter) serset(`.sersets[5].objkey') yvariable(`.sersets[5].seriesof __at') xvariable(`.sersets[5].seriesof x')  lvariable(`.sersets[5].seriesof label')  plotregion(`.plotregion1.objkey') style(scheme p10) 
+.plotregion1.plot85.style.editstyle marker(symbol(none)) label(position(9)) label(textstyle(size(vsmall))) label(textstyle(color(black))) editcopy
+.plotregion1.clear_scales
+.plotregion1.reset_scales , noclear
+.n_views = 85
+.n_plotregions = 1
+.last_style = 85
+.x_scales = `" "1""'
+.y_scales = `" "1""'
+.create_axes 1 1 "9" "" 9
+.style.editstyle legend_position(4) editcopy
+.insert (legend = .legend_g.new, graphs(`.objkey') style(scheme)) rightof plotregion1 , ring(3) 
+.legend.style.editstyle box_alignment(SE) editcopy
+.legend._all = 1
+.legend.holes = ""
+.legend.style.editstyle margin(zero) editcopy
+.legend.style.editstyle labelstyle( size(vsmall)) editcopy
+.legend.holes = ""
+.legend.style.editstyle  row_gap(zero) editcopy
+.legend.insert (note = .sized_textbox.new, mtextq(`""') style(scheme leg_note) ) below plotregion1 , ring(3) 
+.legend.note.style.editstyle box_alignment(SW) editcopy
+.legend.note.style.editstyle horizontal(left) editcopy
+.legend.insert (caption = .sized_textbox.new, mtextq(`""') style(scheme leg_caption) ) below plotregion1 , ring(5) 
+.legend.caption.style.editstyle box_alignment(SW) editcopy
+.legend.caption.style.editstyle horizontal(left) editcopy
+.legend.insert (subtitle = .sized_textbox.new, mtextq(`""') style(scheme leg_subtitle) ) above plotregion1 , ring(6) 
+.legend.subtitle.style.editstyle box_alignment(N) editcopy
+.legend.subtitle.style.editstyle horizontal(center) editcopy
+.legend.insert (title = .sized_textbox.new, mtextq(`""') style(scheme leg_title) ) above plotregion1 , ring(7) 
+.legend.title.style.editstyle box_alignment(N) editcopy
+.legend.title.style.editstyle horizontal(center) editcopy
+.legend.rebuild
+.legend.labels[21] = `" `"cic1"'"'
+.legend.labels[42] = `" `"cic2"'"'
+.legend.labels[63] = `" `"cic3"'"'
+.legend.labels[84] = `" `"cic4"'"'
+.legend.labels[21] = `" "Log hourly wage, 1995""'
+.legend.labels[42] = `" "Imputed log hourly wage, 2005""'
+.legend.labels[63] = `" "Log hourly wage, 2010""'
+.legend.labels[84] = `" "Log typical monthly earnings, 2013‚Äì14""'
+.legend.parse_order 21 42 63 84
+.legend.repositionkeys
+.xaxis1.addmin -.2
+.xaxis1.addmax .5
+.xaxis1.major.clear
+.xaxis1.major.range_ticks -.3 .1 .1
+.xaxis1.reset_scale reinit
+.xaxis1.title.edit , mtextq(`""""')   replace
+.xaxis1.title.edit , mtextq(`""Changes-in-changes impact estimate""')   replace
+tempname glsty
+.`glsty' = .gridlinestyle.new, style(scheme)
+.`glsty'.editstyle  linestyle( color(gs10) pattern(solid)) editcopy
+.xaxis1.plotregion.declare_xyline .gridline_g.new 0 , ordinate(x) plotregion(`.xaxis1.plotregion.objkey') styleref(`glsty') 
+.yaxis1.addmin .5
+.yaxis1.addmax 9.5
+.yaxis1.plotregion.yscale.reverse.set_true
+.yaxis1.major.clear
+.yaxis1.major.add_ticks  1 `"q9"' 2 `"q8"' 3 `"q7"' 4 `"q6"' 5 `"q5"' 6 `"q4"' 7 `"q3"' 8 `"q2"' 9 `"q1"' ,  
+.yaxis1.major.set_default 0
+.yaxis1.reset_scale reinit
+.yaxis1.style.editstyle draw_major_grid(no) editcopy
+.yaxis1.style.editstyle majorstyle( tickangle(horizontal)  ) editcopy
+.yaxis1.major.clear
+.yaxis1.major.add_ticks  1 `"10"' 2 `"20"' 3 `"30"' 4 `"40"' 5 `"50"' 6 `"60"' 7 `"70"' 8 `"80"' 9 `"90"' ,  
+.yaxis1.major.set_default 0
+.yaxis1.reset_scale reinit
+.yaxis1.majornl.clear
+.yaxis1.majornl.add_ticks  1.5 1.5 2.5 2.5 3.5 3.5 4.5 4.5 5.5 5.5 6.5 6.5 7.5 7.5 8.5 8.5 ,  
+.yaxis1.majornl.set_default 0
+.yaxis1.reset_scale reinit
+.yaxis1.style.editstyle draw_majornl_grid(yes) editcopy
+.yaxis1.style.editstyle majornlstyle( tickstyle( show_ticks(no) linestyle(none) ) ) editcopy
+.yaxis1.title.edit , mtextq(`""""')   replace
+.yaxis1.title.edit , mtextq(`"Percentile"')   replace
+.insert (r1title = .sized_textbox.new, mtextq(`""') style(scheme r1title) orientation(vertical)) rightof plotregion1 , ring(1) 
+.insert (r2title = .sized_textbox.new, mtextq(`""') style(scheme r2title) orientation(vertical)) rightof plotregion1 , ring(2) 
+.insert (l1title = .sized_textbox.new, mtextq(`""') style(scheme l1title) orientation(vertical)) leftof plotregion1 , ring(1) 
+.insert (l2title = .sized_textbox.new, mtextq(`""') style(scheme l2title) orientation(vertical)) leftof plotregion1 , ring(2) 
+.insert (t1title = .sized_textbox.new, mtextq(`""') style(scheme t1title) ) above plotregion1 , ring(1) 
+.insert (t2title = .sized_textbox.new, mtextq(`""') style(scheme t2title) ) above plotregion1 , ring(2) 
+.insert (b1title = .sized_textbox.new, mtextq(`""') style(scheme b1title) ) below plotregion1 , ring(1) 
+.insert (b2title = .sized_textbox.new, mtextq(`""') style(scheme b1title) ) below plotregion1 , ring(2) 
+.insert (note = .sized_textbox.new, mtextq(`""') style(scheme note) ) below plotregion1 , ring(4) 
+.note.style.editstyle box_alignment(SW) editcopy
+.note.style.editstyle horizontal(left) editcopy
+.insert (caption = .sized_textbox.new, mtextq(`""') style(scheme caption) ) below plotregion1 , ring(5) 
+.caption.style.editstyle box_alignment(SW) editcopy
+.caption.style.editstyle horizontal(left) editcopy
+.insert (subtitle = .sized_textbox.new, mtextq(`""') style(scheme subtitle) ) above plotregion1 , ring(6) 
+.subtitle.style.editstyle box_alignment(N) editcopy
+.subtitle.style.editstyle horizontal(center) editcopy
+.insert (title = .sized_textbox.new, mtextq(`""') style(scheme title) ) above plotregion1 , ring(7) 
+.title.style.editstyle box_alignment(N) editcopy
+.title.style.editstyle horizontal(center) editcopy
+.insert (spacert = .spacer.new) above plotregion1 , ring(11)
+.insert (spacerb = .spacer.new) below plotregion1 , ring(11)
+.insert (spacerl = .spacer.new) leftof plotregion1 , ring(11)
+.insert (spacerr = .spacer.new) rightof plotregion1 , ring(11)
+.style.editstyle declared_xsize(5.5) editcopy
+.style.editstyle declared_ysize(5) editcopy
+.command = `"twoway (rspike __ll1 __ul1 __at if __plot==1,  pstyle(p1) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==1,  pstyle(p1) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==1,  pstyle(p1) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==1,  pstyle(p1) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==1,  pstyle(p1) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==1,  pstyle(p1) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==1,  pstyle(p1) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==1,  pstyle(p1) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==1,  pstyle(p1) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==1,  pstyle(p1) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==1,  pstyle(p1) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==1,  pstyle(p1) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==1,  pstyle(p1) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==1,  pstyle(p1) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==1,  pstyle(p1) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==1,  pstyle(p1) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==1,  pstyle(p1) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==1,  pstyle(p1) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==1,  pstyle(p1) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==1,  pstyle(p1) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==1,  pstyle(p1)       ) (rspike __ll1 __ul1 __at if __plot==2,  pstyle(p2) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==2,  pstyle(p2) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==2,  pstyle(p2) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==2,  pstyle(p2) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==2,  pstyle(p2) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==2,  pstyle(p2) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==2,  pstyle(p2) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==2,  pstyle(p2) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==2,  pstyle(p2) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==2,  pstyle(p2) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==2,  pstyle(p2) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==2,  pstyle(p2) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==2,  pstyle(p2) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==2,  pstyle(p2) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==2,  pstyle(p2) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==2,  pstyle(p2) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==2,  pstyle(p2) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==2,  pstyle(p2) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==2,  pstyle(p2) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==2,  pstyle(p2) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==2,  pstyle(p2)       ) (rspike __ll1 __ul1 __at if __plot==3,  pstyle(p3) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==3,  pstyle(p3) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==3,  pstyle(p3) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==3,  pstyle(p3) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==3,  pstyle(p3) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==3,  pstyle(p3) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==3,  pstyle(p3) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==3,  pstyle(p3) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==3,  pstyle(p3) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==3,  pstyle(p3) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==3,  pstyle(p3) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==3,  pstyle(p3) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==3,  pstyle(p3) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==3,  pstyle(p3) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==3,  pstyle(p3) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==3,  pstyle(p3) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==3,  pstyle(p3) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==3,  pstyle(p3) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==3,  pstyle(p3) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==3,  pstyle(p3) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==3,  pstyle(p3)       ) (rspike __ll1 __ul1 __at if __plot==4,  pstyle(p4) lwidth(*2)  lcolor("*.3076923") horizontal) (rspike __ll2 __ul2 __at if __plot==4,  pstyle(p4) lwidth(*11.32075)  lcolor("*.3076923") horizontal) (rspike __ll3 __ul3 __at if __plot==4,  pstyle(p4) lwidth(*2.028353)  lcolor("*.3846154") horizontal) (rspike __ll4 __ul4 __at if __plot==4,  pstyle(p4) lwidth(*6.633663)  lcolor("*.3846154") horizontal) (rspike __ll5 __ul5 __at if __plot==4,  pstyle(p4) lwidth(*2.059839)  lcolor("*.4615385") horizontal) (rspike __ll6 __ul6 __at if __plot==4,  pstyle(p4) lwidth(*4.966443)  lcolor("*.4615385") horizontal) (rspike __ll7 __ul7 __at if __plot==4,  pstyle(p4) lwidth(*2.095006)  lcolor("*.5384615") horizontal) (rspike __ll8 __ul8 __at if __plot==4,  pstyle(p4) lwidth(*4.111675)  lcolor("*.5384615") horizontal) (rspike __ll9 __ul9 __at if __plot==4,  pstyle(p4) lwidth(*2.134541)  lcolor("*.6153846") horizontal) (rspike __ll10 __ul10 __at if __plot==4,  pstyle(p4) lwidth(*3.591837)  lcolor("*.6153846") horizontal) (rspike __ll11 __ul11 __at if __plot==4,  pstyle(p4) lwidth(*2.17931)  lcolor("*.6923077") horizontal) (rspike __ll12 __ul12 __at if __plot==4,  pstyle(p4) lwidth(*3.242321)  lcolor("*.6923077") horizontal) (rspike __ll13 __ul13 __at if __plot==4,  pstyle(p4) lwidth(*2.230428)  lcolor("*.7692308") horizontal) (rspike __ll14 __ul14 __at if __plot==4,  pstyle(p4) lwidth(*2.991202)  lcolor("*.7692308") horizontal) (rspike __ll15 __ul15 __at if __plot==4,  pstyle(p4) lwidth(*2.289348)  lcolor("*.8461538") horizontal) (rspike __ll16 __ul16 __at if __plot==4,  pstyle(p4) lwidth(*2.802057)  lcolor("*.8461538") horizontal) (rspike __ll17 __ul17 __at if __plot==4,  pstyle(p4) lwidth(*2.358003)  lcolor("*.9230769") horizontal) (rspike __ll18 __ul18 __at if __plot==4,  pstyle(p4) lwidth(*2.654462)  lcolor("*.9230769") horizontal) (rspike __ll19 __ul19 __at if __plot==4,  pstyle(p4) lwidth(*2.439024)  lcolor("*1") horizontal) (rspike __ll20 __ul20 __at if __plot==4,  pstyle(p4) lwidth(*2.536082)  lcolor("*1") horizontal) (scatter __at __b if __plot==4,  pstyle(p4)       ),    ylabel(1 `"q9"' 2 `"q8"' 3 `"q7"' 4 `"q6"' 5 `"q5"' 6 `"q4"' 7 `"q3"' 8 `"q2"' 9 `"q1"', nogrid angle(horizontal) )  ytick(1.5 1.5 2.5 2.5 3.5 3.5 4.5 4.5 5.5 5.5 6.5 6.5 7.5 7.5 8.5 8.5, notick tlstyle(none) grid ) yscale(range(.5 9.5)) yscale(reverse) yti("") xti("") legend(label(21 `"cic1"') label(42 `"cic2"') label(63 `"cic3"') label(84 `"cic4"') all order(21 42 63 84)) legend(rowgap(zero) lab(21 "Log hourly wage, 1995") lab(42 "Imputed log hourly wage, 2005") lab(63 "Log hourly wage, 2010") lab(84 "Log typical monthly earnings, 2013‚Äì14") pos(4) region( margin(zero)) size(vsmall)) plotregion(margin(t=0 b=0))  scheme(plottig)  graphregion(margin(zero)) ylabel(1 "10" 2 "20" 3 "30" 4 "40" 5 "50" 6 "60" 7 "70" 8 "80" 9 "90") ytitle(Percentile) xtitle("Changes-in-changes impact estimate") || scatter __at x, msym(none) mlab(label) mlabcolor(black) mlabsize(vsmall) mlabpos(9) xscale(range(-.2 .5)) xlab(-.3(.1).1) xline(0, lcolor(gs10) lpat(solid)) xsize(5.5) ysize(5) name(cic, replace)"'
+.date = "26 Jul 2022"
+.time = "13:07:24"
+.dta_file = ""
+.dta_date = ""
+<EndItem>
