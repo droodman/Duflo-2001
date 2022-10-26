@@ -1,5 +1,5 @@
-* dependencies: ivreg2, xtivreg2, ranktest, ftools, reghdfe, boottest, estout, coefplot, blindschemes, palettes, moremata, cmp, and, and cic
-* all are from SSC except cic is from https://sites.google.com/site/blaisemelly/home/computer-programs/cic_stata
+* dependencies: ivreg2, xtivreg2, ranktest, ftools, reghdfe, boottest, estout, coefplot, blindschemes, palettes, moremata, cmp, and, cic, and qrprocess
+* all are from SSC except the last two are from https://sites.google.com/site/blaisemelly/home/computer-programs/cic_stata
 
 global source95 NBER  // source for SUPAS 1995: should be NBER or IPUMS
 
@@ -12,7 +12,7 @@ cap cd "D:\OneDrive\Documents\Work\Clients & prospects\GiveWell\Education\Duflo 
 cap cd /disk/homedirs/nber/feenberg/roodman
 
 cap log close
-log using Public\Output\duflo2001, text replace
+cap log using Public\Output\duflo2001, text replace
 
 
 ***
@@ -237,6 +237,7 @@ log using Public\Output\duflo2001, text replace
   regress lhwage c.age74##c.age74##c.age74##c.age74##(birthpl occ indgen urban) [aw=wt] if year==1995 // imputation regression
   est save Public\Output\IS, replace
   predict double IS if part  // Income Score
+  gen double _lwage = cond(year==1995, lhwage, cond(year==2005, IS, cond(year==2010, lhwage, lwage)))
 
   label var yeduc "Years of education"
   label var primary "Finished primary school"
@@ -244,6 +245,7 @@ log using Public\Output\duflo2001, text replace
   label var lwage "Log monthly wages"
   label var lhwage "Log hourly wage"
   label var IS "Imputed log hourly wage"
+  label var _lwage "Consolidated log wage variable"
 }  // end data prep
 
 
@@ -508,10 +510,8 @@ graph save "Public\Output\Mincer4.4 left.gph", replace
 
 * for blog
 graph set window fontface Montserrat
+gen hwage = exp(lhwage)
 table age _yeduc [aw=wt] if year==1995 & age>=15 & age<=65, stat(mean hwage)
-
-twoway function y = max(0,12-x), range(2 24) xscale(reverse) xtitle(Age in 1974) ytitle(Average dose of Inpres schooling availability) xlab(2/24) yscale(noline) ylab(, notick nolab) scheme(plotplain) graphregion(margin(zero))
-graph export "Public\Output\Dose.png", replace width(2680) height(1552)
 
 colorpalette viridis, n(6) range(.8 0) saturate(1) nograph
 twoway lpoly hwage age if _yeduc== 0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
@@ -576,6 +576,8 @@ qui foreach est in `r(names)' {
 *** Figure with wage scale dilation and OLS reduced-form impacts, all follow-ups
 ***
 {
+preserve
+drop _all
 cap drop lab
 gen lab = ""
 coefplot (RFprimaryc1wwty1, rename(1.young#c.ninnew=1995)) (RFprimaryc1wwty2, rename(1.young#c.ninnew=2005)) (RFprimaryc1wwty3, rename(1.young#c.ninnew=2010)) (RFprimaryc1wwty4, rename(1.young#c.ninnew=2013–14)), bylabel(Primary school completion) || ///
@@ -590,6 +592,7 @@ coefplot (RFprimaryc1wwty1, rename(1.young#c.ninnew=1995)) (RFprimaryc1wwty2, re
 local graph `r(graph)'
 replace lab = subinstr(strofreal(__b, "%6.4f") + " (" + strofreal(__se, "%6.4f") + ")", "-", "−", .) if __b<.
 `graph'
+restore
 }
 
 
@@ -623,10 +626,10 @@ $graph || scatteri  `segmentfn', recast(connected) lcolor(maroon) lwidth(medium)
        || scatteri 0 2, mstyle(p1) msym(smcircle) msize(small) /// // zero for base year
        || scatteri `kinkpt1' 12, msym(diamond) mcolor(maroon) ///
        || scatteri `kinkpt1' 12 `kinkpt2b' 2, recast(line) pstyle(p3) lcolor(gs8) /// 
-       || scatteri `kinkpt2' 1.6 `kinkpt2' 1.3 `kinkpt2b' 1.3 `kinkpt2b' 1.6, recast(line) lpat(solid) /// 
-       || scatteri 0 0, msym(none) text(`=(`kinkpt2'+`kinkpt2b')/2' 1 "{it:{&tau}}", place(e)) /// 
+       || scatteri `=.8*(`kinkpt2'-`kinkpt1')+`kinkpt1'' 4 `=.8*(`kinkpt2'-`kinkpt1')+`kinkpt1'' 3.7 `=.8*(`kinkpt2b'-`kinkpt1')+`kinkpt1'' 3.7 `=.8*(`kinkpt2b'-`kinkpt1')+`kinkpt1'' 4, recast(line) lcolor(maroon) lpat(solid) /// 
+       || scatteri 0 0, msym(none) text(`=.8*((`kinkpt2'+`kinkpt2b')/2-`kinkpt1')+`kinkpt1'' 1.5 "{it:{&tau}}", place(c) color(maroon)) /// 
        || scatteri 0 0, msym(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) /// // fake plot to set up extra axes with range [-1,1] for placing text
-            text(1 -1 "{it:{&tau}} = `:display %4.3f 10*_b[t2#c.nin]' (`:display %4.3f 10*_se[t2#c.nin]')", xaxis(2) yaxis(2) place(e) color(black))
+            text(1 -1 "{it:{&tau}} = `:display %4.3f 8*_b[t2#c.nin]' (`:display %4.3f 8*_se[t2#c.nin]')", xaxis(2) yaxis(2) place(e) color(maroon))
 graph save Public\Output\Fig1yeduc1995, replace
 
 
@@ -664,10 +667,10 @@ twoway scatteri 0 0, msym(none) yscale(off) ylab(,nogrid) nodraw xscale(reverse)
 forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
   local controls: word `=`c'+1' of "" ch71new "ch71new en71new" "ch71new en71new wsppc"
 
-  forvalues y=1/4 {
-    local years   : word `y' of 1995 2005 2010 2013,2014
-    local yearname: word `y' of "Survey: Intercensal, 1995" "Intercensal, 2005" "Labor, 2010" "Socioeconomic, 2013–14"
-    local depvars : word `y' of "primary yeduc part lwage lhwage IS" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage"
+  forvalues y=1/5 {
+    local years   : word `y' of 1995 2005 2010 2013,2014 2005,2010,2013,2014
+    local yearname: word `y' of "Survey: Intercensal, 1995" "Intercensal, 2005" "Labor, 2010" "Socioeconomic, 2013–14" "Post-1995"
+    local depvars : word `y' of "primary yeduc part lwage lhwage IS" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage" "primary yeduc part _lwage"
     local Ndepvars: word count `depvars'
 
     foreach wt in 1 wt {
@@ -676,7 +679,7 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
       forvalues d=1/`Ndepvars' {
         local depvar: word `d' of `depvars'
 
-        eststo RF`depvar'c`c'`wt'y`y'dummies: reghdfe `depvar' i(1950/`=1974-2-1')bn.birthyr#c.ninnew `wtexp' if inlist(year,`years'), absorb(birthplnew birthyr##c.(`controls')) cluster(birthplnew)  // RF = reduced form
+        eststo RF`depvar'c`c'`wt'y`y'dummies: reghdfe `depvar' i(1950/`=1974-2-1')bn.birthyr#c.ninnew `wtexp' if inlist(year,`years'), absorb(birthplnew birthyr##c.(`controls')  `=cond(`y'==5,"year","")') cluster(birthplnew)  // RF = reduced form
         est save Public\Output\RF`depvar'c`c'`wt'y`y'dummies, replace
 
         mata dots = st_matrix("e(b)")'; dots[length(dots)] = 0  // average of dots in plot, including base level's 0
@@ -684,7 +687,7 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
         coefplot, keep(*.birthyr#c.ninnew) omitted rename(([0-9]+)[ob]?.birthyr#c.ninnew = \1, regex) vertical xlab(2(2)24) at(_coef, transform(1974 - @)) xscale(reverse) msym(smcircle) msize(small) gen replace
         global graph `r(graph)'
 
-        eststo RF`depvar'c`c'`wt'y`y'pwlspline: reghdfe `depvar' c.t?#c.ninnew `wtexp' if inlist(year,`years'), absorb(birthplnew birthyr##c.(`controls')) cluster(birthplnew)
+        eststo RF`depvar'c`c'`wt'y`y'pwlspline: reghdfe `depvar' c.t?#c.ninnew `wtexp' if inlist(year,`years'), absorb(birthplnew birthyr##c.(`controls') `=cond(`y'==5,"year","")') cluster(birthplnew)
         est save Public\Output\RF`depvar'c`c'`wt'y`y'pwlspline, replace
 
         mata segmentfit = `=_b[c.t1#c.ninnew]' * (24 :- (24::2)) + `=_b[c.t2#c.ninnew]' * (J(24 - 12,1,0) \ 12 :- (12::2))
@@ -695,13 +698,13 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
 
         local kinkpt = segmentshift + _b[c.t1#c.ninnew] * (24 - 12)
 
-        scalar b = _b[t2#c.ninnew] * 10  // slope increase * 10 years
+        scalar b = _b[t2#c.ninnew] * 8  // slope increase * maroon years
         test t2#c.ninnew
         scalar se = abs(b) / sqrt(r(F))
         local caption: display "{it:{&tau}} = " (b<0)*"{&minus}" %4.3f abs(b) " (" %4.3f se ")"
 
         $graph || scatteri `segmentfn', lcolor(maroon) lwidth(medium) mstyle(p1) msym(diamond) msize(small) mcolor(maroon) lpat(solid) recast(connected) ///
-                  title(`=cond(`d'==1, `""`yearname'", size(medlarge) span"', "")') `=cond(`y'==1, "fxsize(26)", "yscale(off)")' ylab(, format(%3.2f) nogrid) ///
+                  title(`=cond(`d'==1, `""`yearname'", size(medium) span"', "")') `=cond(`y'==1, "fxsize(21)", "yscale(off)")' ylab(, format(%3.2f) nogrid) ///
                   `=cond("`depvar'"=="IS", `"xtitle("") xlab(2(2)24, nogrid)"', "xlab(, nolab notick nogrid) xscale(off fill)")' ///
                   graphregion(margin(zero)) ///
                   name(RF`depvar'`wt'y`y', replace) nodraw ///
@@ -713,11 +716,11 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
     }
   }
   foreach wt in 1 wt {
-    graph combine RFprimary`wt'y1 RFprimary`wt'y2 RFprimary`wt'y3 RFprimary`wt'y4, cols(4) graphregion(margin(zero)) name(RFprimary, replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label primary', size(small))
-    graph combine RFyeduc`wt'y1   RFyeduc`wt'y2   RFyeduc`wt'y3   RFyeduc`wt'y4  , cols(4) graphregion(margin(zero)) name(RFyeduc  , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label yeduc  ', size(small))
-    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1          , cols(4) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part   ', size(small))
-    graph combine RFlhwage`wt'y1  hole1           RFlhwage`wt'y3  RFlwage`wt'y4  , cols(4) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage ', size(small))
-    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2           hole2          , cols(4) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS     ', size(small)) fysize(25)
+    graph combine RFprimary`wt'y1 RFprimary`wt'y2 RFprimary`wt'y3 RFprimary`wt'y4 RFprimary`wt'y5, cols(5) graphregion(margin(zero)) name(RFprimary, replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label primary', size(small))
+    graph combine RFyeduc`wt'y1   RFyeduc`wt'y2   RFyeduc`wt'y3   RFyeduc`wt'y4   RFyeduc`wt'y5  , cols(5) graphregion(margin(zero)) name(RFyeduc  , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label yeduc  ', size(small))
+    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1           RFpart`wt'y5   , cols(5) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part   ', size(small))
+    graph combine RFlhwage`wt'y1  hole1           RFlhwage`wt'y3  RFlwage`wt'y4   RF_lwage`wt'y5 , cols(5) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage ', size(small))
+    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2           hole2           hole2          , cols(5) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS     ', size(small)) fysize(25)
 
     graph combine RFprimary RFyeduc RFpart RFlhwage RFIS, cols(1) graphregion(margin(zero)) name(RFc`c'w`wt', replace) xsize(7.5) ysize(8.34) imargin(1 1 0 0) b1title(Age in 1974, xoffset(4) size(vsmall))
     graph save Public\Output\RFc`c'w`wt'pwlspline, replace
@@ -728,25 +731,29 @@ restore
 
 * piecewise-linear fit for blog
 {
+twoway function y = max(0,12-x), range(2 24) xscale(reverse) xtitle(Age in 1974) ytitle(Average Inpres schooling opportunity) xlab(2/24) yscale(noline) ylab(, notick nolab) scheme(plotplain) graphregion(margin(zero))
+graph export "Public\Output\Dose.png", replace width(2680) height(1552)
+
 preserve
 keep if 24>=age74 & age74>=2
 gen t1 = 24 - age74  // spline components -1974 + birth year
 gen t2 = max(0, 12 - age74)  // 12-year-olds in '74 couldn't benefit
-forvalues y=1/4 {
-  local years: word `y' of 1995 2005 2010 "2013, 2014"
-  local wagevar: word `y' of lhwage IS lhwage lwage
+
+forvalues y=5/5 {
+  local years: word `y' of 1995 2005 2010 "2013, 2014" "2005, 2010, 2013, 2014"
+  local wagevar: word `y' of lhwage IS lhwage lwage _lwage
 
   forvalues d=1/3 {
     local depvar    : word `d' of yeduc primary `wagevar'
     local depvarname: word `d' of Schooling "Primary completion" Wages
 
-    reghdfe `depvar' i(1950/1971)bn.birthyr#c.ninnew [pw=wt] if inlist(year,`years'), absorb(birthplnew birthyr##c.ch71new) cluster(birthplnew)
+    reghdfe `depvar' i(1950/1971)bn.birthyr#c.ninnew [pw=wt] if inlist(year,`years'), absorb(birthplnew birthyr##c.ch71new `=cond(`y'==5,"year","")') cluster(birthplnew)
     mata dots = st_matrix("e(b)")'; dots[length(dots)] = 0  // average of dots in plot, including base level's 0
     coefplot, keep(*.birthyr#c.ninnew) omitted rename(([0-9]+)[ob]?.birthyr#c.ninnew = \1, regex) vertical xlab(2(2)24) at(_coef, transform(1974 - @)) xscale(reverse) msym(square) msize(medium) mcolor(blue) /*mcolor("68 82 125")*/  ///
       cismooth(n(20) lwidth(10 10) color(gray)) title("`depvarname' vs. Inpres intensity in native regency, by age," "men surveyed in `years'", size(large)) xtitle(Age in 1974, size(medium)) plotregion(color(white)) xlab(, labcolor(black) labsize(medium)) ylab(, labcolor(black) labsize(medium)) gen replace
     global graph `r(graph)'
 
-    reghdfe `depvar' c.t?#c.ninnew [pw=wt] if inlist(year,`years'), absorb(birthplnew birthyr##c.ch71new) cluster(birthplnew)
+    reghdfe `depvar' c.t?#c.ninnew [pw=wt] if inlist(year,`years'), absorb(birthplnew birthyr##c.ch71new `=cond(`y'==5,"year","")') cluster(birthplnew)
     mata segmentfit = `=_b[c.t1#c.ninnew]' * (24 :- (24::2)) + `=_b[c.t2#c.ninnew]' * (J(24 - 12,1,0) \ 12 :- (12::2))
     mata st_numscalar("segmentshift", mean(dots - segmentfit))
     local segmentfn `=segmentshift'                                                                24 ///
@@ -782,10 +789,10 @@ twoway scatteri 0 0, msym(none) yscale(off) ylab(,nogrid) nodraw xscale(reverse)
 forvalues c=1/1 {
   local controls: word `=`c'+1' of "" ch71new "ch71new en71new" "ch71new en71new wsppc"
 
-  forvalues y=1/4 {
-    local years   : word `y' of 1995 2005 2010 2013,2014
-    local yearname: word `y' of "Survey: Intercensal, 1995" "Intercensal, 2005" "Labor, 2010" "Socioeconomic, 2013–14"
-    local depvars : word `y' of "primary yeduc part lhwage IS" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage"
+  forvalues y=1/5 {
+    local years   : word `y' of 1995 2005 2010 2013,2014 2005,2010,2013,2014
+    local yearname: word `y' of "Survey: Intercensal, 1995" "Intercensal, 2005" "Labor, 2010" "Socioeconomic, 2013–14" "Post-1995"
+    local depvars : word `y' of "primary yeduc part lhwage IS" "primary yeduc part IS" "primary yeduc part lhwage" "primary yeduc lwage" "primary yeduc part _lwage"
     local Ndepvars: word count `depvars'
 
     foreach wt in 1 wt {
@@ -804,9 +811,9 @@ forvalues c=1/1 {
 
         mata segmentfit = `=_b[c.t1#c.ninnew]' * (24 :- (24::2)) + `=_b[c.t2#c.ninnew]' * (J(24 - 12,1,0) \ 12 :- (12::2))
         mata st_numscalar("segmentshift", mean(dots - segmentfit))
-        local segmentfn `=segmentshift'                                                                                               24 ///
-                        `=segmentshift + _b[c.t1#c.ninnew] * (24 - 12)'                                                               12 ///
-                        `=segmentshift + _b[c.t1#c.ninnew] * (24 -  2) + _b[c.t2#c.ninnew] * (12 - 2)'                                 2
+        local segmentfn `=segmentshift'                                                                24 ///
+                        `=segmentshift + _b[c.t1#c.ninnew] * (24 - 12)'                                12 ///
+                        `=segmentshift + _b[c.t1#c.ninnew] * (24 -  2) + _b[c.t2#c.ninnew] * (12 - 2)'  2
         
         reghdfe `depvar' c.t1#c.ninnew c.t1#c.t1#c.ninnew c.t?#c.ninnew `wtexp' if inlist(year,`years'), absorb(birthplnew birthyr##c.(`controls')) cluster(birthplnew)  // omnibus fit
         test c.t1#c.ninnew c.t1#c.t1#c.ninnew
@@ -821,22 +828,22 @@ forvalues c=1/1 {
 
         $graph || scatteri  `segmentfn', lcolor(maroon) lwidth(medium) mstyle(p1) msym(diamond) msize(small) mcolor(maroon) lpat(solid) recast(connected) ///
                || function y = `polyfn', lcolor(blue  ) lwidth(medium) lpat(solid) range(2 24) ///
-                  title(`=cond(`d'==1, `""`yearname'", size(medlarge) span"', "")') `=cond(`y'==1, "fxsize(27)", "yscale(off)")' ylab(, format(%3.2f) nogrid) ///
+                  title(`=cond(`d'==1, `""`yearname'", size(medium) span"', "")') `=cond(`y'==1, "fxsize(21)", "yscale(off)")' ylab(, format(%3.2f) nogrid) ///
                   `=cond("`depvar'"=="IS", `"xtitle("") xlab(2(2)24, nogrid)"', "xlab(, nolab notick nogrid) xscale(off fill)")' ///
                   graphregion(margin(zero)) ///
                   name(RF`depvar'`wt'y`y', replace) nodraw ///
                || scatteri 0 2, mstyle(p1) msym(smcircle) msize(small) /// // zero for base year
                || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) /// // fake plot to set up extra axes with range [-1,1] for placing text
-                    text(1 -1 "`caption1'", xaxis(2) yaxis(2) place(e) color(blue)) text(1 -.35 "`caption2'", xaxis(2) yaxis(2) place(e) color(maroon))
+                    text(1 -1 "`caption1'", xaxis(2) yaxis(2) place(e) color(blue)) text(1 -.1 "`caption2'", xaxis(2) yaxis(2) place(e) color(maroon))
       }
     }
   }
   foreach wt in 1 wt {
-    graph combine RFprimary`wt'y1 RFprimary`wt'y2 RFprimary`wt'y3 RFprimary`wt'y4, cols(4) graphregion(margin(zero)) name(RFprimary, replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label primary', size(small))
-    graph combine RFyeduc`wt'y1   RFyeduc`wt'y2   RFyeduc`wt'y3   RFyeduc`wt'y4  , cols(4) graphregion(margin(zero)) name(RFyeduc  , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label yeduc'  , size(small))
-    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1          , cols(4) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part'   , size(small))
-    graph combine RFlhwage`wt'y1  hole1           RFlhwage`wt'y3  RFlwage`wt'y4  , cols(4) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage' , size(small))
-    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2           hole2          , cols(4) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS'     , size(small)) fysize(25)
+    graph combine RFprimary`wt'y1 RFprimary`wt'y2 RFprimary`wt'y3 RFprimary`wt'y4 RFprimary`wt'y5, cols(5) graphregion(margin(zero)) name(RFprimary, replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label primary', size(small))
+    graph combine RFyeduc`wt'y1   RFyeduc`wt'y2   RFyeduc`wt'y3   RFyeduc`wt'y4   RFyeduc`wt'y5  , cols(5) graphregion(margin(zero)) name(RFyeduc  , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label yeduc'  , size(small))
+    graph combine RFpart`wt'y1    RFpart`wt'y2    RFpart`wt'y3    hole1           RFpart`wt'y5   , cols(5) graphregion(margin(zero)) name(RFpart   , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label part'   , size(small))
+    graph combine RFlhwage`wt'y1  hole1           RFlhwage`wt'y3  RFlwage`wt'y4   RF_lwage`wt'y5 , cols(5) graphregion(margin(zero)) name(RFlhwage , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label lhwage' , size(small))
+    graph combine RFIS`wt'y1      RFIS`wt'y2      hole2           hole2           hole2          , cols(5) graphregion(margin(zero)) name(RFIS     , replace) imargin(1 0 0 0) ycommon nodraw l1title(`:var label IS'     , size(small)) fysize(25)
 
     graph combine RFprimary RFyeduc RFpart RFlhwage RFIS, cols(1) graphregion(margin(zero)) name(RFc`c'w`wt'poly, replace) xsize(7.5) ysize(8.34) imargin(1 1 0 0) b1title(Age in 1974, xoffset(4) size(vsmall))
     graph save Public\Output\RFc`c'w`wt'qspline, replace
@@ -854,26 +861,26 @@ est drop _all  // avoid system limit on # of stored estimates
 {
 preserve
 keep if 24>=age74 & age74>=2
-xi i.young|ninnew i.dum|ninnew i.birthyr*ch71new i.birthyr*en71new i.birthyr*wsppc  // xtivreg2 doesn't take factor vars, but is faster than ivreg2...i.birthplnew and does weak inst tests
+xi i.young|ninnew i.dum|ninnew i.birthyr*ch71new i.birthyr*en71new i.birthyr*wsppc i.year  // xtivreg2 doesn't take factor vars, but is faster than ivreg2...i.birthplnew and does weak inst tests
 set seed 230498257
 
 forvalues c=1/1 /*3*/ {
   local controls _Ibirthyr_* `: word `c' of _IbirXch7* "_IbirXch7* _IbirXen7*" "_IbirXch7* _IbirXen7* _IbirXwsp*" '
   foreach edvar in yeduc primary {
-    forvalues y=1/4 {
-      local years   : word `y' of 1995 2005 2010 2013,2014
-      local depvars : word `y' of "part lwage lhwage" "part IS" "part lhwage" lwage
+    forvalues y=1/5 {
+      local years   : word `y' of 1995 2005 2010 2013,2014 2005,2010,2013,2014
+      local depvars : word `y' of "part lwage lhwage" "part IS" "part lhwage" lwage "part _lwage" 
       local Ndepvars: word count `depvars'
       local graphs
       forvalues d=1/`Ndepvars' {
         local depvar: word `d' of `depvars'
         foreach wt in 1 wt {
-          eststo OLS`depvar'`edvar'c`c'w`wt'y`y': areg `depvar' `edvar' `controls' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) a(birthplnew)
+          eststo OLS`depvar'`edvar'c`c'w`wt'y`y': areg `depvar' `edvar' `controls' `=cond(`y'==5,"_Iyear*","")' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) a(birthplnew)
           forvalues i=1/2 {
             local insts: word `i' of _IyouXninne_1 _IdumXnin*  // instruments by birth year or young/old
-            eststo TSLS`depvar'`edvar'c`c'`i'w`wt'y`y': xtivreg2 `depvar' (`edvar' = `insts') `controls' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) partial(`controls') small fe
+            eststo TSLS`depvar'`edvar'c`c'`i'w`wt'y`y': xtivreg2 `depvar' (`edvar' = `insts') `controls' `=cond(`y'==5,"_Iyear*","")' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) partial(`controls') small fe
             boottest, ar reps(99999) gridmin(-.8) gridmax(1.1) format(%4.2f) ///
-                      graphopt(xlab(-.8(.2)1.1) ylab(.05 .2(.2)1, nogrid) nodraw ///
+                      graphopt(xlab(-.8(.2)1.1) ylab(.05 .2(.2)1, nogrid) xline(0) nodraw ///
                               `=cond(`d'==`Ndepvars', `"xtitle("")"', "xscale(off)")' xscale(range(-.4 .7)) ytitle("") `=cond("`wt'"=="1" & `i'==1,"","yscale(off)")' `=cond(`d'==1, `"title(`=cond("`wt'"=="1", "Unweighted", "Weighted")')"', "")') ///
                       graphname(`depvar'`edvar'c`c'2SLS`i'w`wt'y`y', replace)
             estadd local CIstr "`r(CIstr)'"
@@ -912,33 +919,32 @@ gen t2 = max(0, 12 - age74)  // 12-year-olds in '74 couldn't benefit
 gen t1_nin = t1 * ninnew
 gen t2_nin = t2 * ninnew
 gen t1t1_nin = t1 * t1_nin
-xi i.young|ninnew i.dum|ninnew i.birthyr*ch71new i.birthyr*en71new i.birthyr*wsppc  // xtivreg2 doesn't take factor vars, but is faster than ivreg2...i.birthplnew and does weak inst tests
+xi i.young|ninnew i.dum|ninnew i.birthyr*ch71new i.birthyr*en71new i.birthyr*wsppc i.year  // xtivreg2 doesn't take factor vars, but is faster than ivreg2...i.birthplnew and does weak inst tests
 set seed 230498257
 
 forvalues c=1/1 /*3*/ {
   local controls _Ibirthyr_* `: word `c' of _IbirXch7* "_IbirXch7* _IbirXen7*" "_IbirXch7* _IbirXen7* _IbirXwsp*" '
   foreach edvar in yeduc primary {
-    forvalues y=1/4 {
-      local years  : word `y' of 1995 2005 2010 2013,2014
-      local depvars : word `y' of "part lhwage" "part IS" "part lhwage" lwage
+    forvalues y=1/5 {
+      local years  : word `y' of 1995 2005 2010 2013,2014 2005,2010,2013,2014
+      local depvars : word `y' of "part lhwage" "part IS" "part lhwage" lwage _lwage
       local Ndepvars: word count `depvars'
       local graphs
-      local graphsQ
       forvalues d=1/`Ndepvars' {
         local depvar: word `d' of `depvars'
         foreach wt in 1 wt {
           forvalues i=1/2 {
             local timecontrols = cond(`i'==1, "t1_nin", "t1_nin t1t1_nin")
-            eststo TSLSPWL`depvar'`edvar'c`c'`i'`wt'y`y': xtivreg2 `depvar' (`edvar' = t2_nin) `timecontrols' `controls' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) partial(`controls') small fe
+            eststo TSLSPWL`depvar'`edvar'c`c'`i'`wt'y`y': xtivreg2 `depvar' (`edvar' = t2_nin) `timecontrols' `controls' `=cond(`y'==5,"_Iyear*","")' [pw=`wt'] if inlist(year,`years'), cluster(birthplnew) partial(`controls') small fe
             boottest, ar reps(99999) gridmin(-.8) gridmax(1.1) format(%4.2f) ///
-                      graphopt(xlab(-.8(.2)1.1) ylab(.05 .2(.2)1, nogrid) nodraw ///
+                      graphopt(xlab(-.8(.2)1.1) ylab(.05 .2(.2)1, nogrid) xline(0) nodraw ///
                               `=cond(`d'==`Ndepvars', `"xtitle("")"', "xscale(off)")' ytitle("") `=cond("`wt'"=="1" & `i'==1,"","yscale(off)")' `=cond(`d'==1, `"title(`=cond("`wt'"=="1", "Unweighted", "Weighted")')"', "")') ///
                       graphname(`depvar'`edvar'c`c'2SLS`i'w`wt'y`y', replace)
             estadd local CIstr "`r(CIstr)'"
             est save Public\Output\TSLSPWL`depvar'`edvar'c`c'`i'`wt'y`y', replace
           }
         }
-        esttab TSLSPWL`depvar'`edvar'c`c'2w1y`y' TSLSPWL`depvar'`edvar'c`c'2wwty`y' TSLSPWL`depvar'`edvar'c`c'1w1y`y' TSLSPWL`depvar'`edvar'c`c'1wwty`y' ///
+        esttab TSLSPWL`depvar'`edvar'c`c'21y`y' TSLSPWL`depvar'`edvar'c`c'2wty`y' TSLSPWL`depvar'`edvar'c`c'11y`y' TSLSPWL`depvar'`edvar'c`c'1wty`y' ///
                using "Public\Output\spline c`c' `edvar' y`y'.rtf", `=cond(`d'==1,"replace","append")' ///
                rename(t2_nin `edvar') keep(`edvar') b se msign("–") nonotes nonumber nogaps nomtitles nostar ///
                stat(CIstr widstat N, labels("Bootstrap CI" "KP F" Observations) fmt(%~1s %4.2f %7.0fc)) fonttbl(\f0\fnil Cambria;)
@@ -967,29 +973,63 @@ restore
 {
 preserve
 keep if young<. & 2<=age74 & age74<=24
-xi i.birthyr|ch71new i.birthyr|en71new i.birthyr|wsppc
+xi i.birthyr|ch71new i.birthyr|en71new i.birthyr|wsppc i.year
 set seed 30948573
-forvalues y=1/4 {
-  local years : word `y' of 1995 2005 2010 2013,2014
-  local depvar: word `y' of lhwage IS lhwage lwage
-  eststo cic`y': cic `depvar' _IbirXch7* [pw=wt] if inlist(year,`years'), group(recpnew) time(young) reps(1000)
+forvalues y=1/5 {
+  local years : word `y' of 1995 2005 2010 2013,2014 2005,2010,2013,2014
+  local depvar: word `y' of lhwage IS lhwage lwage _lwage
+  eststo cic`y': cic `depvar' _IbirXch7* `=cond(`y'==5,"_Iyear*","")' [pw=wt] if inlist(year,`years'), group(recpnew) time(young) reps(`=cond(`y'<5,1000,100)')
   foreach stat in `:rownames e(tests)' {
     estadd scalar `stat' = e(tests)["`stat'",2], replace
   }
 }
 drop _all  // speeds up coefplot, gen
-coefplot cic1 cic2 cic3 cic4, scheme(plottig) ylabel(1 "10" 2 "20" 3 "30" 4 "40" 5 "50" 6 "60" 7 "70" 8 "80" 9 "90") ytitle(Percentile) ///
+coefplot cic1 cic2 cic3 cic4 cic5, scheme(plottig) ylabel(1 "10" 2 "20" 3 "30" 4 "40" 5 "50" 6 "60" 7 "70" 8 "80" 9 "90") ytitle(Percentile) ///
   order(q9 q8 q7 q6 q5 q4 q3 q2 q1) ///
-  legend(rowgap(zero) lab(21 "Log hourly wage, 1995") lab(42 "Imputed log hourly wage, 2005") lab(63 "Log hourly wage, 2010") lab(84 "Log typical monthly earnings, 2013–14") pos(4) region(/*fcolor(gs14%100) lstyle(none)*/ margin(zero)) size(vsmall)) ///
+  legend(rowgap(zero) lab(21 "Log hourly wage, 1995") lab(42 "Imputed log hourly wage, 2005") lab(63 "Log hourly wage, 2010") lab(84 "Log typical monthly earnings, 2013–14") lab(105 "Log earnings, post-1995") pos(4) region(/*fcolor(gs14%100) lstyle(none)*/ margin(zero)) bmargin(1 0 0 0) size(7pt)) ///
   xtitle("Changes-in-changes impact estimate") graphregion(margin(zero)) cismooth(n(20)) gen replace
 local graph `r(graph)'
 cap drop label x
 gen label = subinstr(string(__b, "%5.3f") + " [" + string(__ll1, "%5.3f") + ", " + string(__ul1, "%5.3f") + "]", "-", "–", .) if __at<.
 gen x = .5 if __at<.
-`graph' || scatter __at x, msym(none) mlab(label) mlabcolor(black) mlabsize(vsmall) mlabpos(9) xscale(range(-.2 .5)) xlab(-.3(.1).1) xline(0, lcolor(gs10) lpat(solid)) xsize(5.5) ysize(5) name(cic, replace)
+`graph' || scatter __at x, msym(none) mlab(label) mlabcolor(black) mlabsize(7pt) mlabpos(9) xscale(range(-.2 .5)) xlab(-.3(.1).1) xline(0, lcolor(gs10) lpat(solid)) xsize(5.5) ysize(5) name(cic, replace)
 graph save Public\Output\cic, replace
+
 esttab cic? using Public\Output\cic.rtf, replace rename(q9 90 q8 80 q7 70 q6 60 q5 50 q4 40 q3 30 q2 20 q1 10) order(90 80 70 60 50 40 30 20 10) nogaps nomtitle msign("–") b(3) se(3) nostar ///
                            stats(constant_0 constant_m stoch_dom_pos stoch_dom_neg, labels("No effect (p)" "Constant effect (p)" "All >0 (p)" "All <0 (p)") fmt(%4.2f)) fonttbl(\f0\fnil Cambria;)
+restore
+}
+
+
+***
+*** Jakiela diagnostic
+***
+{
+preserve
+keep if year==1995 & (young==1 | old==1)
+xi i.young|ninnew
+
+regress _IyouXninne_1 i.birthyr i.birthplnew i.birthyr#c.ch71new if lhwage<. [aw=wt]
+predict _T if e(sample), resid
+regress lhwage        i.birthyr i.birthplnew i.birthyr#c.ch71new if lhwage<. [aw=wt]
+predict _Y if e(sample), resid
+
+eststo untreated: reg _Y _T if !young [aw=wt], nocons
+eststo   treated: reg _Y _T if  young [aw=wt], nocons
+suest untreated treated, cluster(birthplnew)
+test [untreated_mean]_T = [treated_mean]_T  // test that two slopes are same
+
+collapse T=_IyouXninne_1 _T _Y (rawsum) wt [aw=wt], by(birthyr birthplnew)
+
+scatter _Y _T if T==0, msym(Oh) mcolor(%20) mlwidth(medthick) || ///
+scatter _Y _T if T!=0, msym(Oh) mcolor(%20) mlwidth(medthick) || ///
+lpoly   _Y _T if T==0 [aw=wt], bw(.5) pstyle(p1) || ///
+lpoly   _Y _T if T!=0 [aw=wt], pstyle(p2) bw(.5) || ///
+lfit    _Y _T if T==0 [aw=wt], pstyle(p1) || ///
+lfit    _Y _T if T!=0 [aw=wt], pstyle(p2) ///
+  legend(order(2 1) cols(1) label(2 "Age 2{&minus}6 in 1974") label(1 "Age 12{&minus}17 in 1974") ring(0) pos(8) region(style(none))) ///
+  scheme(plottig) xtitle(Residualized treatment) ytitle(Residualized log hourly wage) graphregion(margin(zero))
+
 restore
 }
 
