@@ -268,6 +268,7 @@ foreach depvar in primary yeduc part lhwage IS lwage _lwage {
 restore
 }
 
+
 ***
 *** replicate most of original
 ***
@@ -497,12 +498,12 @@ gen potexp = max(0, age - yeduc - 7)
 gen _yeduc = floor((yeduc - 1) / 3) + (yeduc==0) - (yeduc>18)
 
 colorpalette viridis, n(6) range(.9 0) saturate(.5) nograph
-twoway lpoly lhwage age if _yeduc== 0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
-       lpoly lhwage age if _yeduc== 1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
-       lpoly lhwage age if _yeduc== 2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
-       lpoly lhwage age if _yeduc== 3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
-       lpoly lhwage age if _yeduc== 4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
-       lpoly lhwage age if _yeduc== 5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium) || if year==1995 & age>=15 & age<=65, ///
+twoway lpoly lhwage age if _yeduc==0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
+       lpoly lhwage age if _yeduc==1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
+       lpoly lhwage age if _yeduc==2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
+       lpoly lhwage age if _yeduc==3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
+       lpoly lhwage age if _yeduc==4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
+       lpoly lhwage age if _yeduc==5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium) || if year==1995 & age>=15 & age<=65, ///
        xtitle(Age) ytitle("Hourly wage (rupiah)") graphregion(margin(zero)) ///
        legend(on order(6 5 4 3 2 1) label(1 "0–3 years") label(2 "4–6 years")  label(3 "7–9 years") label(4 "10–12 years") label(5 "13–15 years") label(6 "16+ years of schooling") cols(1) pos(11) ring(0) margin(zero) region(margin(zero) style(none) lstyle(none))) ///
        ylab(`=ln(500)' "500" `=ln(1000)' "1,000" `=ln(2000)' "2,000" `=ln(3000)' "3,000" `=ln(4000)' "4,000", nogrid) xlab(15(10)65, nogrid) scheme(plottig) name(MincerAge, replace)
@@ -514,12 +515,12 @@ gen hwage = exp(lhwage)
 table age _yeduc [aw=wt] if year==1995 & age>=15 & age<=65, stat(mean hwage)
 
 colorpalette viridis, n(6) range(.8 0) saturate(1) nograph
-twoway lpoly hwage age if _yeduc== 0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc== 1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc== 2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc== 3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc== 4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc== 5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium) || if year==1995 & age>=15 & age<=65, ///
+twoway lpoly hwage age if _yeduc==0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium) || if year==1995 & age>=15 & age<=65, ///
        xtitle(Age, size(medium)) ytitle("Hourly wage (rupiah)", size(medium)) graphregion(margin(zero)) ///
        legend(on size(medium) order(6 5 4 3 2 1) label(1 "0–3 years") label(2 "4–6 years")  label(3 "7–9 years") label(4 "10–12 years") label(5 "13–15 years") label(6 "16+ years of schooling") cols(1) pos(11) ring(0) margin(zero) region(margin(zero) style(none) lstyle(none))) ///
        xlab(15(10)65, nogrid labsize(medium)) ylab(, labsize(medium)) scheme(plottig)
@@ -527,12 +528,12 @@ graph set window fontface Cambria
 graph export "Public\Output\Mincer4.4 left.png", replace width(2680) height(1552)
 
 colorpalette viridis, n(6) range(.9 0) saturate(.5) nograph
-twoway lpoly lhwage potexp if _yeduc== 0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
-       lpoly lhwage potexp if _yeduc== 1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
-       lpoly lhwage potexp if _yeduc== 2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
-       lpoly lhwage potexp if _yeduc== 3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
-       lpoly lhwage potexp if _yeduc== 4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
-       lpoly lhwage potexp if _yeduc== 5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium) || if year==1995 & potexp<=45, ///
+twoway lpoly lhwage potexp if _yeduc==0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
+       lpoly lhwage potexp if _yeduc==1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
+       lpoly lhwage potexp if _yeduc==2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
+       lpoly lhwage potexp if _yeduc==3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
+       lpoly lhwage potexp if _yeduc==4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
+       lpoly lhwage potexp if _yeduc==5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium) || if year==1995 & potexp<=45, ///
        xtitle(Years of potential experience) yscale(off fill) graphregion(margin(zero)) ///
        legend(off) ///
        xlab(0(5)45, nogrid) ylab(,nogrid) scheme(plottig) name(MincerExp, replace) nodraw
