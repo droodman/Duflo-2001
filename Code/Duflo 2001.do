@@ -1,4 +1,4 @@
-* dependencies: ivreg2, xtivreg2, ranktest, ftools, reghdfe, boottest, estout, coefplot, blindschemes, palettes, moremata, cmp, and, cic, and qrprocess
+* dependencies: ivreg2, xtivreg2, ranktest, ftools, reghdfe, boottest, estout, coefplot, blindschemes, palettes, moremata, cmp, cic, and qrprocess
 * all are from SSC except the last two are from https://sites.google.com/site/blaisemelly/home/computer-programs/cic_stata
 
 global source95 NBER  // source for SUPAS 1995: should be NBER or IPUMS
@@ -548,7 +548,7 @@ eststo IS05     : reg IS     c.age74##c.age74 c.yeduc##c.yeduc c.age74#c.yeduc [
 esttab lhwage95 IS95 IS05 using "Public\Output\wage compression.rtf", replace b(a2) se(a2) nonumber nocons nostar stats(N, fmt(%7.0fc)) msign("–") nogaps fonttbl(\f0\fnil Cambria;)
 esttab lhwage95 lhwage953 lhwage954, varwidth(30)  // quadratic vs cubic model, not reported in text
 
-regress lhwage ibn.age age#c.yeduc if year==1995 [pw=wt], nocons cluster(birthplnew) // Slopes of linear fits of log hourly wage to years of schooling, by age
+regress lhwage ibn.age age#c.yeduc if year==1995 [pw=wt], nocons cluster(birthplnew)  // Slopes of linear fits of log hourly wage to years of schooling, by age
 coefplot, keep(*age#c.yeduc) rename(([0-9]+)[ob]?.age#c.yeduc = \1, regex) vertical omitted at(_coef) ///
           xline(23 45, lpat(dash)) text(0 23 "Age 2 in 1974", place(se)) text(0 45 "Age 24 in 1974", place(se)) ///
           xtitle(Age in 1995) graphregion(margin(zero)) xlab(15(10)65) name(gradlhwageyeduc1995, replace)
@@ -699,7 +699,7 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
 
         local kinkpt = segmentshift + _b[c.t1#c.ninnew] * (24 - 12)
 
-        scalar b = _b[t2#c.ninnew] * 8  // slope increase * maroon years
+        scalar b = _b[t2#c.ninnew] * 8  // slope increase * mean years
         test t2#c.ninnew
         scalar se = abs(b) / sqrt(r(F))
         local caption: display "{it:{&tau}} = " (b<0)*"{&minus}" %4.3f abs(b) " (" %4.3f se ")"
@@ -709,9 +709,9 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
                   `=cond("`depvar'"=="IS", `"xtitle("") xlab(2(2)24, nogrid)"', "xlab(, nolab notick nogrid) xscale(off fill)")' ///
                   graphregion(margin(zero)) ///
                   name(RF`depvar'`wt'y`y', replace) nodraw ///
-               || scatteri 0 2, mstyle(p1) msym(smcircle) msize(small) /// // zero for base year
+               || scatteri 0 2, mstyle(p1) msym(smcircle) msize(small) ///  // zero for base year
                || scatteri `kinkpt' 12, msym(diamond) mcolor(maroon) ///
-               || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) /// // fake plot to set up extra axes with range [-1,1] for placing text
+               || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) ///  // fake plot to set up extra axes with range [-1,1] for placing text
                     text(.95 -1 "`caption'", xaxis(2) yaxis(2) place(e) color(black))
       }
     }
@@ -764,9 +764,9 @@ forvalues y=5/5 {
     test c.t2#c.ninnew
     local caption: display "{it:p} = " %4.2f r(p)
     $graph || scatteri `segmentfn', lcolor(maroon) lwidth(medium) mstyle(p1) msym(diamond) msize(small) mcolor(maroon) lpat(solid) recast(connected) ylab(, format(%3.2f) nogrid) graphregion(margin(zero)) ///
-           || scatteri 0 2, mstyle(p1) msym(square) msize(medium) mcolor(blue) /*mcolor("68 82 125")*/ /// // zero for base year
+           || scatteri 0 2, mstyle(p1) msym(square) msize(medium) mcolor(blue) /*mcolor("68 82 125")*/ ///  // zero for base year
            || scatteri `kinkpt' 12, msym(diamond) mcolor(maroon) ///
-           || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) /// // fake plot to set up extra axes with range [-1,1] for placing text
+           || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) ///  // fake plot to set up extra axes with range [-1,1] for placing text
                 text(.95 -1 "`caption'", xaxis(2) yaxis(2) place(e) color(black) size(medium))
     graph export "Public\Output\\`depvar'`years'blog.png", replace width(2680) height(1552)
   }
@@ -834,7 +834,7 @@ forvalues c=1/1 {
                   graphregion(margin(zero)) ///
                   name(RF`depvar'`wt'y`y', replace) nodraw ///
                || scatteri 0 2, mstyle(p1) msym(smcircle) msize(small) /// // zero for base year
-               || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) /// // fake plot to set up extra axes with range [-1,1] for placing text
+               || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) ///  // fake plot to set up extra axes with range [-1,1] for placing text
                     text(1 -1 "`caption1'", xaxis(2) yaxis(2) place(e) color(blue)) text(1 -.1 "`caption2'", xaxis(2) yaxis(2) place(e) color(maroon))
       }
     }
