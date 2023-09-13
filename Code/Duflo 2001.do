@@ -19,7 +19,7 @@ cap log using Public\Output\duflo2001, text replace
 *** Data prep
 ***
 {
-  cap noi odbc load, clear dsn("Duflo 2001") table("Regency-level vars")
+  cap noi odbc load, clear dsn("Duflo 2001 old") table("Regency-level vars")
   if !_rc {
     gen nen71new = 1 - en71new
     gen nen71newish = 1 - en71newish
@@ -67,7 +67,7 @@ cap log using Public\Output\duflo2001, text replace
 
   if "$source95" != "NBER" {
     #delimit;
-    odbc load, clear dsn("Duflo 2001") exec("
+    odbc load, clear dsn("Duflo 2001 old") exec("
       SELECT YEAR as year, RELATE as relate, 2-URBAN as urban, YRSCHOOL, EDUCATT, BIRTHYR as birthyr, PERWT as wt, INDGEN as indgen, OCC as occ, CLASSWK as classwk, BPLPROV as birthprov, BPLREG as birthpl, birthlat, birthlong
       FROM dbo.[IPUMS-based dataset]
       where year=2005 and Male=1 and BPLPROV<>96
@@ -94,7 +94,7 @@ cap log using Public\Output\duflo2001, text replace
 
     * SAKERNAS
     #delimit;
-    odbc load, clear dsn("Duflo 2001") exec("
+    odbc load, clear dsn("Duflo 2001 old") exec("
       SELECT B5P1A, B5P6B, 2010-UMUR as birthyr, WEIGHT as wt, B5P12A+B5P12B as wage, ID1995A_BPLREG AS birthpl, floor(ID1995A_BPLREG/100) as birthprov
       FROM  [SAKERNAS 2010] LEFT OUTER JOIN
                [SUPAS 1995-2010 regency concordance] ON respl = [SUPAS 1995-2010 regency concordance].regy2010
@@ -128,7 +128,7 @@ cap log using Public\Output\duflo2001, text replace
     
     * SUSENAS
     #delimit;
-    odbc load, clear dsn("Duflo 2001") exec("
+    odbc load, clear dsn("Duflo 2001 old") exec("
       SELECT year, c2.ID1995A_BPLREG AS birthpl, B5_TL1 AS birthprov, B5R15, B5R29, B5R28B, year - UMUR AS birthyr, FWT_TAHUN AS wt, HB as relate
       FROM  [SUPAS95-geo2_id1995 regency concordance] AS c2 RIGHT OUTER JOIN
                [SUPAS 1995-2010 regency concordance] AS c1 ON c2.ID1995A_BPLREG = c1.ID1995A_BPLREG RIGHT OUTER JOIN
@@ -161,7 +161,7 @@ cap log using Public\Output\duflo2001, text replace
   * 1995 data
 
   if "$source95"=="IPUMS" {
-    odbc load, clear dsn("Duflo 2001") exec("select RELATE, YRSCHOOL, 2-URBAN as urban, ID1995A_BIRTHYR as birthyr, PERWT, BPLREG, BPLPROV, OCC, INDGEN, CLASSWK, SALCASH, SALGOODS, HRSWORK, birthlat, birthlong from [IPUMS-based dataset] where Male=1 and YEAR=1995")
+    odbc load, clear dsn("Duflo 2001 old") exec("select RELATE, YRSCHOOL, 2-URBAN as urban, ID1995A_BIRTHYR as birthyr, PERWT, BPLREG, BPLPROV, OCC, INDGEN, CLASSWK, SALCASH, SALGOODS, HRSWORK, birthlat, birthlong from [IPUMS-based dataset] where Male=1 and YEAR=1995")
     ren (YRSCHOOL RELATE PERWT BPLREG BPLPROV OCC INDGEN CLASSWK) (yeduc relate weight birthpl birthprov occ indgen classwk)  // match names in Duflo data set
     replace yeduc=11 if yeduc==93  // 9 people marked as being in 4th year of vocational senior high school; call it 11 years
     gen wage = SALCASH + SALGOODS
@@ -680,7 +680,7 @@ forvalues c=1/1 /*0/3*/ {  // control sets, from none to full
       forvalues d=1/`Ndepvars' {
         local depvar: word `d' of `depvars'
 
-        eststo RF`depvar'c`c'`wt'y`y'dummies: reghdfe `depvar' i(1950/`=1974-2-1')bn.birthyr#c.ninnew `wtexp' if inlist(year,`years'), absorb(birthplnew birthyr##c.(`controls')  `=cond(`y'==5,"year","")') cluster(birthplnew)  // RF = reduced form
+        eststo RF`depvar'c`c'`wt'y`y'dummies: reghdfe `depvar' i(1950/`=1974-2-1')bn.birthyr#c.ninnew `wtexp' if inlist(year,`years'), absorb(birthplnew birthyr##c.(`controls') `=cond(`y'==5,"year","")') cluster(birthplnew)  // RF = reduced form
         est save Public\Output\RF`depvar'c`c'`wt'y`y'dummies, replace
 
         mata dots = st_matrix("e(b)")'; dots[length(dots)] = 0  // average of dots in plot, including base level's 0
