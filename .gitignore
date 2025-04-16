@@ -1,2 +1,9 @@
 
 *.stswp
+.DS_Store
+Code/Continuation rates.do
+Code/Extract survey data.do
+Code/Response to DJL.do
+Code/time series.do
+Code/TWFE.do
+Output/Thumbs.db

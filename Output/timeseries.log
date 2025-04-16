@@ -1,0 +1,66 @@
+
+. 
+end of do-file
+
+. do "/var/folders/8m/329fxyp95gd13zzs5m3kd3400000gn/T//SD78719.000000"
+
+. cwf default
+
+. use "SUSENAS all", clear
+
+. 
+end of do-file
+
+. do "/var/folders/8m/329fxyp95gd13zzs5m3kd3400000gn/T//SD78719.000000"
+
+. gen int birthyr = year - age
+(26 missing values generated)
+
+. gen byte age74 = 1974 - birthyr
+(26 missing values generated)
+
+. gen byte yeducp = min(6, yeduc)
+
+. gen byte yeducls = max(yeduc,9) if yeduc>=6
+(11,008,044 missing values generated)
+
+. gen byte yeducus = yeduc if yeduc>=9
+(17,788,644 missing values generated)
+
+. 
+end of do-file
+
+. local kinkpt 12
+
+. gen byte t1 = `kinkpt' - age74
+(26 missing values generated)
+
+. gen byte t2 = max(0, t1)
+
+. reg yeduc t? if inrange(age74, 12-5, 12+5) & female==`f' [pw=wt]
+pw=wt invalid name
+r(198);
+
+. reg yeduc t? [pw=wt] if inrange(age74, 12-5, 12+5) & female==`f'
+invalid syntax
+r(198);
+
+. reg yeduc t? [pw=wt] if inrange(age74, 12-5, 12+5) & female==1
+(sum of wgt is 410,771,038.4814)
+
+Linear regression                               Number of obs     =  1,863,781
+                                                F(2, 1863778)     =    9257.56
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0168
+                                                Root MSE          =     4.1596
+
+------------------------------------------------------------------------------
+             |               Robust
+       yeduc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          t1 |   .1236212   .0029216    42.31   0.000     .1178949    .1293475
+          t2 |   .0945594   .0050975    18.55   0.000     .0845685    .1045504
+       _cons |   6.156793   .0079586   773.60   0.000     6.141194    6.172391
+------------------------------------------------------------------------------
+
+. exit, clear
