@@ -1,40 +1,32 @@
 * dependencies: ivreg2, xtivreg2, ranktest, boottest, reghdfejl, julia, estout, coefplot, blindschemes, palettes, colrspace, moremata, cic, and qrprocess
 * all are from SSC except the last two are from https://sites.google.com/site/blaisemelly/home/computer-programs/cic_stata
 
+cap cd "D:/OneDrive - Open Philanthropy Project"
+cap cd "/Users/davidroodman/Library/CloudStorage/OneDrive-OpenPhilanthropyProject"
+cap cd "W:/"
+cd "Education/Duflo 2001"
 
-global source95 NBER  // source for SUPAS 1995: should be NBER or IPUMS
-
-global procs 10  // ideally, number of performance cores on CPU
+global source95 NBER  // if "NBER", use primary data owned by NBER; otherwise use processed file for birth years 1950-72, https://github.com/NathanLazarus/Duflo2001/blob/main/inpresdata.dta
 
 cap set scheme plotplain
 set odbcdriver ansi
 
 if c(os)=="Windows" {
-	cap set processors 6
+	global procs 6  // set to number of performance cores; will slightly affect bootstrapped Hausman tests
 	global font LM Roman 9
 }
 else {
-	cap set processors 8
+	global procs 12  // set to number of performance cores; will slightly affect bootstrapped Hausman tests
 	global font Latin Modern Roman
 	global odbc opts u(sa) p(VeryStr0ngP@ssw0rd)
 }
 
-cap cd "D:/OneDrive - Open Philanthropy Project"
-cap cd "/Users/davidroodman/Library/CloudStorage/OneDrive-OpenPhilanthropyProject"
-cap cd "W:\"
-cd "Education/Duflo 2001"
+cap set processors $procs
 graph set window fontface "$font"  // https://www.1001fonts.com/latin-modern-roman-font.html?
 est drop _all
 
 cap log close
 cap log using Public/Output/duflo2001, text replace
-set tracedepth 1
-* set trace on
-
-cap program drop ereturnpost
-program define ereturnpost, eclass
-  ereturn post `0'
-end
 
 global age74kink 12
 global retireage 56
@@ -105,149 +97,80 @@ global retireage 56
   gen totin = round(nin * ch71/1000)
   scatter totin ch71 if recp==0 || scatter totin ch71 if recp==1 || lfit totin ch71, scheme(plottig) legend(off)
 
-  * correlates of treatment
-  gen byte urban = mod(birthpl,100)>=70  // not sure if this is a perfect indicator
-  local correlates len71new ldens71 poor java urban birthlat birthlong
-  forvalues i=1/2 {
-    local   depvar: word `i' of lninnew lch71new
-    local indepvar: word `i' of lch71new
-    local _correlates `indepvar' `correlates'
-    eststo `depvar'MV: reg `depvar' `_correlates', robust
-    scalar R2 = e(r2_a)
-    cap mat drop b
-    cap mat drop V
-    cap mat drop R2a
-    cap mat drop incR2
-    foreach var in `_correlates' {
-      reg `depvar' `var' if e(sample), robust
-      mat b = nullmat(b), e(b)[1,1]
-      mat V = nullmat(V), e(V)[1,1]
-      mat R2a = nullmat(R2a), e(r2_a)
+  * SUPAS 2005
+  cap noi odbc load, $odbcopts clear dsn("Duflo 2001") exec("SELECT * FROM dbo.[IPUMS-based dataset (SUPAS)] where year=2005 and female=0 and birthprov<>96")
+  if _rc use SUPAS05, clear
+  else {
+    recode educatt (11=1) (12=2) (13=3) (14=4) (15=5) (16 17=6) ///  // primary school
+                   (21=7) (22=8) (23 27=9) (31=10) (32=11) (33=12)         (37=12) ///  // junior & senior
+                                           (41=10) (42=11) (43=12) (44=13) (47=12) ///  //          senior, vocational
+                   (51=13) (52 57=14) ///  // Diploma I/II
+                   (61=13) (62=14) (63 67=15) ///  // Academy/Diploma III
+                   (71=13) (72=14) (73=15) (74=16) (75=17) (76=18) (77=17) ///  // University/Diploma IV
+                                                           (86=18) (87=17) ///  // Postgraduate-S2/S3 -- not broken out in 1995
+                   (99=0) (.=0), gen(yeduc)
 
-      reg `depvar' `:list _correlates - var' if e(sample)
-      mat incR2 = nullmat(incR2), R2-e(r2_a)
-    }
-    mat V = diag(V)
-    mat colnames b = `_correlates'
-    mat colnames V = `_correlates'
-    mat rownames V = `_correlates'
-    mat colnames R2a = `_correlates'
-    mat colnames incR2 = `_correlates'
-    ereturnpost b V, obs(`e(N)')
-    estadd matrix R2a = R2a
-    estadd matrix R2a = incR2: `depvar'MV
-    eststo `depvar'BV
-  }
-  esttab lninnewBV lninnewMV lch71newBV lch71newMV using Public/Output/correlates.rtf, replace cells(b(fmt(2)) se(fmt(2) par) R2a(fmt(2) par([ ]))) stat(r2_a N, fmt(2 0)) nocons nogap nonotes nonumbers nomtitles nolines msign("–")
-
-
-  * post-1995 data
-
-  noi {
-    * SUPAS 2005
-    cap noi odbc load, $odbcopts clear dsn("Duflo 2001") exec("SELECT * FROM dbo.[IPUMS-based dataset (SUPAS)] where year=2005 and female=0 and birthprov<>96")
-    if _rc use SUPAS05, clear
-    else {
-      replace occ = floor(occ/10)  // 2005 4-digit classification => 1995 3-digit
-      recode educatt (11=1) (12=2) (13=3) (14=4) (15=5) (16 17=6) ///  // primary school
-                     (21=7) (22=8) (23 27=9) (31=10) (32=11) (33=12)         (37=12) ///  // junior & senior
-                                             (41=10) (42=11) (43=12) (44=13) (47=12) ///  //          senior, vocational
-                     (51=13) (52 57=14) ///  // Diploma I/II
-                     (61=13) (62=14) (63 67=15) ///  // Academy/Diploma III
-                     (71=13) (72=14) (73=15) (74=16) (75=17) (76=18) (77=17) ///  // University/Diploma IV
-                                                             (86=18) (87=17) ///  // Postgraduate-S2/S3 -- not broken out in 1995
-                     (99=0) (.=0), gen(yeduc)
-    //   replace yeduc = yeduc - 1 if educatt==57 & occ==13  // 1 less year for Diploma I/II in teaching; go by occupation for lack of study field in 2005
-
-      gen birthyr = year - age
-      keep year urban yeduc birthyr wt indgen occ birthpl classwk
-      gen source = "SUP"
-      compress
-      save SUPAS05, replace
-    }
-
-    * SAKERNAS
-    cap noi odbc load, $odbcopts clear dsn("Duflo 2001") exec("select * from [SAKERNAS dataset] where female=0 and floor(birthpl/100)<>54 and year in (2017,2018,2019,2020,2023)")  // 2022 has birthpl too but usually missing
-    if _rc use SAKERNAS1723, clear
-    else {
-      keep year wt birthpl urban classwk wage hrswork age female edattain
-      gen birthyr = year - age
-      recode edattain (1=3) (2/4=6) (5/7=9) (8/11=12) (12=14) (13=15) (14=17) (15=18) (16=19) if inrange(year,2016,2020)
-      recode edattain (1=3) (2=6) (3=9) (4/6=12) (7=14) (8 9=17) (10 11=18) (12=19) if inrange(year,2022,2023)
-      keep year birthyr wt birthpl wage hrswork
-      gen source = "SAK"
-      compress
-      save SAKERNAS1723, replace
-    }
-
-    * SUSENAS
-    cap noi odbc load, $odbcopts clear dsn("Duflo 2001") exec("select * from [SUSENAS dataset] where female=0")
-    if _rc use SUSENAS1119, clear
-    else {
-      gen birthyr = year - age
-      replace wage = . if !inlist(classwk,4,5) | wage < 20000  // SUSENAS 2012 alone appears to trim observations below 20000; seems to good to do, and need consistency
-    
-      * for consistency convert to SUSENAS 2019 highest grade attended (R615) typology--most detailed
-      recode edlevatt (3=1) (1=2) (2=4) (6=5) (4=6) (5=7) (10=8) (7=9) (8=12) (9=13) (11=15) (12=16) (13=17) (14=20) if inrange(year,2011,2014)
-      replace edlevatt = edlevatt + 1 if edlevatt>=19 & inrange(year,2017,2018)  // inserted new "profesi" category (19)
-      recode edlevatt (1/4 = 0) (5/7 = 6) (8/14 = 9) (15/21 = 12), gen(yeduc)  // years of schooling *before* each schooling level
-      mat completionyears = 6,6,6,6, 3,3,3, 3,3,3,3,3,3,3, 2,3,5,5,1,7,7  // max years in schooling levels: table yeduc gradeatt if gradeatt<8
-      replace yeduc = yeduc + cond(gradeatt<8, gradeatt, completionyears[1, edlevatt]) if edlevatt
-   
-      keep year yeduc birthyr wt birthpl urban classwk wage hrswork
-      gen source = "SUS"
-      compress
-      save SUSENAS1119, replace
-    }
+    gen birthyr = year - age
+    keep year urban yeduc birthyr wt indgen birthpl classwk
+    compress
+    save SUPAS05, replace
   }
 
+  * SUSENAS
+  cap noi odbc load, $odbcopts clear dsn("Duflo 2001") exec("select * from [SUSENAS dataset] where female=0")
+  if _rc use SUSENAS1119, clear
+  else {
+    gen birthyr = year - age
+    replace wage = . if !inlist(classwk,4,5) | wage < 20000  // SUSENAS 2012 alone appears to trim observations below 20000; seems to good to do, and need consistency
+  
+    * for consistency convert to SUSENAS 2019 highest grade attended (R615) typology--most detailed
+    recode edlevatt (3=1) (1=2) (2=4) (6=5) (4=6) (5=7) (10=8) (7=9) (8=12) (9=13) (11=15) (12=16) (13=17) (14=20) if inrange(year,2011,2014)
+    replace edlevatt = edlevatt + 1 if edlevatt>=19 & inrange(year,2017,2018)  // inserted new "profesi" category (19)
+    recode edlevatt (1/4 = 0) (5/7 = 6) (8/14 = 9) (15/21 = 12), gen(yeduc)  // years of schooling *before* each schooling level
+    mat completionyears = 6,6,6,6, 3,3,3, 3,3,3,3,3,3,3, 2,3,5,5,1,7,7  // max years in schooling levels: table yeduc gradeatt if gradeatt<8
+    replace yeduc = yeduc + cond(gradeatt<8, gradeatt, completionyears[1, edlevatt]) if edlevatt
+ 
+    keep year yeduc birthyr wt birthpl urban classwk wage hrswork
+    compress
+    save SUSENAS1119, replace
+  }
 
   * 1995 data
+  if "$source95"=="NBER" {
+    use supp95_04 if p503==1 & p509prop!=96, clear  // male, not born abroad
+    ren (p605 p606 p608 p504thn p509prop kp) (hrswork occ classwk birthyr birthprov urban)
 
-  if "$source95"=="IPUMS" {
-    odbc load, $odbcopts clear dsn("Duflo 2001") exec("select * from [IPUMS-based dataset] where Male=1 and YEAR=1995")
-    replace yeduc=11 if yeduc==93  // 9 people marked as being in 4th year of vocational senior high school; call it 11 years
-    gen double wage = (SALCASH + SALGOODS) / 1000
-    ren HRSWORK hrswork
+    gen int year = 1995
+    destring prop kab urban, replace
+    replace urban = 2 - urban  // place of residence, not birth
+    gen int birthpl = birthprov * 100 + p509kab
+    gen wage = p609uang + p609brng
+    
+    recode p517 (1 = 0) (2 4 = 6) (3 5 = 9) (6 7 8 = 12) (99 . = 0), gen(yeduc)  // years of schooling *before* each schooling level
+    mat completionyears = 6, 3, 3, 3, 3, 2, 3, 5  // max years in schooling levels; used when p518=8, meaning "completed"
+    replace yeduc = yeduc + cond(p518<8, p518, completionyears[1, p517] - (p517==6 & p520==2)) if p518<.  // 1 year less for completing Diploma I/II in teaching
   }
   else {
-    if "$source95" == "NBER" {
-      use supp95_04 if p503==1 & p509prop!=96, clear  // male, not born abroad
-      ren (p605 p606 p608 p504thn p509prop kp) (hrswork occ classwk birthyr birthprov urban)
-
-      gen int year = 1995
-      destring prop kab urban, replace
-      replace urban = 2 - urban  // place of residence, not birth
-      gen int birthpl = birthprov * 100 + p509kab
-      gen wage = p609uang + p609brng
-      
-      recode p517 (1 = 0) (2 4 = 6) (3 5 = 9) (6 7 8 = 12) (99 . = 0), gen(yeduc)  // years of schooling *before* each schooling level
-      mat completionyears = 6, 3, 3, 3, 3, 2, 3, 5  // max years in schooling levels; used when p518=8, meaning "completed"
-      replace yeduc = yeduc + cond(p518<8, p518, completionyears[1, p517] - (p517==6 & p520==2)) if p518<.  // 1 year less for completing Diploma I/II in teaching
-    }
-    else {
-      use inpresdata, clear
-      replace birthpl = p509pro * 100 + p509kab
-      ren (p608 p504thn) (classwk birthyr)
-      gen occ = .
-      replace urban = .
-      gen int year = 1995
-    }
-
-    replace birthyr = birthyr + 1900
-    ren weight wt
-    recode p607 (11 12 13 14 15 16 17 18 = 10) (21 22 23 24 25 26 = 20) ///  // recode to IPUMS INDGEN
-                (31 32 33 34 35 36 37 38 39 = 30) (41=40) (42 43=40) (51 52=50) (61 62=60 ) (63 64 = 70) ///
-                (71 72 73 74 75 = 80) (81 82 = 90) (83=111) (91=100) (92=40) (93=114) ///
-                (94=114) (96=120) (98=999) (99=0), gen(indgen)
-
-    recode birthpl (7271=7204)  // Duflo (2001) recoding
+    use inpresdata, clear  // https://github.com/NathanLazarus/Duflo2001/blob/main/inpresdata.dta
+    replace birthpl = p509pro * 100 + p509kab
+    ren (p608 p504thn) (classwk birthyr)
+    gen int year = 1995
+    gen hrswork = wage / exp(lhwage) / 4
   }
+  
+  replace birthyr = birthyr + 1900
+  ren weight wt
+  recode p607 (11 12 13 14 15 16 17 18 = 10) (21 22 23 24 25 26 = 20) ///  // recode to IPUMS INDGEN
+              (31 32 33 34 35 36 37 38 39 = 30) (41=40) (42 43=40) (51 52=50) (61 62=60 ) (63 64 = 70) ///
+              (71 72 73 74 75 = 80) (81 82 = 90) (83=111) (91=100) (92=40) (93=114) ///
+              (94=114) (96=120) (98=999) (99=0), gen(indgen)
 
-  keep year urban yeduc birthyr wt indgen occ birthpl classwk wage hrswork
+  recode birthpl (7271=7204)  // Duflo (2001) recoding
+
+  keep year urban yeduc birthyr wt indgen birthpl classwk wage wage hrswork
   compress
-  gen source = "SUP"
-  append using SUPAS05 SAKERNAS1723 SUSENAS1119
+
+  append using SUPAS05 SUSENAS1119
   drop if floor(birthpl/100) == 54  // East Timor--gained independence
 
   merge m:1 birthpl using "Public/Regency-level vars/Regency-level vars", nogen update
@@ -273,40 +196,14 @@ global retireage 56
   gen lhwage = ln(wage / 4 / hrswork)
   gen byte part = lhwage<. | (year==2005 & classwk==4)  // labor force participation
 
-  regress lhwage c.age74##c.age74##c.age74##c.age74##(occ indgen urban) [aw=wt] if year==1995 // imputation regression
-  predict double IS if part  // Income Score
-  gen double _lhwage = cond(lhwage<., lhwage, cond(lwage<., lwage, IS))  // preferred wage var from each survey
-
   label var yeduc "Years of schooling"
   label var primary "Primary completion"
   label var part "Employment"
   label var lwage "Log monthly wages"
   label var lhwage "Log hourly wage"
-  label var IS "Imputed log hourly wage"
-  label var _lhwage "Log hourly wage"
   
   save analysisdata, replace
 }  // end data prep
-
-
-***
-*** cross-survey, regency-level correlations in key variables
-***
-{
-preserve
-gen _year = cond(year<2011, year, 2014)
-collapse ninnew ch71new en71new year part yeduc primary lhwage lwage IS (rawsum) wt [aw=wt] if old | young, by(young birthplnew _year)
-gen _lhwage = cond(inlist(year,1995,2010), lhwage, cond(year==2005, IS, lwage))
-reshape wide ninnew ch71new en71new year part yeduc primary lhwage lwage IS _lhwage wt, i(birthplnew young) j(_year)
-
-foreach depvar in primary yeduc part lhwage IS lwage _lhwage {
-  graph matrix `depvar'*, scheme(plotplain) msym(Oh) msize(tiny) name(mat`depvar', replace)
-  graph matrix `depvar'*, scheme(plotplain) msym(Oh) msize(tiny) name(matby`depvar', replace) by(young)
-  pwcorr `depvar'*
-  bysort young: pwcorr `depvar'*
-}
-restore
-}
 
 
 ***
@@ -551,8 +448,8 @@ scalar placscale = ($oldmax+$oldmin-$youngmax-$youngmin)/($reallyoldmax+$reallyo
 scalar tauscale = $age74kink - ($youngmax-$youngmin)  // factor to multiply kink estimate by to get tau: 8
 
 forvalues y=1/3 {
-  local years: word `y' of 1995,1995 2005,2012 1995,2012
-  local yearname: word `y' of 1995 Post-1995 All
+  local years   : word `y' of 1995,1995 2005,2012 1995,2012
+  local yearname: word `y' of 1995      Post-1995    All
   replace       old = inrange(age74,      $oldmin      ,$oldmax)
   replace reallyold = inrange(age74,$reallyoldmin,$reallyoldmax)
 
