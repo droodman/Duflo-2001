@@ -1,4 +1,4 @@
-* dependencies: ivreg2, xtivreg2, ranktest, boottest, reghdfejl, julia, estout, coefplot, blindschemes, palettes, colrspace, moremata, cic, and qrprocess
+* dependencies: ivreg2, xtivreg2, ranktest, boottest, reghdfejl, julia, estout, coefplot, blindschemes, palettes, colrspace, moremata, xlincom, cic, and qrprocess
 * all are from SSC except the last two are from https://sites.google.com/site/blaisemelly/home/computer-programs/cic_stata
 
 cap cd "D:/OneDrive - Open Philanthropy Project"
@@ -302,33 +302,24 @@ restore
 
 
 ***
-*** 2x2 DID
+*** ~ Mincer 1974, chart 4.4
 ***
 {
 preserve
-keep if year==1995 & lhwage<.
-cap erase Public/Output/DID2x2.rtf
-
-foreach depvar in yeduc lhwage {
-  eststo E`depvar'wt   : reg `depvar'  young##recp    if old | young     [aw=wt]
-  eststo E`depvar'newwt: reg `depvar'  young##recpnew if old | young     [aw=wt], cluster(birthplnew)
-  eststo P`depvar'wt   : reg `depvar'  old##recp      if reallyold | old [aw=wt]
-  eststo P`depvar'newwt: reg `depvar'  old##recpnew   if reallyold | old [aw=wt], cluster(birthplnew)
-  eststo E`depvar'wt   : reg `depvar'  young##recp    if old | young     [aw=wt]
-  eststo E`depvar'newwt: reg `depvar'  young##recpnew if old | young     [aw=wt], cluster(birthplnew)
-  eststo P`depvar'wt   : reg `depvar'  old##recp      if reallyold | old [aw=wt]
-  eststo P`depvar'newwt: reg `depvar'  old##recpnew   if reallyold | old [aw=wt], cluster(birthplnew)
-
-  esttab E`depvar'wt E`depvar'newwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.young#1.recp DID 1.young#1.recpnew DID)
-  esttab P`depvar'wt P`depvar'newwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.old#1.recp   DID 1.old#1.recpnew   DID)
-}
-eststo EWaldwt   : ivregress 2sls lhwage young recp    (yeduc = young#recp   ) if old | young     [aw=wt], small
-eststo EWaldnewwt: ivregress 2sls lhwage young recpnew (yeduc = young#recpnew) if old | young     [aw=wt], cluster(birthplnew) small
-eststo PWaldwt   : ivregress 2sls lhwage old recp      (yeduc = old#recp     ) if reallyold | old [aw=wt], small
-eststo PWaldnewwt: ivregress 2sls lhwage old recpnew   (yeduc = old#recpnew  ) if reallyold | old [aw=wt], cluster(birthplnew) small
-
-esttab EWaldwt EWaldnewwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc)
-esttab PWaldwt PWaldnewwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc)
+keep if age>=15 & age<56 & year==1995
+gen _yeduc = floor((yeduc - 1) / 3) + (yeduc==0) - (yeduc>18)
+gen hwage = exp(lhwage)
+colorpalette viridis, n(6) range(.8 0) saturate(1) nograph
+twoway lpoly hwage age if _yeduc==0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
+       lpoly hwage age if _yeduc==5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium)    ///
+       xtitle(Age, size(medium) margin(medium)) ytitle("Hourly wage (rupiah)", size(medium)) graphregion(margin(zero)) plotregion(fcolor(white)) ///
+       legend(on size(medium) order(6 5 4 3 2 1) label(1 "0–3 years") label(2 "4–6 years")  label(3 "7–9 years") label(4 "10–12 years") label(5 "13–15 years") label(6 "16+ years of schooling") cols(1) pos(11) ring(0) margin(zero) region(margin(zero) style(none) lstyle(none))) ///
+       xlab(15(10)55, nogrid labsize(medium)) ylab(, labsize(medium)) yscale(log) scheme(plottig)
+graph export "Public/Output/Mincer4.4 left.png", replace width(3000)
 restore
 }
 
@@ -400,26 +391,39 @@ restore
 
 
 ***
-*** ~ Mincer 1974, chart 4.4
+*** 2x2 DID
 ***
 {
 preserve
-keep if age>=15 & age<56 & year==1995
-gen _yeduc = floor((yeduc - 1) / 3) + (yeduc==0) - (yeduc>18)
-gen hwage = exp(lhwage)
-colorpalette viridis, n(6) range(.8 0) saturate(1) nograph
-twoway lpoly hwage age if _yeduc==0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc==1 [aw=wt], bw(5) lcolor("`r(p2)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc==2 [aw=wt], bw(5) lcolor("`r(p3)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc==3 [aw=wt], bw(5) lcolor("`r(p4)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc==4 [aw=wt], bw(5) lcolor("`r(p5)'") lwidth(medium) || ///
-       lpoly hwage age if _yeduc==5 [aw=wt], bw(5) lcolor("`r(p6)'") lwidth(medium)    ///
-       xtitle(Age, size(medium) margin(medium)) ytitle("Hourly wage (rupiah)", size(medium)) graphregion(margin(zero)) plotregion(fcolor(white)) ///
-       legend(on size(medium) order(6 5 4 3 2 1) label(1 "0–3 years") label(2 "4–6 years")  label(3 "7–9 years") label(4 "10–12 years") label(5 "13–15 years") label(6 "16+ years of schooling") cols(1) pos(11) ring(0) margin(zero) region(margin(zero) style(none) lstyle(none))) ///
-       xlab(15(10)55, nogrid labsize(medium)) ylab(, labsize(medium)) yscale(log) scheme(plottig)
-graph export "Public/Output/Mincer4.4 left.png", replace width(3000)
+keep if year==1995 & lhwage<.
+cap erase Public/Output/DID2x2.rtf
+
+foreach depvar in yeduc lhwage {
+  eststo E`depvar'wt   : reg `depvar'  young##recp    if old | young     [aw=wt]
+  eststo E`depvar'newwt: reg `depvar'  young##recpnew if old | young     [aw=wt], cluster(birthplnew)
+  eststo P`depvar'wt   : reg `depvar'  old##recp      if reallyold | old [aw=wt]
+  eststo P`depvar'newwt: reg `depvar'  old##recpnew   if reallyold | old [aw=wt], cluster(birthplnew)
+
+  esttab E`depvar'wt E`depvar'newwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.young#1.recp DID 1.young#1.recpnew DID) fonttbl(\f0\fnil $font;)
+  esttab P`depvar'wt P`depvar'newwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.old#1.recp   DID 1.old#1.recpnew   DID) fonttbl(\f0\fnil $font;)
+}
+eststo EWaldwt   : ivregress 2sls lhwage young recp    (yeduc = young#recp   ) if old | young     [aw=wt], small
+eststo EWaldnewwt: ivregress 2sls lhwage young recpnew (yeduc = young#recpnew) if old | young     [aw=wt], cluster(birthplnew) small
+eststo PWaldwt   : ivregress 2sls lhwage old recp      (yeduc = old#recp     ) if reallyold | old [aw=wt], small
+eststo PWaldnewwt: ivregress 2sls lhwage old recpnew   (yeduc = old#recpnew  ) if reallyold | old [aw=wt], cluster(birthplnew) small
+
+esttab EWaldwt EWaldnewwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc) fonttbl(\f0\fnil $font;)
+esttab PWaldwt PWaldnewwt using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc) fonttbl(\f0\fnil $font;) 
 restore
 }
+
+
+* Store a scalar or (labeled) row vector as a regression estimate without standard errors. Destroys its argument.
+cap program drop myestpost
+program define myestpost, eclass
+  mat b = `1'
+  ereturn post b
+end
 
 
 ***
@@ -446,6 +450,7 @@ global reallyoldmin 18
 global reallyoldmax 24
 scalar placscale = ($oldmax+$oldmin-$youngmax-$youngmin)/($reallyoldmax+$reallyoldmin-$oldmax-$oldmin)  // factor to scale placebo effect by before comparison to experiment: 10.5/6.5
 scalar tauscale = $age74kink - ($youngmax-$youngmin)  // factor to multiply kink estimate by to get tau: 8
+ren wt _wt
 
 forvalues y=1/3 {
   local years   : word `y' of 1995,1995 2005,2012 1995,2012
@@ -453,120 +458,132 @@ forvalues y=1/3 {
   replace       old = inrange(age74,      $oldmin      ,$oldmax)
   replace reallyold = inrange(age74,$reallyoldmin,$reallyoldmax)
 
-  cap erase "Public/Output/RF`yearname'.rtf"
-  forvalues c=1(-1)0 {  // control sets, 0=none, 1=minimal, 2=intermediate, 3=full
-    eststo clear
-    foreach depvar in primary yeduc part lhwage {
-      local edvar = inlist("`depvar'","primary","yeduc")
-      foreach new in `=cond(`y'==1 & `c' & inlist("`depvar'","yeduc","lhwage"), `""""', "")' new {
-        local controls: word `=`c'+1' of "" ch71`new' "ch71`new' en71`new'" "ch71`new' en71`new' wsppc"
+  sum _wt if inrange(year,`years'), detail
+  cap drop wt
+  gen wt = min(_wt, r(p50)+5*(r(p75)-r(p50)))  // clip extreme weights to median + 5 * IQR (Potter and Zheng 2015)
 
-        local seed `c(seed)'  // save to give weighted & unweighted, experiment and placebo, Hausman bootstraps same DGPs
-        foreach wt in 1 `=cond("`new'"=="","","wt")' {
-          reg `depvar' 1.young#c.nin`new' ib1974.birthyr##c.(`controls') i.birthpl`new' i.year [pw=`wt'] if inrange(year,`years') & (`edvar' | year<1974-$oldmax+$retireage) & (old | young)
-          est store exp
-          qui count if e(sample)
-          scalar expN = r(N)
+  foreach depvars in "primary yeduc" "part lhwage" {
+    cap erase "Public/Output/RF`yearname' `depvars'.rtf"
+    forvalues c=1(-1)0 {  // control sets, 0=none, 1=minimal, 2=intermediate, 3=full
+      eststo clear
+      foreach depvar in `depvars' {
+        local edvar = inlist("`depvar'","primary","yeduc")
+        foreach new in `=cond(`y'==1 & `c' & inlist("`depvar'","yeduc","lhwage"), `""""', "")' new {
+          local controls: word `=`c'+1' of "" ch71`new' "ch71`new' en71`new'" "ch71`new' en71`new' wsppc"
 
-          * bootstrap distribution, for Hausman test of weighted vs unweighted
-          reghdfejl `depvar' 1.young#c.nin`new' [pw=`wt'] if e(sample), a(birthyr##c.(`controls') birthpl`new' year) vce(bs, cluster(birthpl`new') procs($procs) reps(1000) seed(`seed') saving("`bs'", replace)) nosamp
-          scalar b`wt'exp = _b[1.young#c.nin`new']
-          frame bs: use "`bs'.dta", clear
-          frame bs: putmata bs`wt'exp = _bs_1, replace
-
-          cap noi reg `depvar' 1.old#c.nin`new' ib1974.birthyr##c.(`controls') i.birthpl`new' i.year [iw=`wt'] if inrange(year,`years') & (`edvar' | year<1974-$reallyoldmax+$retireage) & (old | reallyold)
-          if _rc {
-            est restore exp
-            eststo
-            scalar placeboN = .
-          }
-          else {
-            est sto placebo
+          local seed `c(seed)'  // save to give weighted & unweighted, experiment and placebo, Hausman bootstraps same DGPs
+          foreach wt in 1 `=cond("`new'"=="","","wt")' {
+            reg `depvar' 1.young#c.nin`new' ib1974.birthyr##c.(`controls') i.birthpl`new' i.year [pw=`wt'] if inrange(year,`years') & (`edvar' | year<1974-$oldmax+$retireage) & (old | young)
+            est store exp
             qui count if e(sample)
-            scalar placeboN = r(N)
+            scalar N`depvar'`new'`wt'exp = r(N)
 
             * bootstrap distribution, for Hausman test of weighted vs unweighted
-            reghdfejl `depvar' 1.old#c.nin`new' [pw=`wt'] if e(sample), a(birthyr##c.(`controls') birthpl`new' year) vce(bs, cluster(birthpl`new') procs($procs) reps(1000) seed(`seed') saving("`bs'", replace)) nosamp
-            scalar b`wt'plac = _b[1.old#c.nin`new']
+            reghdfejl `depvar' 1.young#c.nin`new' [pw=`wt'] if e(sample), a(birthyr##c.(`controls') birthpl`new' year) vce(bs, cluster(birthpl`new') procs($procs) reps(1000) seed(`seed') saving("`bs'", replace)) nosamp
+            scalar b`depvar'`new'`wt'exp = _b[1.young#c.nin`new']
             frame bs: use "`bs'.dta", clear
-            frame bs: putmata bs`wt'plac = _bs_1, replace
+            frame bs: putmata bs`wt'exp = _bs_1, replace
 
-            reg `depvar' 1.young#c.nin`new' ib1974.birthyr##c.(`controls') i.birthpl`new' i.year [iw=`wt'] if inrange(year,`years') & (`edvar' | year<1974-$reallyoldmax+$retireage) & (old | young)
-            eststo: suest . placebo, `=cond("`new'"=="","","cluster(birthplnew)")'
-            lincom [_LAST_mean]1.young#c.nin`new' - placscale * [placebo_mean]1.old#c.nin`new'
-            estadd scalar diff   = r(estimate)
-            estadd scalar diffse = r(se)
+            cap noi reg `depvar' 1.old#c.nin`new' ib1974.birthyr##c.(`controls') i.birthpl`new' i.year [iw=`wt'] if inrange(year,`years') & (`edvar' | year<1974-$reallyoldmax+$retireage) & (old | reallyold)
+            if _rc {
+              est restore exp
+              eststo: xlincom Experiment = 1.young#c.nin`new', post
+              scalar N`depvar'`new'`wt'plac = .
+            }
+            else {
+              est sto placebo
+              qui count if e(sample)
+              scalar N`depvar'`new'`wt'plac = r(N)
+
+              * bootstrap distribution, for Hausman test of weighted vs unweighted
+              reghdfejl `depvar' 1.old#c.nin`new' [pw=`wt'] if e(sample), a(birthyr##c.(`controls') birthpl`new' year) vce(bs, cluster(birthpl`new') procs($procs) reps(1000) seed(`seed') saving("`bs'", replace)) nosamp
+              scalar b`depvar'`new'`wt'plac = _b[1.old#c.nin`new']
+              frame bs: use "`bs'.dta", clear
+              frame bs: putmata bs`wt'plac = _bs_1, replace
+
+              reg `depvar' 1.young#c.nin`new' ib1974.birthyr##c.(`controls') i.birthpl`new' i.year [iw=`wt'] if inrange(year,`years') & (`edvar' | year<1974-$reallyoldmax+$retireage) & (old | young)
+              suest . placebo, `=cond("`new'"=="","","cluster(birthplnew)")'
+              eststo: xlincom (Experiment = [_LAST_mean]1.young#c.nin`new') ///
+                              (Placebo    = [placebo_mean]1.old#c.nin`new') ///
+                              (Difference = [_LAST_mean]1.young#c.nin`new' - placscale * [placebo_mean]1.old#c.nin`new'), post
+            }
           }
-          estadd scalar expN     = expN    
-          estadd scalar placeboN = placeboN
-        }
-        if "`new'"!="" {
-          foreach trial in exp `=cond(placeboN==., "", "plac")' {
-            mata st_numscalar("V", variance(bs1`trial' - bswt`trial'))                                      // bootstrap-based Hausman χ²(1) stat. (Cameron and Travedi 2005, p. 378)
-            estadd scalar χ²p_`trial' = chi2tail(1, (b1`trial'-bwt`trial')^2 / V): est`=$eststo_counter-1'  // store in previous, unweighted regression
+          if "`new'"!="" {  // add Hausman p values in the form of another estimation result
+            mata st_numscalar("Vexp", variance(bs1exp - bswtexp))  // bootstrap-based Hausman χ²(1) stat. (Cameron and Travedi 2005, p. 378)
+            mat χ²p = chi2tail(1, (b`depvar'`new'1exp - b`depvar'`new'wtexp)^2 / Vexp)
+            if `depvar'`new'wtNplac < . {
+              mata st_numscalar("Vplac", variance(bs1plac - bswtplac))
+              mata st_numscalar("Vdiff", variance(bs1exp - bswtexp - `=placscale' * (bs1plac - bswtplac)))
+              mat χ²p = χ²p, chi2tail(1, (b`depvar'`new'1plac - b`depvar'`new'wtplac)^2 / Vplac), chi2tail(1, (b`depvar'`new'1exp - b`depvar'`new'wtexp - placscale * (b`depvar'`new'1plac - b`depvar'`new'wtplac))^2 / Vdiff)
+              mat colnames χ²p = Experiment Placebo Difference
+            }
+            else mat colnames χ²p = Experiment
+            eststo: myestpost χ²p  // fake estimation result for esttab to include, with Hausman p values for unweighted vs weighted
           }
-          mata st_numscalar("V", variance(bs1exp - bswtexp - `=placscale' * (bs1plac - bswtplac)))
-          estadd scalar χ²p_diff = chi2tail(1, (b1exp - bwtexp - placscale * (b1plac - bwtplac))^2 / V): est`=$eststo_counter-1'
         }
       }
-    }
-    esttab using Public/Output/RF`yearname'.rtf, append keep(*#c.nin*) equations(1) rename(1.young#c.nin 1.young#c.ninnew 1.old#c.nin 1.old#c.ninnew) b(a2) se(a2) eqlabels(,none) nostar nolines nonotes nomtitles noeqlines nogap nonumber msign("–") ///
-       stat(χ²p_exp χ²p_plac χ²p_diff diff diffse `=cond(`c',"","placeboN expN")', label("Hausman p experiment" "Hausman p placebo" "Hausman p difference" "Experiment–placebo" " " "Experiment N" "Placebo N") fmt(a2 a2 a2 a2 a2 %10.0fc %10.0fc) layout(@ @ @ @ (@) @ @))
+      esttab using "Public/Output/RF`yearname' `depvars'.rtf", append b(a2) se(a2) title(Controls: `controls') eqlabels(,none) nostar nolines nonotes nomtitles noeqlines nogap nonumber msign("–") noobs fonttbl(\f0\fnil $font;)
 
-    eststo clear
-    forvalues d=1/4 {
-      local depvar: word `d' of primary yeduc part lhwage
-      local edvar = inlist("`depvar'","primary","yeduc")
-      local pretrendlen = cond(`y'==1 | `edvar', 10, 5)
-      foreach new in `=cond(`y'==1 & `c' & inlist("`depvar'","yeduc","lhwage"), `""""', "")' new {
-        local controls: word `=`c'+1' of "" ch71`new' "ch71`new' en71`new'" "ch71`new' en71`new' wsppc"
-        local seed `c(seed)'  // save to give weighted & unweighted, experiment and placebo, Hausman bootstraps same DGPs
-        foreach wt in 1 `=cond("`new'"=="","","wt")' {
-          // event study
-          reghdfejl `depvar' ibn.birthyr#c.nin`new' [pw=`wt'] if inrange($age74kink-age74, -`pretrendlen', 10) & inrange(year,`years') & (`edvar' | year<1974-$age74kink-`pretrendlen'+$retireage), a(birthpl`new' birthyr##c.(`controls') year) cluster(birthpl`new')
-          mata dots = st_matrix("e(b)")'
-          coefplot, keep(*.birthyr#c.nin`new') omitted rename(([0-9]+)[ob]?.birthyr#c.nin`new' = \1, regex) vertical at(_coef, transform(1974 - @)) xscale(reverse) msym(smcircle) msize(small) gen replace
-          global graph `r(graph)'
-        
-          // spline fit with bootstrapping for Hausman test
-          qui reghdfejl `depvar' c.t?#c.nin`new'    [pw=`wt'] if e(sample), a(birthpl`new' birthyr##c.(`controls') year) vce(bs, cluster(birthpl`new') procs($procs) reps(1000) seed(`seed') saving("`bs'", replace))
-          scalar b`wt' = _b[c.t2#c.nin`new']
-          frame bs: use "`bs'.dta", clear
-          frame bs: putmata bs`wt' = _bs_1, replace
+      eststo clear
+      forvalues d=1/`:word count `depvars'' {
+        local depvar: word `d' of `depvars'
+        local edvar = inlist("`depvar'","primary","yeduc")
+        local pretrendlen = cond(`y'==1 | `edvar', 10, 5)
+        foreach new in `=cond(`y'==1 & `c' & inlist("`depvar'","yeduc","lhwage"), `""""', "")' new {
+          local controls: word `=`c'+1' of "" ch71`new' "ch71`new' en71`new'" "ch71`new' en71`new' wsppc"
+          local seed `c(seed)'  // save to give weighted & unweighted, experiment and placebo, Hausman bootstraps same DGPs
+          foreach wt in 1 `=cond("`new'"=="","","wt")' {
+            // event study
+            reghdfejl `depvar' ibn.birthyr#c.nin`new' [pw=`wt'] if inrange($age74kink-age74, -`pretrendlen', 10) & inrange(year,`years') & (`edvar' | year<1974-$age74kink-`pretrendlen'+$retireage), a(birthpl`new' birthyr##c.(`controls') year) cluster(birthpl`new')
+            mata dots = st_matrix("e(b)")'
+            coefplot, keep(*.birthyr#c.nin`new') omitted rename(([0-9]+)[ob]?.birthyr#c.nin`new' = \1, regex) vertical at(_coef, transform(1974 - @)) xscale(reverse) msym(smcircle) msize(small) gen replace
+            global graph `r(graph)'
+          
+            // spline fit with bootstrapping for Hausman test
+            qui reghdfejl `depvar' c.t?#c.nin`new'    [pw=`wt'] if e(sample), a(birthpl`new' birthyr##c.(`controls') year) vce(bs, cluster(birthpl`new') procs($procs) reps(1000) seed(`seed') saving("`bs'", replace))
+            scalar b`depvar'`new'`wt' = _b[c.t2#c.nin`new']
+            frame bs: use "`bs'.dta", clear
+            frame bs: putmata bs`wt' = _bs_1, replace
 
-          // spline fit with non-bootstrap standard errors
-          reghdfejl `depvar' c.t?#c.nin`new'        [pw=`wt'] if e(sample), a(birthpl`new' birthyr##c.(`controls') year) cluster(birthpl`new') nosamp
-          mata splinefit = `=_b[c.t1#c.nin`new']' * (-`pretrendlen'::10) + `=_b[c.t2#c.nin`new']' * (J(`pretrendlen',1,0) \ 0::10)
-          mata st_numscalar("splineshift", mean(dots - splinefit))
-          local splinefn `=splineshift - _b[c.t1#c.nin`new'] * `pretrendlen'' `=$age74kink+`pretrendlen'' `=splineshift' $age74kink `=splineshift + _b[c.t1#c.nin`new'] * 10 + _b[c.t2#c.nin`new'] * 10' `=$age74kink-10'
+            // spline fit with non-bootstrap standard errors
+            reghdfejl `depvar' c.t?#c.nin`new'        [pw=`wt'] if e(sample), a(birthpl`new' birthyr##c.(`controls') year) cluster(birthpl`new') nosamp
+            mata splinefit = `=_b[c.t1#c.nin`new']' * (-`pretrendlen'::10) + `=_b[c.t2#c.nin`new']' * (J(`pretrendlen',1,0) \ 0::10)
+            mata st_numscalar("splineshift", mean(dots - splinefit))
+            local splinefn `=splineshift - _b[c.t1#c.nin`new'] * `pretrendlen'' `=$age74kink+`pretrendlen'' `=splineshift' $age74kink `=splineshift + _b[c.t1#c.nin`new'] * 10 + _b[c.t2#c.nin`new'] * 10' `=$age74kink-10'
 
-          eststo: nlcom Kink: tauscale * _b[t2#c.nin`new'], post  // slope increase * mean years
+            eststo: xlincom Kink = tauscale * _b[t2#c.nin`new'], post  // slope increase * mean years
+            estadd scalar Nexp  = N`depvar'`new'`wt'exp      // for display, tack the N's for the experiment & placebo to the bottom of the kink estimate
+            estadd scalar Nplac = N`depvar'`new'`wt'plac
 
-          local caption: display "{it:{&tau}} = " (_b[Kink]<0)*"{&minus}" %4.3f abs(_b[Kink]) " (" %4.3f abs(_se[Kink]) ")"
-          $graph || scatteri 0 $age74minplot, mstyle(p1) msym(smcircle) msize(small) ///  // zero for base year
-                 || scatteri `splinefn', lcolor(maroon) lwidth(medium) mstyle(p1) msym(diamond) msize(small) mcolor(maroon) lpat(solid) recast(connected) ///
-                    xlab($age74minplot $age74kink $age74maxplot, nogrid) ///
-                    `=cond("`wt'"=="1", "xlab(, nolab notick nogrid) xscale(off fill)", "")' ///
-                    `=cond(`d'==1 & `c'==1, `"ytitle(`=cond("`wt'"=="1","Unweighted","Weighted")')"', "")' ///
-                    plotregion(margin(0 1 0 0)) ///
-                    name(RF`depvar'`wt'y`y', replace) nodraw ///
-                 || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) ///  // fake plot to set up extra axes with range [-1,1] for placing text
-                      text(-.9 1 "`caption'", xaxis(2) yaxis(2) place(w) color(black))
+            local caption: display "{it:{&tau}} = " (_b[Kink]<0)*"{&minus}" %4.3f abs(_b[Kink]) " (" %4.3f abs(_se[Kink]) ")"
+            $graph || scatteri 0 $age74minplot, mstyle(p1) msym(smcircle) msize(small) ///  // zero for base year
+                   || scatteri `splinefn', lcolor(maroon) lwidth(medium) mstyle(p1) msym(diamond) msize(small) mcolor(maroon) lpat(solid) recast(connected) ///
+                      xlab($age74minplot $age74kink $age74maxplot, nogrid) ///
+                      `=cond("`wt'"=="1", "xlab(, nolab notick nogrid) xscale(off fill)", "")' ///
+                      `=cond(`d'==1 & `c'==1, `"ytitle(`=cond("`wt'"=="1","Unweighted","Weighted")')"', "")' ///
+                      plotregion(margin(0 1 0 0)) ///
+                      name(RF`depvar'`wt'y`y', replace) nodraw ///
+                   || scatteri 0 0, msymbol(none) xaxis(2) yaxis(2) xscale(axis(2) off) yscale(axis(2) off) ///  // fake plot to set up extra axes with range [-1,1] for placing text
+                        text(-.9 1 "`caption'", xaxis(2) yaxis(2) place(w) color(black))
+          }
+          if "`new'"!="" {  // add Hausman p values in the form of another estimation result
+            mata st_numscalar("Vkink", variance(bs1 - bswt))  // bootstrap-based Hausman χ²(1) stat. (Cameron and Travedi 2005, p. 378)
+            mat χ²p = chi2tail(1, (b`depvar'`new'1 - b`depvar'`new'wt)^2 / Vkink)
+            mat colnames χ²p = Kink
+            eststo: myestpost χ²p
+          }
         }
-        if "`new'"!="" {
-          mata st_numscalar("V", variance(bs1 - bswt))                                     // bootstrap-based Hausman χ²(1) stat. (Cameron and Travedi 2005, p. 378)
-          estadd scalar χ²p_kink = chi2tail(1, (b1 - bwt)^2 / V): est`=$eststo_counter-1'  // store in previous, unweighted regression
-        }
+        graph combine RF`depvar'1y`y' RF`depvar'wty`y', cols(1) graphregion(margin(zero)) /*`=cond(`d'==1 & `c'==1,"fxsize(55)","")'*/ name(`depvar', replace) imargin(zero) ycommon nodraw t1title("     `:var label `depvar' '", size(small))
       }
-      graph combine RF`depvar'1y`y' RF`depvar'wty`y', cols(1) graphregion(margin(zero)) `=cond(`d'==1 & `c'==1,"fxsize(30)","")' name(RF`depvar', replace) imargin(zero) ycommon nodraw t1title("     `:var label `depvar' '", size(small))
-    }
-    esttab using "Public/Output/RF`yearname'.rtf", append b(a2) se(a2) nostar nolines nonotes noeqlines nomtitles nogap nonumber noobs msign("–") stat(χ²p_kink `=cond(`c',"","N")', label("Hausman p kink" "Kink N") fmt(a2 %10.0fc))
+      esttab using "Public/Output/RF`yearname' `depvars'.rtf", append b(a2) se(a2) nostar nolines nonotes noeqlines nomtitles nogap nonumber noobs msign("–") fonttbl(\f0\fnil $font;) ///
+          `=cond(`c', "", `"stat(Nexp Nplac N, label("Experiment N" "Placebo N" "Kink N") fmt(%10.0fc %10.0fc %10.0fc))"')'
 
-    local t1title: word `=`c'+1' of "No extra controls" "With controls based on number of children in regency of birth"
-    graph combine RFprimary RFyeduc RFpart RFlhwage, rows(1) title(`t1title', size(small)) graphregion(margin(zero)) name(RFy`y'ctl`c', replace)
+      local t1title: word `=`c'+1' of "No extra controls" "With controls based on number of children in regency of birth"
+      graph combine `depvars', rows(1) title(`t1title', size(small)) graphregion(margin(zero)) name(RFy`y'ctl`c', replace)
+    }
+    graph combine RFy`y'ctl1 RFy`y'ctl0, imargin(zero) xsize(9) ysize(5.5) graphregion(margin(zero)) b1title(Age in 1974, xoffset(4) size(vsmall)) altshrink iscale(*1.5)
+    graph export "Public/Output/RF`yearname' `depvars' spline.png", replace width(2000)
   }
-  graph combine RFy`y'ctl1 RFy`y'ctl0, imargin(zero) xsize(9) ysize(5.5) graphregion(margin(zero)) b1title(Age in 1974, xoffset(4) size(vsmall)) altshrink iscale(*1.5)
-  graph export "Public/Output/RF`yearname'spline.png", replace width(2000)
 }
 restore
 }
@@ -586,12 +603,16 @@ replace young = . if !(young | old)  // to restrict young/old samples to those 2
 xi i.young|ninnew i.dum|ninnew i.birthyr*ch71new i.birthyr*en71new i.birthyr*wsppc i.year i.birthplnew
 set seed 230498257
 xtset birthpl
-
+ren wt _wt
 * new regressions
 xtset birthplnew
 foreach edvar in /*yeduc*/ primary {
   forvalues y=1/3 {
     local years: word `y' of 1995,1995 2005,2012 1995,2012
+    sum _wt if inrange(year,`years'), detail
+    cap drop wt
+    gen wt = min(_wt, r(p50)+5*(r(p75)-r(p50)))  // clip extreme weights to median + 5 * IQR (Potter and Zheng 2015)
+    
     local graphs
     cap erase "Public/Output/`edvar' y`y'.rtf"
     forvalues c=1(-1)0 /*1/3*/ {
@@ -610,10 +631,10 @@ foreach edvar in /*yeduc*/ primary {
             estadd local CIstr "`r(CIstr)'"
           }
         }
-        esttab /*OLS`depvar'`edvar'c`c'w*y`y'* */ TSLS`depvar'`edvar'c`c'1w*y`y'* TSLS`depvar'`edvar'c`c'2w*y`y'* TSLS`depvar'`edvar'c`c'3w*y`y'* ///
+        esttab /*OLS`depvar'`edvar'c`c'w*y`y'* */ TSLS`depvar'`edvar'c`c'1w*y`y'* /*TSLS`depvar'`edvar'c`c'2w*y`y'* */ TSLS`depvar'`edvar'c`c'3w*y`y'* ///
                using "Public/Output/TSLS`edvar' y`y'.rtf", append ///
-               keep(`edvar') b(a2) se(a2) msign("–") nonotes nonumber nogaps nomtitles nostar ///
-               stat(CIstr jp widstat N, labels("Bootstrap CI" "Hansen p" "KP F" Observations) fmt(%~1s a2 a2 %11.0gc))
+               keep(`edvar') b(a2) se(a2) msign("–") nonotes nonumber nogaps nomtitles nostar fonttbl(\f0\fnil $font;) ///
+               stat(CIstr /*jp*/ widstat N, labels("Bootstrap CI" /*"Hansen p"*/ "KP F" Observations) fmt(%~1s /*a2*/ a2 %11.0gc))
 
         graph combine `depvar'`edvar'c`c'2SLS1w1y`y' `depvar'`edvar'c`c'2SLS1wwty`y', ///
               rows(1) imargin(1 0 0 0) `=cond(`d'==1 & `c'==1, "title(Instrument by young/old)", "")' name(g1, replace) nodraw
@@ -643,6 +664,10 @@ program define mycic
   preserve  // double-nested preserve, which is why code is in this subprogram
   forvalues y=1/3 {
     local years : word `y' of 1995,1995 2005,2012 1995,2012
+    if "`exp'"!="1" {
+      sum _wt if inrange(year,`years'), detail
+      replace wt = min(_wt, r(p50)+5*(r(p75)-r(p50)))  // clip extreme weights to median + 5 * IQR (Potter and Zheng 2015)
+    }
     eststo cicw`exp'y`y': cic lhwage _Ibirthyr* _Ibirthpl* _Iyear* `=cond("`exp'"=="1","","[pw=`exp']")' if inrange(year,`years'), group(recpnew) time(young) reps(1000)
     foreach stat in `:rownames e(tests)' {
       estadd scalar `stat' = e(tests)["`stat'",2], replace
@@ -658,7 +683,7 @@ program define mycic
   gen x = .17 if __at<.
   $graph || scatter __at x, msym(none) mlab(label) mlabcolor(black) mlabsize(7pt) mlabpos(9) xscale(range(-.1 .17)) xlab(-.1(.05).1) xline(0, lcolor(gs10) lpat(solid)) xsize(5.5) ysize(5) name(cicw`exp', replace)
 
-  esttab cicw`exp'y? using Public/Output/cic.rtf, append rename(q9 90 q8 80 q7 70 q6 60 q5 50 q4 40 q3 30 q2 20 q1 10) order(90 80 70 60 50 40 30 20 10) nogaps nomtitle msign("–") b(3) se(3) nostar ///
+  esttab cicw`exp'y? using Public/Output/cic.rtf, append rename(q9 90 q8 80 q7 70 q6 60 q5 50 q4 40 q3 30 q2 20 q1 10) order(90 80 70 60 50 40 30 20 10) nogaps nomtitle msign("–") b(3) se(3) nostar fonttbl(\f0\fnil $font;) ///
                              stats(constant_0 constant_m stoch_dom_pos stoch_dom_neg, labels("No effect (p)" "Constant effect (p)" "All >0 (p)" "All <0 (p)") fmt(%4.2f))
   restore
 end
@@ -668,6 +693,7 @@ keep if (young | old) & inrange(age,23,55) & inlist(year,1995,2011,2012)
 xi i.year i.birthyr i.birthplnew
 set seed 30948573
 cap erase Public/Output/cic.rtf
+gen _wt = wt
 foreach wt in 1 wt {
   mycic [pw=`wt']
 }
