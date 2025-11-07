@@ -9,4 +9,4 @@ The "Regency-level vars" files contain figures on population, school attendance,
 
 Regencies and municipality boundaries in Indonesia have changed over time, mostly through subdivision, occasionally through merger. This complicates linking regency-level data from the 1971 census and mid-1970s presidential directives to the follow-ups in 1995, 2005, 2010, and 2011-14. IPUMS helpfully provides [shapefiles](https://international.ipums.org/international/gis_yrspecific_2nd.shtml) that modern database and GIS software can use to make the linkages. The concordances folder contains concordances linking the 1995 coding to the 2005 and 2011-14 codings. The 1970s data are manually coded with respect to 1995. Notes in "Baseline variable reconstruction.xlsx" in the "Regency-level vars" folder document complications in this coding, including a few cases where the original and new differ.
 
-"Duflo 2001.do" is a Stata do file that generates all results.
+"Duflo 2001.do" generates nearly all the results. Exception: "de Chaisemartin and d'Haultfoeuille 2017 simulation.do" produces the table in appendix G.
