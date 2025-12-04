@@ -3,7 +3,7 @@ This archive contains the shareable data and code used in the [reanalysis](https
 
 The main data file, from the 1995 Intercensal survey (SUPAS), is not contained in this repository. It can however be found [here](https://github.com/droodman/Duflo2001/blob/main/inpresdata.dta).
 
-The reanalysis also uses the 2005 SUPAS and 2011-12 SUSENAS survey data sets. The [2005 SUPAS data at IPUMS](https://international.ipums.org/international-action/sample_details/country/id#tab_id2005a) is used for the first. The second was obtained through the Harvard library system.
+The reanalysis also uses the 2005 SUPAS and 2011-14 and 2017-19 SUSENAS survey data sets. The [2005 SUPAS data at IPUMS](https://international.ipums.org/international-action/sample_details/country/id#tab_id2005a) is used for the first. The second was obtained through the Harvard library system.
 
 The "Regency-level vars" files contain figures on population, school attendance,  planned school construction, and water and sanitation spending. The Duflo (2001) versions of the variables, which have been used in many studies, are here copied from the [public data archive](https://www.dropbox.com/s/ayq0e2esty5hduw/Ashraf_Bau_Nunn_Voena_JPE_2020_Replication_Files.zip) of [Ashraf et al. (2020)](https://doi.org/10.1086/704572). The new versions carry the suffix "new". Images of the government documents they were reconstructed from are in the "Printed sources" folder.
 
