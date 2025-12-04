@@ -12,4 +12,8 @@ Output/continuationtrends.png
 Output/bigpushsim.png
 Code/Correlates of treatment.do
 Code/Response to DJL 2.do
-*.dta
+data/analysisdata.dta
+data/inpresdata.dta
+data/SUPAS05.dta
+data/supp95_04.dta
+data/SUSENAS1119.dta
