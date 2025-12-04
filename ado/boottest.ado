@@ -1,4 +1,4 @@
-*! boottest 4.5.0 18 June 2025
+*! boottest 4.5.2 27 July 2025
 *! Copyright (C) 2015-25 David Roodman
 
 * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 
 cap program drop boottest
-program define boottest
+program define boottest, rclass sortpreserve
 	version 11
   cap version 13.1
   if _rc {
@@ -26,1094 +26,1009 @@ program define boottest
      di as err "is at https://github.com/droodman/boottest/releases/tag/v2.6.0."
      exit _rc
   }
-	cap noi _boottest `0'
-	local rc = _rc
-  if `'"`env'"'!="" qui jl SetEnv `env'  // revert to original Julia environment local env set by _boottest
-	constraint drop `anythingh0'
+
+  cap noi {
+    
+    local JLVERSION 1.1.9
+
+    local   cmd = cond(substr("`e(cmd)'", 1, 6)=="ivreg2" | ("`e(cmd)'"=="ivreghdfe" & "`e(extended_absvars)'"==""), "ivreg2", "`e(cmd)'")
+    local ivcmd = cond(inlist("`cmd'","reghdfe","ivreghdfe"), cond("`e(model)'"=="iv", "ivreg2", ""), cond("`cmd'"=="xtivreg2", "ivreg2", "`cmd'"))
+
+    _assert "`e(cmd)'" != "", msg(No estimates detected) rc(198)
+    _assert "`e(prefix)'" != "svy", msg(Doesn't work after {cmd:svy}) rc(198)
+    _assert !inlist("`cmd'", "mvreg", "sureg"), msg(Doesn't work after {cmd:`e(cmd)'}) rc(198)
+    _assert "`e(cmd)'" != "margins", msg(Doesn't work after {cmd:margins ..., post}) rc(198)
+    _assert !inlist("`cmd'", "xtreg", "xtivreg") | "`e(model)'"=="fe", msg(Doesn't work after {`cmd', `e(model)'}) rc(198)
+    _assert !("`cmd'"=="xtreg" & `:word count `e(absvar)''>1), msg(Doesn't work after `cmd' with the {cmdab:a:bsorb()} option) rc(198)
+    _assert "`cmd'"!="xtivreg2" | "`e(xtmodel)'"=="fe", msg(Doesn't work after {`cmd', `e(xtmodel)'}) rc(198)
+    if inlist("`cmd'","reghdfe","ivreghdfe","reghdfejl","ivreghdfejl") & `"`e(absvars)'"'!="" {
+      fvunab absvars: `e(absvars)'
+      _assert `:word count `absvars''<2, msg(Doesn't work after {cmd:`cmd'} with more than one set of absorbed fixed effects or with absorbed interaction terms) rc(198)
+      _assert !strpos("`absvars'", "c."), msg(Doesn't work after {cmd:`cmd'} with absorbed interaction terms containing slopes) rc(198)
+      local absvars = subinstr(subinstr("`absvars'", "#", " ", .), "i.", "", .)
+    }
+    
+    _assert !inlist("`cmd'", "sem", "gsem") | c(stata_version) >= 14, msg(Requires Stata version 14.0 or later to work with {cmd:`e(cmd)'}) rc(198)
+    _assert "`e(cmd)'`e(model)'"!="regressiv", msg(Doesn't support the undocumented IV syntax of {cmd:regress}) rc(198)
+
+    _assert "`ivcmd'`e(model)'"!="ivreg2gmm2s" & "`cmd'`e(estimator)'"!="ivregressgmm", msg(GMM no longer supported) rc(198)
+
+    tokenize `"`0'"', parse(",")
+    if `"`1'"' != "," {
+      local h0s `1'
+      macro shift
+    }
+    local 0 `*'
+    syntax, [h0(numlist integer >0) Reps(integer 999) seed(string) sameseed BOOTtype(string) CLuster(string) Robust BOOTCLuster(string) noNULl QUIetly WEIGHTtype(string) Ptype(string) STATistic(string) NOCI Level(real `c(level)') NOSMall SMall SVMat ///
+              noGRaph gridmin(string) gridmax(string) gridpoints(string) graphname(string asis) graphopt(string asis) ar MADJust(string) CMDline(string) MATSIZEgb(real 1000000) PTOLerance(real 1e-3) svv MARGins ///
+              issorted julia PRECision(integer 64) Format(string) ALGOrithm(string) jk JACKknife *]
+
+    if "`format'"=="" local format %10.4g
+    qui query born
+    local mlabformat = cond($S_1 < td(16oct2019), "", `"mlabformat(`format')"')
+    
+    local jk = "`jk'`jackknife'" != ""
+    local quietly = "`quietly'" != ""
+    local julia = "`julia'" != ""
+    local margins = "`margins'" != ""
+
+    if `margins' {
+      _assert `"`h0s'`h0'"' == "", msg(Include the {cmd:margins} option or state null hyptheses, but don't do both) rc(198)
+      _assert "`r(predict1_label)'" == "Linear prediction", msg({cmd:margins} option only works with linear margins predictions such as average predictions after {cmd:regress}) rc(198)
+      _assert strlen("`r(Jacobian)'"), msg({cmd:margins} results not found) rc(303)
+
+      tempname rJacobian
+      mat `rJacobian' = r(Jacobian)
+      if strlen("`r(L)'") mat `rJacobian' = r(L) * `rJacobian'
+    }
+
+    if `julia' {
+      qui jl GetEnv
+      local env `r(env)'
+      qui jl SetEnv boottest
+
+      if !0$boottest_julia_loaded {
+        cap jl version
+        _assert !_rc, rc(198) msg(Can't access Julia. {cmd:boottest} requires that the {cmd:jl} command be installed, via {stata ssc install julia}.)
+        parse "`r(version)'", parse(".")
+        local v1: copy local 1
+        local v2: copy local 3
+        local v3: copy local 5
+        parse "`JLVERSION'", parse(".")
+        local version: di %05.0f `v1' %05.0f `v2' %05.0f `v3'
+        if `v1'<`1' | `v1'==`1' & `v2'<`3' | `v1'==`1' & `v2'==`3' & `v3'<`5' {
+          di as txt "The Stata package {cmd:julia} is not up to date. Attempting to update it with {stata ssc install julia, replace}." _n
+          ssc install julia, replace
+        }
+
+    // _jl: pushfirst!(LOAD_PATH, "D:/OneDrive/Documents/Macros/WildBootTests.jl")
+        jl AddPkg StableRNGs
+        jl AddPkg WildBootTests, minver(1.0.2)
+        _jl: using StableRNGs, WildBootTests
+        global boottest_julia_loaded 1
+      }
+      _jl: rng = StableRNG(0)  // create now, seed later
+    }
+
+    if "`small'" != "" & "`nosmall'" != "" {
+      di as err "{cmd:small} and {cmd:nosmall} options conflict."
+      exit 198
+    }
+
+    if inlist("`e(cmd)'", "didregress", "xtdidregress") & `"`h0s'`h0'"' == "" local h0s r1vs0.`e(treatment)'
+
+    if `matsizegb'==1000000 local matsizegb .
+
+    if "`svv'" != "" tempname svv
+
+    if `reps'==0 local svmat
+      else {
+        local _svmat = cond("`svmat'"=="", "", "t")
+        local 0, `options'
+        syntax, [SVMat(string) *]
+        _assert inlist(`"`svmat'"', "numer", "t", ""), msg(option svmat(`svmat') not allowed) rc(198)
+        if "`svmat'" == "" local svmat: copy local _svmat
+      }
+
+    if `"`options'"' != "" {
+      if `"`options'"'=="ci" di as err  "Option {cmd:ci} is obsolete, because it is now the default."
+        else                 di as err `"Option `options' not allowed."'
+      exit 198
+    }
+
+    _assert `reps'>=0, msg({cmdab:r:eps()} option must be non-negative) rc(198)
+
+    if `"`algorithm'"' == "" local granular .  // let program decide between coarse and granular implementations
+      else {
+        local 0, `algorithm'
+        syntax, [GRANular coarse]
+        _assert "`granular'" == "" | "`coarse'" == "", msg({cmd:coarse} and {cmd:granular} suboptions conflict) rc(198)
+        local granular = "`granular'"!=""
+      }
+
+    local 0, `madjust'
+    syntax, [Bonferroni Sidak]
+    local madjust `bonferroni'`sidak'
+
+    if `"`graphname'"' != "" {
+      local 0: copy local graphname
+      syntax [anything(name=graphname)], [replace]
+    }
+    else local graphname Graph
+
+    if `"`gridpoints'"'!="" {
+      foreach g of local gridpoints {
+        cap confirm integer number `g'
+        local rc = _rc
+        if !_rc {
+          local rc = `g' <= 0
+        }
+        _assert !`rc', msg({cmd:gridpoints()} entry not a positive integer) rc(198)
+      }
+    }
+
+    foreach macro in gridmin gridmax {
+      if `"``macro''"'!="" {
+        foreach g of local `macro' {
+          if `"`g'"' != "." {
+            cap confirm number `g'
+            _assert !_rc, msg({cmd:`macro'()} entry not numeric) rc(198)
+          }
+        }
+      }
+    }
+    
+    if `"`robust'`cluster'"' != "" {
+      local hasrobust 1
+      local clustvars: copy local cluster
+      if `"`clustvars'"'!="" confirm var `clustvars'
+      local override 1
+      di as txt _n "Overriding estimator's cluster/robust settings with " as res `"`=cond("`clustvars'"=="", "robust", "cluster(`clustvars')")'"'
+    }
+    else {
+      local clustvars `e(clustvar)'
+      local hasrobust = "`e(vcetype)'" == "Robust" | "`clustvars'" != ""
+    }
+
+    local hasclust = `"`clustvars'"' != ""
+
+    local wtype `e(wtype)'
+    local null = "`null'" == ""
+    if "`svmat'"!="" tempname dist
+    local ar = "`ar'" != ""
+    if `ar' & `"`h0s'`h0'"' == "" local h0s `e(instd)'
+
+    _assert `:word count `weighttype'' <= 1, msg(The {cmd:weight:type} option must be {cmdab:rad:emacher}, {cmdab:mam:men}, {cmdab:nor:mal}, {cmdab:web:b}, or {cmdab:gam:ma}) rc(198)
+    if "`weighttype'"'=="" local weighttype rademacher
+    else {
+      local 0, `weighttype'
+      syntax, [RADemacher MAMmen NORmal WEBb GAMma]
+      local weighttype `rademacher'`mammen'`normal'`webb'`gamma'
+    }
+
+    _assert `:word count `ptype''<2, msg(The {cmd:wp:type} option must be {cmdab:sym:metric}, {cmdab:eq:qualtail}, {cmd:lower}, or {cmd:upper}) rc(198)
+
+    if "`ptype'"'=="" local ptype symmetric
+    else {
+      local 0, `ptype'
+      syntax, [SYMmetric EQualtail LOWer UPper]
+      local ptype `symmetric'`equaltail'`lower'`upper'
+    }
+   
+    if `"`statistic'"'=="" local statistic t
+    else {
+      _assert inlist(`"`statistic'"', "t", "c"), msg(The {cmd:stat:istic} option must be {cmd:t} or {cmd:c}) rc(198)
+      _assert "`statistic'"!="c" | `reps', msg({cmdab:stat:istic(c)} not allowed with non-bootstrap tests) rc(198)
+    }
+
+    local ML = e(converged) != . & !inlist("`cmd'", "reghdfe", "ivreghdfe", "reghdfejl")
+    local IV = "`e(instd)'`e(endogvars)'" != ""
+    local LIML = ("`cmd'"=="ivreg2" & "`e(model)'"=="liml") | ("`cmd'"=="ivregress" & "`e(estimator)'"=="liml") | (inlist("`cmd'","reghdfe","ivreghdfe") & strpos("`e(title)'", "LIML"))
+    local WRE = `"`boottype'"'!="score" & `IV' & `reps'
+    local small = (e(df_r) != . | "`small'" != "" | e(cmd)=="cgmreg") & "`nosmall'"==""
+    local partial = `:word count `e(partial1)'' & inlist("`e(cmd)'", "ivreg2", "xtivreg2", "ivreghdfe")
+    local fuller `e(fuller)'  // "" if missing
+    local K = e(kclass)  // "." if missing
+
+    local DID = inlist("`cmd'", "didregress", "xtdidregress")
+    if `DID' {
+      _assert "`e(aggmethod)'"=="", msg(Doesn't work after {cmd:`e(cmd)'} with aggregation) rc(198)
+      local treatment `e(treatment)'
+      local 0 `e(cmdline)'
+      syntax [anything], [NOGTEFFECTS *]
+      local DID = "`nogteffects'" == ""
+    }
+
+    local tz = cond(`small', "t", "z")
+    local symmetric Prob>|`tz'|
+    local equaltail 2 * min(Prob>|`tz'|, Prob<-|`tz'|)
+    local lower             Prob<`tz'
+    local upper             Prob>`tz'
+
+    _assert !`ar' | `IV', msg(Anderson-Rubin test is only for IV models) rc(198)
+    _assert !`jk' | !`ML', msg(Can't jackknife ML-based estimates) rc(198)
+    
+    if "`boottype'"'=="" local boottype = cond(`ML', "score", "wild")
+    else {
+      local 0, `boottype'
+      syntax, [Wild SCore]
+      local boottype `score'`wild'
+      _assert "`boottype'" != "wild" | !`ML', msg({cmd:boottype(wild)} not accepted after Maximum Likelihood-based estimation) rc(198)
+      _assert "`boottype'"!="score" | "`fuller'`K'" == "." | "`e(model)'"=="liml", rc(198) msg({cmd:boottype(score)} not accepted after Fuller LIML or k-class estimation)
+    }
+    local scoreBS = "`boottype'"=="score"
+    
+    if inlist("`cmd'","xtreg","xtivreg","xtivreg2") local NFE = e(N_g) + 0`e(singleton)'
+    else local NFE = cond(`DID', 0`e(N_clust)',                       ///
+                                 cond("`cmd'"=="areg", 1+e(df_a),     ///
+                                       max(0`e(K1)', 0`e(df_a)', 0`e(df_a_initial)')))  // reghdfe
+
+    local _FEname = cond(inlist("`cmd'","xtreg","xtivreg","xtivreg2"), "`e(ivar)'", cond(`DID', "`e(clustvar)'", "`e(absvar)'`absvars'"))
+    if `"`_FEname'"' != "" {
+      cap confirm numeric var `_FEname'
+      if _rc | `:word count `_FEname' > 1' {
+        tempvar FEname
+        qui egen long `FEname' = group(`_FEname') if e(sample)
+      }
+      else local FEname: copy local _FEname
+    }
+
+    if "`cmd'" == "xtreg" {
+      local 0 `e(cmdline)'
+      syntax [anything] [if] [in] [fw aw pw iw], [dfadj *]
+      local FEdfadj = ("`dfadj'" != "") * `NFE'
+    }
+    else if inlist("`cmd'","xtivreg","xtivreg2","xtdidregress") local FEdfadj 0
+    else if inlist("`cmd'", "reghdfe", "ivreghdfe") local FEdfadj = max(1, e(df_a))
+    else local FEdfadj: copy local NFE
+
+    if `"`seed'"'=="" local seed = c(seed)
+    set seed `seed'
+
+    tempname p padj se teststat df df_r hold C1 C R1 R r1 r1r R1R r b V b0 V0 keepC repsname repsFeasname t NBootClustname marginsH0 touse
+    mat `b' = e(b)
+    if "`e(wtype)'" != "" {
+      tokenize `e(wexp)', parse("=")
+      cap confirm var `2'
+      if _rc {
+        tempname wtname
+        qui gen double `wtname' `e(wexp)'
+      }
+      else if c(varabbrev)=="on" unab wtname: `2'
+      else local wtname: copy local 2
+    }
+
+    if `"`h0s'"' != "" {
+      _assert "`h0'" == "", rc(198) msg(Specify hypotheses before comma or with {cmd:h0()} option, but not both)
+      local multiple = strpos(`"`h0s'"', "{")
+      if !`multiple' local h0s {`h0s'}
+      local N_h0s 0  // number of nulls
+      while `"`h0s'"' != "" {
+        gettoken h0 h0s: h0s, parse("{}")
+        if !inlist(`"`h0'"', "{", "}") {
+          local ++N_h0s
+          while `"`h0'"' != "" {
+            gettoken cns h0: h0, parse("()") match(m)
+            constraint free
+            constraint `r(free)' `cns'
+            local h0_`N_h0s' `h0_`N_h0s'' `r(free)'
+            local constraints `constraints' `r(free)'
+          }
+        }
+      }
+      local anythingh0 1
+    }
+    else if `margins' {
+      mata _boottestp = selectindex(rowsum(st_matrix("`rJacobian'"):!=0))  // skip all-zero rows
+      mata st_local("marginsnames", invtokens(st_matrixrowstripe("`rJacobian'")[_boottestp,2]'))
+      mata st_matrix("`marginsH0'", st_matrix("`rJacobian'")[_boottestp,])
+      mata st_local("N_h0s", strofreal(length(_boottestp)))
+      _assert `N_h0s', msg(No valid {cmd:margins} results not found) rc(303)
+      scalar `df' = 1  // always when working with margins results, df = 1 and constant term = 0
+      mat `r' = 0
+
+      marksample marginstouse, strok
+    }
+    else {
+      local N_h0s 1  // number of nulls
+      if "`h0'" == "" {
+        di as txt _n "({cmd:h0(1)} assumed)"
+        local h0 1
+      }
+      if !`quietly' {
+        foreach c of numlist `h0' {
+          if `"`: constraint `c''"' == "" di as res "Constraint `c' not found and will be skipped."
+        }
+      }
+      local h0_1: copy local h0
+    }
+
+    if `N_h0s'==1 local madjust
+
+    makecns
+    if "`e(Cns)'" != "" {
+      local hascns 1
+      mat `C1' = e(Cns)
+      mat `R1' = `C1'[1...,1..colsof(`C1')-1]
+      mat `r1' = `C1'[1...,   colsof(`C1')  ]
+    }
+
+    cap _estimates drop `hold'
+    if !`ML' {
+      if ("`ivcmd'"=="ivreg2" & !inlist("`e(model)'", "ols", "iv", "gmm2s", "liml")) | ("`ivcmd'"=="ivregress" & !inlist("`e(estimator)'", "liml", "2sls", "gmm")) {
+        di as err "Only for use with OLS, 2SLS, single-equation GMM, and ML-based estimators."
+        exit 198
+      }
+
+      local Ynames `e(depvar)'
+
+      local colnames: colnames e(b)
+      if `partial' local colnames `colnames' `e(partial1)'
+  //     local colnames: subinstr local colnames "b." ".", all  // introduced in 51192a82d181920ca7009f95cc7744a2f031c9bf but interferes with _ms_parse_parts below
+  //     local colnames: subinstr local colnames "bn." ".", all
+          local colnames: subinstr local colnames "bn." "b.", all
+
+      local k = `:word count `colnames'' + (`partial' & 0`e(partialcons)')
+      local _cons _cons
+      local cons = "`:list colnames & _cons'" != ""
+      local colnames: list colnames - _cons
+
+      if `IV' {
+        local Xnames_endog `e(instd)'
+  //       local Xnames_endog: subinstr local Xnames_endog "b." ".", all
+  //       local Xnames_endog: subinstr local Xnames_endog "bn." ".", all
+          local colnames: subinstr local colnames "bn." "b.", all
+        local Xnames_exog: list colnames - Xnames_endog
+        local cons = `cons' | e(partialcons)==1
+
+        if inlist("`cmd'", "ivreg2", "xtivreg2", "ivreghdfe") local ZExclnames `e(exexog1)'
+  //       else if "`e(cmd)'"=="ivreghdfe" {  // ivreghdfe provides no collinear instrument info
+  //         if "`FEname'"==""  local ZExclnames `e(exexog1)'
+  //         else {
+  //           qui _rmdcoll `Ynames' `Xnames_exog' i.`FEname' `e(exexog1)' if e(sample) [`e(wtype)'`e(wexp)']  // will fail if number of groups exceeds matsize
+  //           local varlist `r(varlist)'
+  //           local n: word count `varlist'
+  //           forvalues i=`=`n'-`:word count `e(exexog1)''+1'/`n' {
+  //             local var: word `i' of `varlist'
+  //             _ms_parse_parts `var'
+  //             if !r(omit) local ZExclnames `ZExclnames' `var'
+  //           }
+  //         }
+  //       }
+        else {
+          local ZExclnames `e(insts)'
+          local ZExclnames: list ZExclnames - Xnames_exog
+        }
+      }
+      else {
+        local Xnames_exog: copy local colnames
+        if inlist("`e(cmd)'", "didregress", "xtdidregress") local Xnames_exog: subinstr local Xnames_exog "r1vs0." ""
+      }
+
+      local cons = `cons' & !0`NFE'  // no constant in FE model
+      if !`cons' local _cons
+      mata _boottestp = J(`cons', 1, `k') \ order(tokens("`colnames'")', 1)[invorder(order(tokens("`Xnames_exog' `Xnames_endog'")', 1))]  // for putting vars in cons-exog-endog order
+      if `cons' mat `keepC' = 1
+      local colnames `_cons' `Xnames_exog' `Xnames_endog'
+
+      foreach varlist in Xnames_exog Ynames Xnames_endog ZExclnames {
+        fvrevar ``varlist'' if e(sample)
+        local revarlist `r(varlist)'
+        local _revarlist
+        forvalues i=1/`:word count ``varlist''' {
+          local var: word `i' of ``varlist''
+          _ms_parse_parts `var'
+          if !r(omit) {
+            local _revarlist `_revarlist' `: word `i' of `revarlist''
+            if inlist("`varlist'", "Xnames_exog", "Xnames_endog") {
+              local pos: list posof "`var'" in colnames
+              if `pos' mat `keepC' = nullmat(`keepC'), `pos'
+            }
+          }
+        }
+        local `varlist': copy local _revarlist
+      }
+
+      mata _boottestkeepC = st_matrix("`keepC'"); _boottestp = cols(_boottestkeepC)? _boottestp[_boottestkeepC] : J(0,1,0)
+      if 0`hascns' {
+        if `partial' mat `R1' = `R1', J(rowsof(`R1'), `:word count `e(partial1)'', 0)  // add blanks for partialled-out 
+        mata st_matrix("`R1'", st_matrix("`R1'")[,_boottestp])  // put cols in standardized order & drop those for omitted regressors
+        mata _boottestkeepC = rowsum(st_matrix("`R1'"):!=0)
+        mata st_matrix("`R1'", select(st_matrix("`R1'"), _boottestkeepC))  // drop rows corresponding purely to omitted variables
+        mata st_matrix("`r1'", select(st_matrix("`r1'"), _boottestkeepC))
+      }
+      if `cons' local Xnames_exog `hold' `Xnames_exog'  // add constant term
+    }
+
+    local NErrClustVar : word count `clustvars'
+    if `hasclust' {
+      if 0`override' {
+        cap assert !missing(`:subinstr local clustvars " " ",", all') if e(sample), `=cond(c(stata_version)>=12.1, "fast", "")'
+        if _rc {
+          di as err "A clustering variable has a missing value for at least one observation."
+          exit 9
+        }
+      }
+
+      if `"`bootcluster'"' == "" {
+        local bootcluster: copy local clustvars
+        if `reps' & `NErrClustVar'>1 di as txt "({cmdab:bootcl:uster(`clustvars')} assumed)"
+      }
+      local    clustvars `:list clustvars & bootcluster' `:list clustvars - bootcluster'
+      local allclustvars `:list bootcluster - clustvars' `clustvars' // put bootstrapping clusters first, error clusters last, overlap in middle
+
+      if "`issorted'"=="" sort `clustvars' `:list bootcluster - clustvars', stable  // bootstrapping-only clusters left out of this sort. Effect is that in subcluster bootstrap, bootstrapping clusters are intersections of all clusterings
+
+      foreach clustvar in `allclustvars' {
+        if !inlist("`:type `clustvar''", "byte", "int", "long") {
+          tempvar IDname
+          qui egen long `IDname' = group(`clustvar') if e(sample)
+          local _allclustvars `_allclustvars' `IDname'
+        }
+        else local _allclustvars `_allclustvars' `clustvar'
+      }
+      local allclustvars: copy local _allclustvars
+    }
+    local NBootClustVar: word count `bootcluster'
+
+    forvalues h=1/`N_h0s' {  // loop over multiple independent constraints
+      if "`sameseed'"!="" set seed `seed'
+    
+      if `margins' mat `R' = `marginsH0'[`h', 1...]
+      else {
+        _estimates hold `hold', restore
+        ereturn post `b'
+        mat `b' = e(b)
+
+        local h0text
+        foreach c in `h0_`h'' {
+          local h0text = `"`h0text'"' + `" "`: constraint `c''""'
+        }
+
+        qui makecns `h0_`h''  // process hypothesis constraints into e(Cns)
+        if "`h0_`h''" != "`r(clist)'" {
+          local clist `r(clist)'
+          local clist: list h0_`h' - clist
+          foreach c in `clist' {
+            di as txt `"note: constraint `=cond(0`anythingh0', `"{res}`:constraint `c''{txt}"', "number `c'")' caused error {search r(111)}"'
+            if `DID' di `"If your test relates to the treatment effect, you may need to reference "{cmd:r1vs0.`treatment'}" instead of "{cmd:`treatment'}"."' _n
+          }
+          exit 111
+        }
+        
+        cap mat `C' = e(Cns)
+        if _rc exit 111
+        _estimates unhold `hold'
+        if r(k_autoCns) mat `C' = `C'[r(k_autoCns)+1...,1...]
+        mat `R' = `C'[1...,1..colsof(`C')-1]
+        mat `r' = `C'[1...,   colsof(`C')  ]
+
+        * get rid of any remaining o. and b. constraints; r(k_autoCns) doesn't capture all
+        mata _boottestC = J(1,0,0)
+        foreach var in `:colnames `R'' {
+          _ms_parse_parts `var'
+          mata _boottestC = _boottestC, !`r(omit)'
+        }
+        mata _boottestC = rowsum(select(st_matrix("`R'"), _boottestC) :!= 0)
+        mata st_matrix("`R'", select(st_matrix("`R'"), _boottestC))
+        mata st_matrix("`r'", select(st_matrix("`r'"), _boottestC))
+        cap mat `R'[1,1] = `R'[1,1]
+        if _rc {
+          di as error _n "Null constraint applies only to omitted variables or base levels of factor variables."
+          continue
+        }
+        scalar `df' = rowsof(`R')
+      }
+
+      if 0`NFE' {
+        mata st_local("rc", strofreal(any(0:!=select(st_matrix("`R'"),st_matrixcolstripe("`R'")[,2]':=="_cons"))))
+
+        _assert !`rc', msg(In fixed-effect models, null hypotheses may not involve constant term) rc(111)
+      }
+
+      local plotmat
+      local peakmat
+      local cimat
+      if "`noci'"=="" & !`ML' & (`df'<=1 | `df'==2 & "`graph'"=="") {
+        if `reps' | !`scoreBS' | `null' | "`graph'"=="" tempname plotmat peakmat // don't request plot if doing simple Wald with no graph
+        if `level'<100 & `df'==1 tempname cimat
+      }
+
+      if `df'>1 & "`ptype'"!="symmetric" di as txt "Note: {cmd:ptype(`ptype')} ignored for multi-constraint null hypotheses."
+
+      if `df'<=2 {  // a bit duplicative of code in the if-`ML' block just below...
+        if  "`graph'"=="" {  // construct axis label(s)
+          if `margins' local constraintLHS1 "Margins of `:word `h' of `marginsnames''"
+          else {
+            local coleq: coleq `b'
+            if "`:word 1 of `coleq''"=="_" local coleq
+            local colnames: colnames `b'
+            forvalues i=1/`=`df'' {
+              local terms 0
+              local constraintLHS`i'
+              forvalues j=1/`=colsof(`R')' {
+                if `R'[`i',`j'] {
+                  if `terms++' local constraintLHS`i' `constraintLHS`i''+
+                  local constraintLHS`i' `constraintLHS`i'' `=cond(`R'[`i',`j']!=1,"`=`R'[`i',`j']'*","")'`=cond("`coleq'"=="","","[`:word `j' of `coleq'']")'`:word `j' of `colnames''
+                }
+              }
+            }
+          }
+        }
+        
+        foreach option in gridmin gridmax gridpoints {
+          if "``option''" == "" local `option' = `df' * ". "
+          else if `df' != `:word count ``option''' {
+            di as err "{cmd:`option'()} option needs " cond(`df'==1, "one entry", "two entries")
+            exit 199
+          }
+          tempname `option'vec
+          mata st_matrix("``option'vec'", strtoreal(tokens("``option''"))) 
+        }
+      }
+
+      if `ML' {
+        local K .
+        local k = colsof(`b')
+
+        if `null' {
+          if "`e(cmdline)'"=="" & `"`cmdline'"'=="" {
+            di as err "Original estimation command line needed. Include it in a {cmd:cmdline()} option."
+            exit 198
+          }
+          if "`cmd'"=="tobit" & c(stata_version)<15 {
+            di as err "Cannot impose null after {help tobit} in Stata versions below 15. Try re-fitting the model with {stata ssc describe cmp:cmp}, {help intreg}, or {help gsem}."
+            exit 198
+          }
+
+          mat `R1R' = `R' \ nullmat(`R1')  // add null to model constraints
+          mat `r1r' = `r' \ nullmat(`r1')
+
+          if !`quietly' di as res _n "Re-running regression with null imposed." _n
+          if `"`cmdline'"'=="" local cmdline `e(cmdline)'
+          
+          _parse expand lc lg: cmdline, common(CONSTraints(passthru) from(passthru) INIt(passthru) ITERate(passthru) Robust)  // would be nice to extract, thus remove, cluster() option for speed, but it affects sample
+          local 0, `lg_op'
+          syntax, [from(passthru) INIt(passthru) ITERate(passthru) *]
+          local 0: copy local lc_1
+          syntax [anything] [aw pw fw iw] [if] [in], [*]
+
+          if "`e(cmd)'"=="ml" local max max  // tack on max option in case ml run in interactive model and cmdline() is missing it
+
+          cap _estimates drop `hold'
+          _estimates hold `hold', restore
+          local coleq: coleq `b'
+          if "`:word 1 of `coleq''"=="_" local coleq
+          local colnames: colnames `b'
+          local _constraints
+          forvalues i=1/`=rowsof(`R1R')' {
+            local terms 0
+            local _constraint
+            forvalues j=1/`=colsof(`R1R')' {
+              if `R1R'[`i',`j'] {
+                if `terms++' local _constraint `_constraint' +
+                local eq = cond("`coleq'"=="" | inlist("`cmd'","xttobit","xtintreg") & "`coleq'"!=".", "", "[`:word `j' of `coleq'']")  // hack around xttobit/xtintreg bug internally renaming first eq to "eq1"
+                local _constraint `_constraint' `=cond(`R1R'[`i',`j']!=1,"`=`R1R'[`i',`j']' * ","")' `eq'`:word `j' of `colnames''
+              }
+            }
+            local _constraint `_constraint' = `=`r1r'[`i',1]'
+            constraint free
+            local _constraints `_constraints' `r(free)'
+            constraint `r(free)' `_constraint'
+          }
+
+          local cmdline version `c(stata_version)': `anything' `if' `in' `=cond("`weight'"=="","",`"[`weight'`exp']"')', `max' `options'  // "if `hold'" would prematurely restrict sample, interact badly with probit perfect prediction detection, changing retained regressors
+          forvalues i=2/0`lc_n' {  // reassemble hierarchical command line
+            local cmdline2 `cmdline2' || `lc_`i''
+          }
+
+          * re-estimate!
+          cap `=cond(`quietly', "", "noisily")' `cmdline' `from' `init' `iterate' `=cond("`cmd'"=="slogit","nocorner","")' constraints(`_constraints') `cmdline2'
+          local rc = _rc
+          constraint drop `_constraints'
+          _assert e(converged), msg(Could not impose null) rc(430)
+
+          if !`rc' {
+            mat `b0' = e(b)
+            _mkvec `b', update from(`b0', skip) first  // mlexp doesn't handle from(..., skip)
+            cap `cmdline' `=cond(inlist("`cmd'","cmp","ml"),"init(`b')","from(`b')")' iterate(0) `cmdline2'
+            if _rc cap `cmdline' from(`b', skip) iterate(0) `cmdline2'  // mprobit still needs skip even after _mkvec, from(..., skip)
+            local rc = _rc
+            mat drop `b0'
+          }
+          _assert !`rc', msg(Error imposing null. Perhaps {cmd:`cmd'} does not accept the {cmd:constraints()}, {cmd:from()}, and {cmd:iterate()} options) rc(`rc')
+          if !`quietly' {
+            mata st_numscalar("`t'", any(!diagonal(st_matrix("e(V)")) :& st_matrix("e(b)")'))
+            if `t' {
+              di _n as res _n "{res}Warning: Negative Hessian under null hypothesis not positive definite. Results may be unreliable." _n
+              di "This may indicate that the constrained optimum is far from the unconstrained one, i.e., that the hypothesis is incompatible with the data." _n
+            }
+          }
+        }
+        
+        mat `V' = e(V`=cond("`e(V_modelbased)'"!="", "_modelbased", "")')
+
+        tempvar sc
+        cap predict double `sc'* if e(sample), score
+        if _rc {
+          if `reps'==0 & "`e(gradient)'"!="" {  // hack: for score and Wald tests, generate observation-level "scores" with last entries=total gradient and rest 0, since only their sums matter
+            tempname gradient
+            mat `gradient' = e(gradient)
+            mata st_view(_boottestt=.,.,"`hold'"); st_local("n1", strofreal(max(selectindex(_boottestt))))
+            local scnames
+            qui forvalues i=1/`k' {
+              tempvar t
+              gen double `t' = 0
+              replace `t' = `gradient'[1,`i'] in `n1'
+              local scnames `scnames' `t'
+            }
+          }
+          else {
+            di as err "Could not generate scores from `e(cmd)' with {cmd:predict}."
+            exit _rc
+          }
+        }
+        else {
+          unab scnames: `sc'*
+          if `:word count `scnames'' == e(k_eq) {  // generate score for each parameter from those for each equation
+            local colnames: colnames `b'
+            tokenize `:coleq `b''
+            local lasteq
+            local eq 0
+            local _sc
+            qui forvalues i=1/`k' {
+              if "``i''" != "`lasteq'" | "``i''"=="/" {
+                local ++eq
+                local lasteq: copy local `i'
+              }
+              local var: word `i' of `colnames'
+              if "`var'"=="_cons" | strmatch("`var'","*._cons") | "``i''"=="/" local _sc `_sc' `:word `eq' of `scnames'' // constant term or free parameter
+              else {
+                tempvar t
+                gen double `t' = `:word `eq' of `scnames'' * `var' if e(sample)
+                local _sc `_sc' `t'
+              }
+            }
+            local scnames: copy local _sc
+          }
+        }
+
+        if !`null' {
+          cap _estimates drop `hold'
+          _estimates hold `hold', restore  // rename estimation as `hold' instead of generating new sample marker
+        }
+      }
+      else { // not ML
+        if `partial' mat `R'  = `R', J(`df', `:word count `e(partial1)'' + e(partialcons), 0)  // add blanks for partialled-out
+        mata st_matrix("`R'" , st_matrix("`R'" )[,_boottestp])  // put cols in standardized order & drop those for 0-variance vars
+
+        cap _estimates drop `hold'
+        _est hold `hold', restore
+
+        if `ar' {
+          local kEnd: word count `Xnames_endog'
+          local kEx : word count `Xnames_exog'
+          mata st_numscalar("`p'", rows(st_matrix("`R'"))!=`kEnd' | (`kEx'? any(st_matrix("`R'")[|.,.\.,`kEx'|]) : 0))
+          _assert !`p', msg(For Anderson-Rubin test, null hypothesis must constrain all the instrumented variables and no others) rc(198)
+        }
+      }
+
+      cap confirm var `hold'
+      _assert !_rc, msg(Sample marker for the regression not found. Perhaps the data set was cleared and reconstructed) rc(`=_rc')
+
+      if `margins' {
+        cap drop `touse'
+        gen byte `touse' = `hold' & `marginstouse'
+        local sample: copy local touse
+      }
+      else local sample: copy local hold
+
+      return local seed: copy local seed
+
+      if !`julia' {
+        mata boottest_stata("`teststat'", "`df'", "`df_r'", "`p'", "`padj'", "`cimat'", "`plotmat'", "`peakmat'", `level', `ptolerance', ///
+                            `ML', `LIML', 0`fuller', `K', `ar', `null', `scoreBS', `jk', "`weighttype'", "`ptype'", "`statistic'", ///
+                            "`madjust'", `N_h0s', "`Xnames_exog'", "`Xnames_endog'", ///
+                            "`Ynames'", `=cond(`ML', `" "`b'", "`V'" "', `" "","" "')', "`ZExclnames'", "`hold'", "`scnames'", `hasrobust', "`allclustvars'", `NBootClustVar', `NErrClustVar', ///
+                            "`FEname'", `NFE', `FEdfadj', "`wtname'", "`wtype'", "`R1'", "`r1'", "`R'", "`r'", `reps', "`repsname'", "`repsFeasname'", `small', "`svmat'", "`dist'", ///
+                            "`gridmin'", "`gridmax'", "`gridpoints'", `matsizegb', `quietly', "`b0'", "`V0'", "`svv'", "`NBootClustname'", `granular')
+      }
+      else {
+        foreach X in R R1 V {
+          if "``X''" != "" jl PutMatToMat ``X'', dest(`X')
+            else _jl: `X' = Matrix{Float`precision'}(undef,0,0)
+        }
+
+        foreach X in gridminvec gridmaxvec gridpointsvec {
+          if "``X''" != "" jl PutMatToMat ``X'', dest(`X')
+            else _jl: `X' = Matrix{Float`precision'}(undef,`=`df'',0)
+        }
+        foreach X in r r1 b {
+          if "``X''" != "" {
+            jl PutMatToMat ``X'', dest(`X')
+            _jl: `X' = vec(`X')
+          }
+          else _jl: `X' = Vector{Float`precision'}(undef,0)
+        }
+        foreach X in Xnames_exog Xnames_endog ZExclnames scnames allclustvars {
+          if "``X''" != "" jl PutVarsToMat ``X'' if `hold', dest(`X')
+            else _jl: `X' = Matrix{Float`precision'}(undef,0,0)
+        }
+        foreach X in Ynames wtname FEname {
+          if "``X''" != "" {
+            jl PutVarsToMat ``X'' if `hold', dest(`X')
+            _jl: `X' = dropdims(`X'; dims=2)
+          }
+          else _jl: `X' = Vector{Float`precision'}(undef,0)
+        }
+        _jl: FEname = iszero(`NFE') ? Vector{Int64}(undef,0) : Vector{Int64}(FEname)
+        _jl: allclustvars = iszero(`hasclust') ? Matrix{Int64}(undef,0,0) : Matrix{Int64}(allclustvars)
+  // jl: using JLD
+  // jl: @save "/Users/davidroodman/Downloads/tmp.jld" Ynames Xnames_exog Xnames_endog ZExclnames wtname allclustvars FEname scnames R r R1 r1 gridminvec gridmaxvec gridpointsvec b V rng
+        _jl: using Random; Random.seed!(rng, `=runiformint(0, 9007199254740992)')  // chain Stata rng to Julia rng
+        _jl: _boottest_jl = wildboottest!(Float`precision', R, r; resp=Ynames, predexog=Xnames_exog, predendog=Xnames_endog, inst=ZExclnames, ///
+                            obswt=wtname, clustid=allclustvars, feid=FEname, scores=scnames, ///
+                            R1, r1, ///
+                            nbootclustvar=`NBootClustVar', nerrclustvar=`NErrClustVar', ///
+                            issorted=true, ///
+                            hetrobust=Bool(`hasrobust'), ///
+                            fedfadj=`FEdfadj', ///
+                            fweights = "`wtype'"=="fweight", ///
+                            maxmatsize=`=0`matsizegb'', ///
+                            ptype="`ptype'", ///
+                            bootstrapc = "`statistic'"=="c", ///
+                            liml=Bool(`LIML'), fuller=`=0`fuller'', `=cond(`K'<.,"kappa=`K',","")' ///
+                            arubin=Bool(`ar'), small=Bool(`small'), ///
+                            scorebs=Bool(`scoreBS'), ///
+                            jk=Bool(`jk'), ///
+                            reps=`reps', imposenull=Bool(`null'), level=`level'/100, ///
+                            auxwttype=:`weighttype', ///
+                            rtol=`ptolerance', ///
+                            madjtype="`madjust'"=="" ? :none : :`madjust', nH0=`N_h0s', ///
+                            ml=Bool(`ML'), beta=b, A=V, ///
+                            gridmin=gridminvec, gridmax=gridmaxvec, gridpoints=gridpointsvec, ///
+                            getdist = Bool("`svmat'"!=""), ///
+                            getci = `level'<100 && "`cimat'" != "", getplot = "`plotmat'"!="", ///
+                            getauxweights = "`svv'"!="", ///
+                            rng=rng, ///
+                            granular=`=cond(`granular', "true", "false", "missing")' )
+        _jl: rand(rng, Int32)  // chain Julia rng back to Stata to advance it replicably
+        set seed `r(ans)'
+        if "`plotmat'"!="" {
+          if `df'==1 {
+            jl GetMatFromMat `plotmat', source([_boottest_jl.plot[:X][1] _boottest_jl.plot[:p]])
+            jl GetMatFromMat `peakmat', source([_boottest_jl.peak[:X][1] _boottest_jl.peak[:p]])
+          }
+          else jl GetMatFromMat `plotmat', source([vcat(vec([[x y] for x in _boottest_jl.plot[:X][1], y in _boottest_jl.plot[:X][2]])...) _boottest_jl.plot[:p]])
+        }
+        if `level'<100 & "`cimat'" != "" jl GetMatFromMat `cimat', source(_boottest_jl.ci)
+        _jl: SF_scal_save("`teststat'", _boottest_jl.stat)
+        _jl: SF_scal_save("`df'", _boottest_jl.dof)
+        _jl: SF_scal_save("`df_r'", _boottest_jl.dof_r)
+        _jl: SF_scal_save("`p'", _boottest_jl.p)
+        _jl: SF_scal_save("`padj'", _boottest_jl.padj)
+        _jl: SF_scal_save("`repsname'", _boottest_jl.reps)
+        _jl: SF_scal_save("`repsFeasname'", _boottest_jl.repsfeas)
+        _jl: SF_scal_save("`NBootClustname'", _boottest_jl.nbootclust)
+        jl GetMatFromMat `b0', source(_boottest_jl.b)
+        jl GetMatFromMat `V0', source(_boottest_jl.V)
+        if "`dist'"!="" jl GetMatFromMat `dist', source(_boottest_jl.`=cond("`svmat'"=="t", "dist", "numerdist")'')
+        if "`svv'" !="" jl GetMatFromMat `svv', source(_boottest_jl.auxweights)
+      }
+
+      _estimates unhold `hold'
+
+      if !`quietly' & 2^`NBootClustname' < `reps' & inlist("`weighttype'", "rademacher", "mammen") {
+        di _n "Warning: with " `NBootClustname' " bootstrap clusters, the number of replications, `reps', exceeds the universe of " strproper("`weighttype'") " draws, 2^"`NBootClustname' " = " 2^`NBootClustname' ". " _c
+        if "`weighttype'"=="rademacher" di "Sampling each once." _c
+        di _n "Consider Webb weights instead, using {cmd:weight(webb)}."
+      }
+      local reps = `repsname'  // in case reduced to 2^G
+      if !`quietly' & `reps' & (`NBootClustname'>12 | "`weighttype'" != "rademacher") & floor(`level'/100 * (`reps'+1)) != `level'/100 * (`reps'+1) {
+        di _n "Note: The bootstrap usually performs best when the confidence level (here, `level'%)" _n "      times the number of replications plus 1 (`reps'+1=" `reps'+1 ") is an integer."
+      }
+
+      if !`ML' & `reps' & `NErrClustVar'>1 & `teststat'<. {
+        return scalar repsFeas = `repsFeasname'
+        if `repsFeasname' < `reps' di _n "Warning: " `reps' - `repsFeasname' " replications returned an infeasible test statistic and were deleted from the bootstrap distribution."
+      }
+      
+      if `N_h0s'>1 local _h _`h'
+
+      if `df'==1 {
+        local tz = cond(`small', "t", "z")
+        return scalar `tz'`_h' = `teststat'
+      }
+
+      di
+      if `reps' {
+        di as txt strproper("`boottype'") " bootstrap-`statistic', null " cond(0`null', "", "not ") "imposed, " _c
+        if `jk' di "jackknifed residuals, " _c
+        di as txt `reps' as txt " replications, " _c
+      }
+      di as txt cond(`ar', "Anderson-Rubin ", "") cond(!`reps' & `null' & "`boottype'"=="score", "Rao score (Lagrange multiplier)", "Wald") " test" _c
+      if "`cluster'"!="" di ", clustering by " as res "`cluster'" _c
+      if ("`bootcluster'"!="" | `NErrClustVar' > 1) & `reps' di as txt ", bootstrap clustering by " as res "`bootcluster'" _c
+      if `reps'	di as txt ", " strproper("`weighttype'") " weights" _c
+      di as txt ":"
+      
+      if `margins' di `"  `:word `h' of "`marginsnames'""'
+      else {
+        foreach c in `h0_`h'' {
+          di "  " _c
+          if !0`anythingh0' di as txt %4.0g `c' ": " _c
+          di as res "`:constraint `c''"
+        }
+      }
+
+      if `df'==1 {
+        local line1 = cond(`small', "t(`=`df_r'')", "z")
+        di _n as txt _col(`=33-strlen("`line1'")') "`line1' = " as res %10.4f `teststat' _n _col(`=33-strlen("``ptype''")') as txt "``ptype'' = " as res %10.4f `p'
+        local `teststat' = `teststat' * `teststat'
+      }
+      else {
+        if `small' {
+          local line1 F(`=`df'', `=`df_r'')
+          local line2 Prob > F
+        }
+        else {
+          local line1 chi2(`=`df'')
+          local line2 Prob > chi2
+        }
+        di _n as txt _col(`=27-strlen("`line1'")') "`line1' = " as res %10.4f `teststat' _n as txt _col(`=27-strlen("`line2'")') "`line2' = " as res %10.4f `p'
+      }
+
+      if "`madjust'" != "" {
+        di _col(`=strlen("bonferroni")-strlen("`madjust'")+3') as txt strproper("`madjust'") "-adjusted prob = " as res %10.4f `padj'
+        return scalar padj`_h' = `padj'
+      }
+
+      if `NErrClustVar' > 1 {
+        cap mat `t' = syminv(`V0')
+        cap noi if diag0cnt(`t') di _n "Test statistic could not be computed. The multiway-clustered variance estimate " cond(`df'==1, "", "matrix ") "is not positive" cond(`df'==1, "", "-definite") "."
+      }
+      cap mat colnames `b0' = `h0text'
+      cap mat colnames `V0' = `h0text'
+      cap mat rownames `V0' = `h0text'
+      cap return matrix b`_h' = `b0'
+      cap return matrix V`_h' = `V0'
+
+      cap confirm mat `plotmat'
+      if _rc == 0 {
+        tempvar X1 Y _plotmat
+        mat `_plotmat' = `plotmat'
+        return matrix plot`_h' = `plotmat'
+        mat `plotmat' = `_plotmat'
+
+        if "`graph'"=="" {
+          cap confirm matrix `peakmat'
+          if !_rc {
+            mata st_matrix("`plotmat'", st_matrix("`plotmat'") \ st_matrix("`peakmat'"))
+            return matrix peak`_h' = `peakmat'
+          }
+          cap confirm matrix `cimat'
+          if _rc mat `_plotmat' = `plotmat'
+          else {
+            mata st_matrix("`_plotmat'", st_matrix("`plotmat'") \ ((st_matrix("`cimat'")[,1] \ st_matrix("`cimat'")[,2]), J(2*`=rowsof(`cimat')', 1, 1-`level'/100)))
+          }
+
+          if colsof(`_plotmat')==3 tempvar X2
+          mat colnames `_plotmat' = `X1' `X2' `Y'
+          local _N = _N
+          qui svmat `_plotmat', names(col)
+          label var `Y' " "  // in case user turns on legend
+          if `"`graphname'"'=="Graph" cap graph drop Graph`_h'
+
+          if colsof(`_plotmat')==2 {
+            cap mata st_local("nonmiss", strofreal(nonmissing(st_matrix("`cimat'"))))
+            if 0`nonmiss' > 1 {
+              mata _boottestm = (-min(-st_matrix("`cimat'")) - min(st_matrix("`cimat'"))) / 2 / (`nonmiss' + 1)  // margin
+              mata _boottestt = min(select(st_matrix("`plotmat'")[,1], st_matrix("`plotmat'")[,1] :> max(st_matrix("`cimat'")) + _boottestm)); st_local("plotmax", rows(_boottestt)? strofreal(_boottestt * (1 + sign(_boottestt)*1e-6)) : .)
+              mata _boottestt = max(select(st_matrix("`plotmat'")[,1], st_matrix("`plotmat'")[,1] :< min(st_matrix("`cimat'")) - _boottestm)); st_local("plotmin", rows(_boottestt)? strofreal(_boottestt * (1 - sign(_boottestt)*1e-6)) : .)
+            }
+            else {
+              local plotmin .
+              local plotmax .
+            }
+            
+            format `X1' `X2' %5.0g
+
+            local 0, `graphopt'
+            syntax, [LPattern(passthru) LWidth(passthru) LColor(passthru) LStyle(passthru) *]
+
+            line `Y' `X1', sort(`X1') `lpattern' `lwidth' `lcolor' `lstyle' || scatter `Y' `X1' if _n>rowsof(`plotmat'), mlabel(`X1') mlabpos(6) `mlabformat' xtitle("`constraintLHS1'") ///
+              || if (`gridmin'<. | -`X1'<=-`plotmin') & (`gridmax'<. | `X1'<=`plotmax'), ///
+              ytitle(`"`=strproper("`madjust'") + cond("`madjust'"!="","-adjusted ", "")' p value"') ///
+              yscale(range(0 .)) name(`graphname'`_h', `replace') ///
+              `=cond(`level'<100, "yline(`=1-`level'/100') ylabel(#6 `=1-`level'/100')", "")' legend(off) `options'
+          }
+          else {
+            foreach var in Y X1 X2 {
+              if "``var''" != "" {
+                cap drop _boottest``var''
+                ren ``var'' _boottest``var'' // work-around for bug in twoway contour, rejecting temp vars
+                local `var' _boottest``var''
+              }
+            }
+            
+            cap noi twoway contour `Y' `X2' `X1' if _n<=rowsof(`plotmat'), xtitle("`constraintLHS1'") ytitle("`constraintLHS2'") ///
+              ztitle(`"`=strproper("`madjust'")+ cond("`madjust'"!="","-adjusted ", "")' p value"', orient(rvert)) ///
+              name(`graphname'`_h', `replace') crule(linear) scolor(gs5) ecolor(white) ccut(0(.05)1) plotregion(margin(zero)) /// // defaults copied from weakiv
+              `graphopt'
+            drop `Y' `X1' `X2'
+          }
+          qui keep in 1/`_N'
+        }
+      }
+
+      cap confirm mat `cimat'
+      if _rc==0 {
+        di _n as res `level' "%" as txt " confidence set for null hypothesis expression: " _c
+        local CIstr
+        local infty = cond(c(stata_version)>=14, "∞", ".")
+        local neginfty = cond(c(stata_version)>=14, "-∞", ".")
+        local union = cond(c(stata_version)>=14, "∪", "U")
+        forvalues i=1/`=rowsof(`cimat')' {
+          if `i'>1 local CIstr = "`CIstr' `union' "
+          local CIstr = "`CIstr'" + cond(`cimat'[`i',1]==., "(`neginfty'", "[" + strofreal(`cimat'[`i',1], "`format'")) + ", " + cond(`cimat'[`i',2]==., "`infty')", strofreal(`cimat'[`i',2], "`format'") + "]")
+        }
+        local CIstr = subinstr("`CIstr'", "-", "−", .)  // proper minus sign
+        di as res "`CIstr'"
+
+        if inlist("`ptype'", "symmetric", "equaltail") {
+          tempname t
+          mata st_numscalar("`t'", anyof(st_matrix("`cimat'"), .))
+          if `t' di "(A confidence set could not be bounded. Try widening the search range with the {cmd:gridmin()} and {cmd:gridmax()} options.)"
+        }
+        mat colnames `cimat' = lo hi
+        cap mat rownames `cimat' = `h0text'
+        return matrix CI`_h' = `cimat'
+        return local CIstr`_h': copy local CIstr
+      }
+      
+      if "`statistic'"=="c" & `df'==1 {
+        di "Note: denominator for `tz' statistic computed from the bootstrap replications of the numerator."
+      }
+      
+      return scalar `=cond(`small', "F", "chi2")'`_h' = cond(`df'==1, `teststat'*`teststat', `teststat')
+      if `small' return scalar df_r`_h' = `df_r'
+      return scalar df`_h' = `df'
+      return scalar p`_h' = `p'
+      if `hasrobust' return local robust robust
+      if "`svmat'"!="" return matrix dist`_h' = `dist'
+      if "`svv'" != "" return matrix v`_h' = `svv'
+    }  // loop over independent H0s
+
+    cap mat_put_rr `C'  // can fail in boottest, margins
+    return scalar level = `level'
+    return scalar ptol = `ptolerance'
+    return local statistic: copy local statistic
+    return local weighttype: copy local weighttype
+    return local boottype: copy local boottype
+    return local clustvars: copy local clustvars
+    return scalar null = `null'
+    return scalar reps = `repsname'
+    return scalar NH0s = `N_h0s'
+  }  // cap noi ...
+  
+	constraint drop `constraints'
 	cap mata mata drop _boottestp
 	cap mata mata drop _boottestC
 	cap mata mata drop _boottestkeepC
 	cap mata mata drop _boottestm
 	cap mata mata drop _boottestt
-	cap drop `contourvars'
-	exit `rc'
-end
-
-cap program drop _boottest
-program define _boottest, rclass sortpreserve
-	version 11
-
-  local JLVERSION 0.8.0
-
-	local   cmd = cond(substr("`e(cmd)'", 1, 6)=="ivreg2" | ("`e(cmd)'"=="ivreghdfe" & "`e(extended_absvars)'"==""), "ivreg2", "`e(cmd)'")
-	local ivcmd = cond(inlist("`cmd'","reghdfe","ivreghdfe"), cond("`e(model)'"=="iv", "ivreg2", ""), cond("`cmd'"=="xtivreg2", "ivreg2", "`cmd'"))
-
-	if "`e(cmd)'" == "" {
-		di as err "No estimates detected."
-		error 198
-	}
-	if "`e(prefix)'" == "svy" {
-		di as err "Doesn't work after {cmd:svy}."
-		exit 198
-	}
-	if inlist("`cmd'", "mvreg", "sureg") {
-		di as err "Doesn't work after {cmd:`e(cmd)'}."
-		exit 198
-	}
-	if "`e(cmd)'" == "margins" {
-		di as err "Doesn't work after {cmd:margins ..., post}."
-		exit 198
-	}
-	if inlist("`cmd'", "xtreg", "xtivreg") & "`e(model)'"!="fe" {
-		di as err "Doesn't work after {`cmd', `e(model)'}."
-		exit 198
-	}
-	if "`cmd'"=="xtivreg2" & "`e(xtmodel)'"!="fe" {
-		di as err "Doesn't work after {`cmd', `e(xtmodel)'}."
-		exit 198
-	}
-	if inlist("`cmd'","reghdfe","ivreghdfe","reghdfejl","ivreghdfejl") & `"`e(absvars)'"'!="" {
-    fvunab absvars: `e(absvars)'
-		if `:word count `absvars''>1 {
-			di as err "Doesn't work after {cmd:`cmd'} with more than one set of absorbed fixed effects or with absorbed interaction terms."
-			exit 198
-		}
-		if strpos("`absvars'", "c.") {
-			di as err "Doesn't work after {cmd:`cmd'} with absorbed interaction terms containing slopes."
-			exit 198
-		}
-    else local absvars = subinstr(subinstr("`absvars'", "#", " ", .), "i.", "", .)
-	}
   
-	if inlist("`cmd'", "sem", "gsem") & c(stata_version) < 14 {
-		di as err "Requires Stata version 14.0 or later to work with {cmd:`e(cmd)'}."
-		exit 198
-	}
-	if "`e(cmd)'"=="regress" & "`e(model)'" == "iv" {
-		di as err "Doesn't support the undocumented IV syntax of {cmd:regress}."
-		exit 198
-	}
-  
-  if ("`ivcmd'"=="ivreg2" & "`e(model)'"=="gmm2s") | ("`cmd'"=="ivregress" & "`e(estimator)'"=="gmm") {
-  	di as err "GMM no longer supported."
-    exit 198
-  }
-
-	tokenize `"`0'"', parse(",")
-	if `"`1'"' != "," {
-		local h0s `1'
-		macro shift
-	}
-	local 0 `*'
-	syntax, [h0(numlist integer >0) Reps(integer 999) seed(string) sameseed BOOTtype(string) CLuster(string) Robust BOOTCLuster(string) noNULl QUIetly WEIGHTtype(string) Ptype(string) STATistic(string) NOCI Level(real `c(level)') NOSMall SMall SVMat ///
-						noGRaph gridmin(string) gridmax(string) gridpoints(string) graphname(string asis) graphopt(string asis) ar MADJust(string) CMDline(string) MATSIZEgb(real 1000000) PTOLerance(real 1e-3) svv MARGins ///
-            issorted julia PRECision(integer 64) Format(string) jk JACKknife *]
-
-  if "`format'"=="" local format %10.4g
-  qui query born
-  local mlabformat = cond($S_1 < td(16oct2019), "", `"mlabformat(`format')"')
-  
-  local jk = "`jk'`jackknife'" != ""
-  local quietly = "`quietly'" != ""
-  local julia = "`julia'" != ""
-
-  if `julia' & !0$boottest_julia_loaded {
-    cap jl version
-    if _rc {
-      di as err `"Can't access Julia. {cmd:boottest} requires that the {cmd:jl} command be installed, via {stata ssc install julia}."
-      exit 198
-    }
-    parse "`r(version)'", parse(".")
-    local v1: copy local 1
-    local v2: copy local 3
-    local v3: copy local 5
-    parse "`JLVERSION'", parse(".")
-    local version: di %05.0f `v1' %05.0f `v2' %05.0f `v3'
-    if "`version'" < "000010000000000" {
-      di as txt "The Stata package {cmd:julia} is not up to date. Attempting to update it with {stata ssc install julia, replace}." _n
-      ssc install julia, replace
-    }
-
-    qui jl GetEnv
-    c_local env `r(env)'
-    qui jl SetEnv boottest
-// _jl: pushfirst!(LOAD_PATH, "D:/OneDrive/Documents/Macros/WildBootTests.jl")
-    jl AddPkg StableRNGs
-    jl AddPkg WildBootTests, minver(1.0.0)
-    _jl: using StableRNGs, WildBootTests
-    _jl: rng = StableRNG(0)  // create now, seed later
-    global boottest_julia_loaded 1
-  }
-
-  if "`small'" != "" & "`nosmall'" != "" {
-    di as err "{cmd:small} and {cmd:nosmall} options conflict."
-    exit 198
-  }
-
-  local margins = "`margins'" != ""
-  if `margins' {
-    if `"`h0s'`h0'"' != "" {
-      di as err "Include the {cmd:margins} option or state null hyptheses, but don't do both."
-      exit 198
-    }
-    if "`r(predict1_label)'" != "Linear prediction" {
-      di as err _n "{cmd:margins} option only works with linear margins predictions such as average predictions after {cmd:regress}."
-      exit 198
-    }
-    if strlen("`r(Jacobian)'") {
-      tempname rJacobian
-      mat `rJacobian' = r(Jacobian)
-      if strlen("`r(L)'") mat `rJacobian' = r(L) * `rJacobian'
-    }
-    else {
-    	di as err "{cmd:margins} results not found."
-      error 303
-    }
-  }
-
-  if inlist("`e(cmd)'", "didregress", "xtdidregress") & `"`h0s'`h0'"' == "" local h0s r1vs0.`e(treatment)'
-
-	if `matsizegb'==1000000 local matsizegb .
-
-  if "`svv'" != "" tempname svv
-
-	if `reps'==0 local svmat
-		else {
-			local _svmat = cond("`svmat'"=="", "", "t")
-			local 0, `options'
-			syntax, [SVMat(string) *]
-			if !inlist(`"`svmat'"', "numer", "t", "") {
-				di as err "option " as res "svmat(" `svmat' ")" as err " not allowed."
-				error 198
-			}
-			if "`svmat'" == "" local svmat: copy local _svmat
-		}
-
-	if `"`options'"' != "" {
-		if `"`options'"'=="ci" di as err "Option {cmd:ci} is obsolete, because it is now the default."
-			else di as err `"Option `options' not allowed."'
-		exit 198
-	}
-
-	if `reps' < 0 {
-		di as err "{cmdab:r:eps()} option must be non-negative."
-		exit 198
-	}
-
-	local 0, `madjust'
-	syntax, [Bonferroni Sidak]
-	local madjust `bonferroni'`sidak'
-
-	if `"`graphname'"' != "" {
-		local 0: copy local graphname
-		syntax [anything(name=graphname)], [replace]
-	}
-	else local graphname Graph
-
-	if `"`gridpoints'"'!="" {
-		foreach g of local gridpoints {
-			cap confirm integer number `g'
-			local rc = _rc
-			if !_rc {
-				local rc = `g' <= 0
-			}
-			if `rc' {
-				di as err "{cmd:gridpoints()} entry not a positive integer."
-				exit 198
-			}
-		}
-	}
-
-	foreach macro in gridmin gridmax {
-		if `"``macro''"'!="" {
-			foreach g of local `macro' {
-				if `"`g'"' != "." {
-					cap confirm number `g'
-					if _rc {
-						di as err "{cmd:`macro'()} entry not numeric."
-						exit 198
-					}
-				}
-			}
-		}
-	}
-	
-	if `"`robust'`cluster'"' != "" {
-		local hasrobust 1
-		local clustvars: copy local cluster
-		if `"`clustvars'"'!="" confirm var `clustvars'
-		local override 1
-		di as txt _n "Overriding estimator's cluster/robust settings with " as res `"`=cond("`clustvars'"=="", "robust", "cluster(`clustvars')")'"'
-	}
-	else {
-		local clustvars `e(clustvar)'
-		local hasrobust = "`e(vcetype)'" == "Robust" | "`clustvars'" != ""
-	}
-
-	local hasclust = `"`clustvars'"' != ""
-
-	local wtype `e(wtype)'
-	local null = "`null'" == ""
-	if "`svmat'"!="" tempname dist
-	local ar = "`ar'" != ""
-	if `ar' & `"`h0s'`h0'"' == "" local h0s `e(instd)'
-
-	if `:word count `weighttype'' > 1 {
-		di as err "The {cmd:weight:type} option must be {cmdab:rad:emacher}, {cmdab:mam:men}, {cmdab:nor:mal}, {cmdab:web:b}, or {cmdab:gam:ma}."
-		exit 198
-	}
-	if "`weighttype'"'=="" local weighttype rademacher
-	else {
-		local 0, `weighttype'
-		syntax, [RADemacher MAMmen NORmal WEBb GAMma]
-		local weighttype `rademacher'`mammen'`normal'`webb'`gamma'
-	}
-
-	if `:word count `ptype'' > 1 {
-		di as err "The {cmd:wp:type} option must be {cmdab:sym:metric}, {cmdab:eq:qualtail}, {cmd:lower}, or {cmd:upper}."
-		exit 198
-	}
-	if "`ptype'"'=="" local ptype symmetric
-	else {
-		local 0, `ptype'
-		syntax, [SYMmetric EQualtail LOWer UPper]
-		local ptype `symmetric'`equaltail'`lower'`upper'
-	}
- 
-	if `"`statistic'"'=="" local statistic t
-	else if !inlist(`"`statistic'"', "t", "c") {
-		di as err "The {cmd:stat:istic} option must be {cmd:t} or {cmd:c}."
-		exit 198
-	}
-	else if "`statistic'"=="c" & `reps'==0 {
-		di as err "{cmdab:stat:istic(c)} not allowed with non-bootstrap tests."
-		exit 198
-	}
-
-	local ML = e(converged) != . & !inlist("`cmd'", "reghdfe", "ivreghdfe", "reghdfejl")
-	local IV = "`e(instd)'`e(endogvars)'" != ""
-	local LIML = ("`cmd'"=="ivreg2" & "`e(model)'"=="liml") | ("`cmd'"=="ivregress" & "`e(estimator)'"=="liml") | (inlist("`cmd'","reghdfe","ivreghdfe") & strpos("`e(title)'", "LIML"))
-	local WRE = `"`boottype'"'!="score" & `IV' & `reps'
-	local small = (e(df_r) != . | "`small'" != "" | e(cmd)=="cgmreg") & "`nosmall'"==""
-  local partial = `:word count `e(partial1)'' & inlist("`e(cmd)'", "ivreg2", "xtivreg2", "ivreghdfe")
-	local fuller `e(fuller)'  // "" if missing
-	local K = e(kclass)  // "." if missing
-
-  local DID = inlist("`cmd'", "didregress", "xtdidregress")
-  if `DID' {
-    if "`e(aggmethod)'" != "" {
-      di as err "Doesn't work after {cmd:`e(cmd)'} with aggregation."
-      exit 198
-    }
-    local treatment `e(treatment)'
-  	local 0 `e(cmdline)'
-    syntax [anything], [NOGTEFFECTS *]
-    local DID = "`nogteffects'" == ""
-  }
-
-	local tz = cond(`small', "t", "z")
-	local symmetric Prob>|`tz'|
-	local equaltail 2 * min(Prob>|`tz'|, Prob<-|`tz'|)
-	local lower             Prob<`tz'
-	local upper             Prob>`tz'
-
-	if `ar' & !`IV' {
-		di as err "Anderson-Rubin test is only for IV models."
-		exit 198
-	}
-
-  if `jk' & `ML' {
-		di as err "boottest can't jackknife ML-based estimates."
-		exit 198
-  }
-  
-	if "`boottype'"'=="" local boottype = cond(`ML', "score", "wild")
-	else {
-		local 0, `boottype'
-		syntax, [Wild SCore]
-		local boottype `score'`wild'
-		if "`boottype'" == "wild" & `ML' {
-			di as err "{cmd:boottype(wild)} not accepted after Maximum Likelihood-based estimation."
-			exit 198
-		}
-		if "`boottype'"=="score" & "`fuller'`K'" != "." & "`e(model)'"!="liml" {
-			di as err "{cmd:boottype(score)} not accepted after Fuller LIML or k-class estimation."
-			exit 198
-		}
-	}
-	local scoreBS = "`boottype'"=="score"
-	
-  if inlist("`cmd'","xtreg","xtivreg","xtivreg2") local NFE = e(N_g) + 0`e(singleton)'
-  else local NFE = cond(`DID', 0`e(N_clust)',                       ///
-                               cond("`cmd'"=="areg", 1+e(df_a),     ///
-                                     max(0`e(K1)', 0`e(df_a)', 0`e(df_a_initial)')))  // reghdfe
-
-  local _FEname = cond(inlist("`cmd'","xtreg","xtivreg","xtivreg2"), "`e(ivar)'", cond(`DID', "`e(clustvar)'", "`e(absvar)'`absvars'"))
-  if `"`_FEname'"' != "" {
-    cap confirm numeric var `_FEname'
-    if _rc | `:word count `_FEname' > 1' {
-      tempvar FEname
-      qui egen long `FEname' = group(`_FEname') if e(sample)
-    }
-    else local FEname: copy local _FEname
-  }
-
-  if "`cmd'" == "xtreg" {
-    local 0 `e(cmdline)'
-    syntax [anything] [if] [in] [fw aw pw iw], [dfadj *]
-    local FEdfadj = ("`dfadj'" != "") * `NFE'
-  }
-  else if inlist("`cmd'","xtivreg","xtivreg2","xtdidregress") local FEdfadj 0
-  else if inlist("`cmd'", "reghdfe", "ivreghdfe") local FEdfadj = max(1, e(df_a))
-  else local FEdfadj: copy local NFE
-
-	if `"`seed'"'=="" local seed = c(seed)
-  set seed `seed'
-
-	tempname p padj se teststat df df_r hold C1 C R1 R r1 r1r R1R r b V b0 V0 keepC repsname repsFeasname t NBootClustname marginsH0 touse
-	mat `b' = e(b)
-	if "`e(wtype)'" != "" {
-		tokenize `e(wexp)', parse("=")
-		cap confirm var `2'
-		if _rc {
-			tempname wtname
-			qui gen double `wtname' `e(wexp)'
-		}
-		else if c(varabbrev)=="on" unab wtname: `2'
-    else local wtname: copy local 2
-	}
-
-	if `"`h0s'"' != "" {
-		if "`h0'" != "" {
-			di as err "Specify hypotheses before comma or with {cmd:h0()} option, but not both."
-			exit 198
-		}
-		local multiple = strpos(`"`h0s'"', "{")
-		if !`multiple' local h0s {`h0s'}
-		local N_h0s 0  // number of nulls
-		while `"`h0s'"' != "" {
-			gettoken h0 h0s: h0s, parse("{}")
-			if !inlist(`"`h0'"', "{", "}") {
-				local ++N_h0s
-				while `"`h0'"' != "" {
-					gettoken cns h0: h0, parse("()") match(m)
-					constraint free
-					constraint `r(free)' `cns'
-					local h0_`N_h0s' `h0_`N_h0s'' `r(free)'
-					local constraints  `constraints' `r(free)'
-					c_local anythingh0 `constraints'
-				}
-			}
-		}
-		local anythingh0 1
-	}
-	else if `margins' {
-    mata _boottestp = selectindex(rowsum(st_matrix("`rJacobian'"):!=0))  // skip all-zero rows
-    mata st_local("marginsnames", invtokens(st_matrixrowstripe("`rJacobian'")[_boottestp,2]'))
-    mata st_matrix("`marginsH0'", st_matrix("`rJacobian'")[_boottestp,])
-    mata st_local("N_h0s", strofreal(length(_boottestp)))
-    if `N_h0s'==0 {
-      di as err "No valid {cmd:margins} results not found."
-      error 303
-    }
-    scalar `df' = 1  // always when working with margins results, df = 1 and constant term = 0
-    mat `r' = 0
-
-    marksample marginstouse, strok
-  }
-  else {
-		local N_h0s 1  // number of nulls
-		if "`h0'" == "" {
-			di as txt _n "({cmd:h0(1)} assumed)"
-			local h0 1
-		}
-		if !`quietly' {
-      foreach c of numlist `h0' {
-        if `"`: constraint `c''"' == "" di as res "Constraint `c' not found and will be skipped."
-      }
-    }
-		local h0_1: copy local h0
-	}
-
-	if `N_h0s'==1 local madjust
-
-	makecns
-	if "`e(Cns)'" != "" {
-		local hascns 1
-		mat `C1' = e(Cns)
-    mat `R1' = `C1'[1...,1..colsof(`C1')-1]
-    mat `r1' = `C1'[1...,   colsof(`C1')  ]
-	}
-
-	cap _estimates drop `hold'
-	if !`ML' {
-		if ("`ivcmd'"=="ivreg2" & !inlist("`e(model)'", "ols", "iv", "gmm2s", "liml")) | ("`ivcmd'"=="ivregress" & !inlist("`e(estimator)'", "liml", "2sls", "gmm")) {
-			di as err "Only for use with OLS, 2SLS, single-equation GMM, and ML-based estimators."
-			exit 198
-		}
-
-		local Ynames `e(depvar)'
-
-		local colnames: colnames e(b)
-    if `partial' local colnames `colnames' `e(partial1)'
-    local k = `:word count `colnames'' + (`partial' & 0`e(partialcons)')
-		local _cons _cons
-    local cons = "`:list colnames & _cons'" != ""
-		local colnames: list colnames - _cons
-
-		if `IV' {
-			local Xnames_endog `e(instd)'
-			local Xnames_exog: list colnames - Xnames_endog
-			local cons = `cons' | e(partialcons)==1
-
-			if inlist("`cmd'", "ivreg2", "xtivreg2", "ivreghdfe") local ZExclnames `e(exexog1)'
-//       else if "`e(cmd)'"=="ivreghdfe" {  // ivreghdfe provides no collinear instrument info
-//         if "`FEname'"==""  local ZExclnames `e(exexog1)'
-//         else {
-//           qui _rmdcoll `Ynames' `Xnames_exog' i.`FEname' `e(exexog1)' if e(sample) [`e(wtype)'`e(wexp)']  // will fail if number of groups exceeds matsize
-//           local varlist `r(varlist)'
-//           local n: word count `varlist'
-//           forvalues i=`=`n'-`:word count `e(exexog1)''+1'/`n' {
-//             local var: word `i' of `varlist'
-//             _ms_parse_parts `var'
-//             if !r(omit) local ZExclnames `ZExclnames' `var'
-//           }
-//         }
-//       }
-      else {
-        local ZExclnames `e(insts)'
-        local ZExclnames: list ZExclnames - Xnames_exog
-      }
-		}
-		else {
-			local Xnames_exog: copy local colnames
-      if inlist("`e(cmd)'", "didregress", "xtdidregress") local Xnames_exog: subinstr local Xnames_exog "r1vs0." ""
-		}
-
-		local cons = `cons' & !0`NFE'  // no constant in FE model
-		if !`cons' local _cons
-
-		mata _boottestp = J(`cons', 1, `k') \ order(tokens("`colnames'")', 1)[invorder(order(tokens("`Xnames_exog' `Xnames_endog'")', 1))]  // for putting vars in cons-exog-endog order
-		if `cons' mat `keepC' = 1
-		local colnames `_cons' `Xnames_exog' `Xnames_endog'
-
-		foreach varlist in Xnames_exog Ynames Xnames_endog ZExclnames {
-      fvrevar ``varlist'' if e(sample)
-      local revarlist `r(varlist)'
-			local _revarlist
-			forvalues i=1/`:word count ``varlist''' {
-				local var: word `i' of ``varlist''
-        _ms_parse_parts `var'
-				if !r(omit) {
-          local _revarlist `_revarlist' `: word `i' of `revarlist''
-          if inlist("`varlist'", "Xnames_exog", "Xnames_endog") {
-            local pos: list posof "`var'" in colnames
-            if `pos' mat `keepC' = nullmat(`keepC'), `pos'
-          }
-				}
-			}
-			local `varlist': copy local _revarlist
-		}
-		mata _boottestkeepC = st_matrix("`keepC'"); _boottestp = cols(_boottestkeepC)? _boottestp[_boottestkeepC] : J(0,1,0)
-
-		if 0`hascns' {
-      if `partial' mat `R1' = `R1', J(rowsof(`R1'), `:word count `e(partial1)'', 0)  // add blanks for partialled-out 
-      mata st_matrix("`R1'", st_matrix("`R1'")[,_boottestp])  // put cols in standardized order & drop those for omitted regressors
-      mata _boottestkeepC = rowsum(st_matrix("`R1'"):!=0)
-      mata st_matrix("`R1'", select(st_matrix("`R1'"), _boottestkeepC))  // drop rows corresponding purely to omitted variables
-      mata st_matrix("`r1'", select(st_matrix("`r1'"), _boottestkeepC))
-    }
-		if `cons' local Xnames_exog `hold' `Xnames_exog'  // add constant term
-	}
-
-	local NErrClustVar : word count `clustvars'
-	if `hasclust' {
-		if 0`override' {
-			cap assert !missing(`:subinstr local clustvars " " ",", all') if e(sample), `=cond(c(stata_version)>=12.1, "fast", "")'
-			if _rc {
-				di as err "A clustering variable has a missing value for at least one observation."
-				exit 9
-			}
-		}
-
-		if `"`bootcluster'"' == "" {
-			local bootcluster: copy local clustvars
-			if `reps' & `NErrClustVar'>1 di as txt "({cmdab:bootcl:uster(`clustvars')} assumed)"
-		}
-		local    clustvars `:list clustvars & bootcluster' `:list clustvars - bootcluster'
-		local allclustvars `:list bootcluster - clustvars' `clustvars' // put bootstrapping clusters first, error clusters last, overlap in middle
-
-		if "`issorted'"=="" sort `clustvars' `:list bootcluster - clustvars', stable  // bootstrapping-only clusters left out of this sort. Effect is that in subcluster bootstrap, bootstrapping clusters are intersections of all clusterings
-
-		foreach clustvar in `allclustvars' {
-			if !inlist("`:type `clustvar''", "byte", "int", "long") {
-				tempvar IDname
-				qui egen long `IDname' = group(`clustvar') if e(sample)
-				local _allclustvars `_allclustvars' `IDname'
-			}
-			else local _allclustvars `_allclustvars' `clustvar'
-		}
-		local allclustvars: copy local _allclustvars
-	}
-  local NBootClustVar: word count `bootcluster'
-
-	forvalues h=1/`N_h0s' {  // loop over multiple independent constraints
-    if "`sameseed'"!="" set seed `seed'
-  
-    if `margins' mat `R' = `marginsH0'[`h', 1...]
-    else {
-    	_estimates hold `hold', restore
-      ereturn post `b'
-      mat `b' = e(b)
-
-      local h0text
-      foreach c in `h0_`h'' {
-        local h0text = `"`h0text'"' + `" "`: constraint `c''""'
-      }
-
-      qui makecns `h0_`h''  // process hypothesis constraints into e(Cns)
-      if "`h0_`h''" != "`r(clist)'" {
-        local clist `r(clist)'
-        local clist: list h0_`h' - clist
-        foreach c in `clist' {
-          di as txt `"note: constraint `=cond(0`anythingh0', `"{res}`:constraint `c''{txt}"', "number `c'")' caused error {search r(111)}"'
-          if `DID' di `"If your test relates to the treatment effect, you may need to reference "{cmd:r1vs0.`treatment'}" instead of "{cmd:`treatment'}"."' _n
-        }
-        exit 111
-      }
-      
-      cap mat `C' = e(Cns)
-      if _rc exit 111
-      _estimates unhold `hold'
-      if r(k_autoCns) mat `C' = `C'[r(k_autoCns)+1...,1...]
-      mat `R' = `C'[1...,1..colsof(`C')-1]
-      mat `r' = `C'[1...,   colsof(`C')  ]
-
-			* get rid of any remaining o. and b. constraints; r(k_autoCns) doesn't capture all
-      mata _boottestC = J(1,0,0)
-      foreach var in `:colnames `R'' {
-        _ms_parse_parts `var'
-        mata _boottestC = _boottestC, !`r(omit)'
-      }
-      mata _boottestC = rowsum(select(st_matrix("`R'"), _boottestC) :!= 0)
-			mata st_matrix("`R'", select(st_matrix("`R'"), _boottestC))
-			mata st_matrix("`r'", select(st_matrix("`r'"), _boottestC))
-			cap mat `R'[1,1] = `R'[1,1]
-			if _rc {
-				di as error _n "Null constraint applies only to omitted variables or base levels of factor variables."
-				continue
-			}
-			scalar `df' = rowsof(`R')
-    }
-
-		if 0`NFE' {
-			mata st_local("rc", strofreal(any(0:!=select(st_matrix("`R'"),st_matrixcolstripe("`R'")[,2]':=="_cons"))))
-
-			if `rc' {
-				di as err "In fixed-effect models, null hypotheses may not involve constant term."
-				exit 111
-			}
-		}
-
-		local plotmat
-		local peakmat
-		local cimat
-		if "`noci'"=="" & !`ML' & (`df'<=1 | `df'==2 & "`graph'"=="") {
-			if `reps' | !`scoreBS' | `null' | "`graph'"=="" tempname plotmat peakmat // don't request plot if doing simple Wald with no graph
-			if `level'<100 & `df'==1 tempname cimat
-		}
-
-		if `df'>1 & "`ptype'"!="symmetric" di as txt "Note: {cmd:ptype(`ptype')} ignored for multi-constraint null hypotheses."
-
-		if `df'<=2 {  // a bit duplicative of code in the if-`ML' block just below...
-			if  "`graph'"=="" {  // construct axis label(s)
-				if `margins' local constraintLHS1 "Margins of `:word `h' of `marginsnames''"
-        else {
-        	local coleq: coleq `b'
-          if "`:word 1 of `coleq''"=="_" local coleq
-          local colnames: colnames `b'
-          forvalues i=1/`=`df'' {
-            local terms 0
-            local constraintLHS`i'
-            forvalues j=1/`=colsof(`R')' {
-              if `R'[`i',`j'] {
-                if `terms++' local constraintLHS`i' `constraintLHS`i''+
-                local constraintLHS`i' `constraintLHS`i'' `=cond(`R'[`i',`j']!=1,"`=`R'[`i',`j']'*","")'`=cond("`coleq'"=="","","[`:word `j' of `coleq'']")'`:word `j' of `colnames''
-              }
-            }
-					}
-				}
-			}
-			
-			foreach option in gridmin gridmax gridpoints {
-				if "``option''" == "" local `option' = `df' * ". "
-				else if `df' != `:word count ``option''' {
-					di as err "{cmd:`option'()} option needs " cond(`df'==1, "one entry", "two entries")
-					exit 199
-				}
-        tempname `option'vec
-        mata st_matrix("``option'vec'", strtoreal(tokens("``option''"))) 
-			}
-		}
-
-		if `ML' {
-			local K .
-      local k = colsof(`b')
-
-			if `null' {
-				if "`e(cmdline)'"=="" & `"`cmdline'"'=="" {
-					di as err "Original estimation command line needed. Include it in a {cmd:cmdline()} option."
-					exit 198
-				}
-				if "`cmd'"=="tobit" & c(stata_version)<15 {
-					di as err "Cannot impose null after {help tobit} in Stata versions below 15. Try re-fitting the model with {stata ssc describe cmp:cmp}, {help intreg}, or {help gsem}."
-					exit 198
-				}
-
-				mat `R1R' = `R' \ nullmat(`R1')  // add null to model constraints
-				mat `r1r' = `r' \ nullmat(`r1')
-
-				if !`quietly' di as res _n "Re-running regression with null imposed." _n
-				if `"`cmdline'"'=="" local cmdline `e(cmdline)'
-        
-        _parse expand lc lg: cmdline, common(CONSTraints(passthru) from(passthru) INIt(passthru) ITERate(passthru) Robust)  // would be nice to extract, thus remove, cluster() option for speed, but it affects sample
-        local 0, `lg_op'
-        syntax, [from(passthru) INIt(passthru) ITERate(passthru) *]
-        local 0: copy local lc_1
-				syntax [anything] [aw pw fw iw] [if] [in], [*]
-
-				if "`e(cmd)'"=="ml" local max max  // tack on max option in case ml run in interactive model and cmdline() is missing it
-
-				cap _estimates drop `hold'
-				_estimates hold `hold', restore
-				local coleq: coleq `b'
-				if "`:word 1 of `coleq''"=="_" local coleq
-				local colnames: colnames `b'
-				local _constraints
-				forvalues i=1/`=rowsof(`R1R')' {
-					local terms 0
-					local _constraint
-					forvalues j=1/`=colsof(`R1R')' {
-						if `R1R'[`i',`j'] {
-							if `terms++' local _constraint `_constraint' +
-              local eq = cond("`coleq'"=="" | inlist("`cmd'","xttobit","xtintreg") & "`coleq'"!=".", "", "[`:word `j' of `coleq'']")  // hack around xttobit/xtintreg bug internally renaming first eq to "eq1"
-							local _constraint `_constraint' `=cond(`R1R'[`i',`j']!=1,"`=`R1R'[`i',`j']' * ","")' `eq'`:word `j' of `colnames''
-						}
-					}
-					local _constraint `_constraint' = `=`r1r'[`i',1]'
-					constraint free
-					local _constraints `_constraints' `r(free)'
-					constraint `r(free)' `_constraint'
-				}
-
-				local cmdline version `c(stata_version)': `anything' `if' `in' `=cond("`weight'"=="","",`"[`weight'`exp']"')', `max' `options'  // "if `hold'" would prematurely restrict sample, interact badly with probit perfect prediction detection, changing retained regressors
-        forvalues i=2/0`lc_n' {  // reassemble hierarchical command line
-          local cmdline2 `cmdline2' || `lc_`i''
-        }
-
-        * re-estimate!
-        cap `=cond(`quietly', "", "noisily")' `cmdline' `from' `init' `iterate' `=cond("`cmd'"=="slogit","nocorner","")' constraints(`_constraints') `cmdline2'
-				local rc = _rc
-				constraint drop `_constraints'
-				if e(converged)==0 {
-					di as err "Could not impose null."
-					exit 430
-				}
-				if !`rc' {
-					mat `b0' = e(b)
-          _mkvec `b', update from(`b0', skip) first  // mlexp doesn't handle from(..., skip)
-          cap `cmdline' `=cond(inlist("`cmd'","cmp","ml"),"init(`b')","from(`b')")' iterate(0) `cmdline2'
-          if _rc cap `cmdline' from(`b', skip) iterate(0) `cmdline2'  // mprobit still needs skip even after _mkvec, from(..., skip)
-					local rc = _rc
-          mat drop `b0'
-				}
-				if `rc' {
-					di as err "Error imposing null. Perhaps {cmd:`cmd'} does not accept the {cmd:constraints()}, {cmd:from()}, and {cmd:iterate()} options, as needed."
-					exit `rc'
-				}
-				if !`quietly' {
-					mata st_numscalar("`t'", any(!diagonal(st_matrix("e(V)")) :& st_matrix("e(b)")'))
-					if `t' {
-						di _n as res _n "{res}Warning: Negative Hessian under null hypothesis not positive definite. Results may be unreliable." _n
-						di "This may indicate that the constrained optimum is far from the unconstrained one, i.e., that the hypothesis is incompatible with the data." _n
-					}
-				}
-			}
-			
-			mat `V' = e(V`=cond("`e(V_modelbased)'"!="", "_modelbased", "")')
-
-      tempvar sc
-      cap predict double `sc'* if e(sample), score
-      if _rc {
-        if `reps'==0 & "`e(gradient)'"!="" {  // hack: for score and Wald tests, generate observation-level "scores" with last entries=total gradient and rest 0, since only their sums matter
-          tempname gradient
-          mat `gradient' = e(gradient)
-          mata st_view(_boottestt=.,.,"`hold'"); st_local("n1", strofreal(max(selectindex(_boottestt))))
-          local scnames
-          qui forvalues i=1/`k' {
-            tempvar t
-            gen double `t' = 0
-            replace `t' = `gradient'[1,`i'] in `n1'
-            local scnames `scnames' `t'
-          }
-        }
-        else {
-          di as err "Could not generate scores from `e(cmd)' with {cmd:predict}."
-          exit _rc
-        }
-      }
-      else {
-        unab scnames: `sc'*
-        if `:word count `scnames'' == e(k_eq) {  // generate score for each parameter from those for each equation
-          local colnames: colnames `b'
-          tokenize `:coleq `b''
-          local lasteq
-          local eq 0
-          local _sc
-          qui forvalues i=1/`k' {
-            if "``i''" != "`lasteq'" | "``i''"=="/" {
-              local ++eq
-              local lasteq: copy local `i'
-            }
-            local var: word `i' of `colnames'
-            if "`var'"=="_cons" | strmatch("`var'","*._cons") | "``i''"=="/" local _sc `_sc' `:word `eq' of `scnames'' // constant term or free parameter
-            else {
-              tempvar t
-              gen double `t' = `:word `eq' of `scnames'' * `var' if e(sample)
-              local _sc `_sc' `t'
-            }
-          }
-          local scnames: copy local _sc
-        }
-      }
-
-			if !`null' {
-				cap _estimates drop `hold'
-				_estimates hold `hold', restore  // rename estimation as `hold' instead of generating new sample marker
-			}
-		}
-		else { // not ML
-      if `partial' mat `R'  = `R', J(`df', `:word count `e(partial1)'' + e(partialcons), 0)  // add blanks for partialled-out
-      mata st_matrix("`R'" , st_matrix("`R'" )[,_boottestp])  // put cols in standardized order & drop those for 0-variance vars
-
- 			cap _estimates drop `hold'
-			_est hold `hold', restore
-
-			if `ar' {
-				local kEnd: word count `Xnames_endog'
-				local kEx : word count `Xnames_exog'
-				mata st_numscalar("`p'", rows(st_matrix("`R'"))!=`kEnd' | (`kEx'? any(st_matrix("`R'")[|.,.\.,`kEx'|]) : 0))
-				if `p' {
-					di as err "For Anderson-Rubin test, null hypothesis must constrain all the instrumented variables and no others."
-					exit 198
-				}			
-			}
-		}
-
-    cap confirm var `hold'
-    if _rc {
-      di as err "Sample marker for the regression not found. Perhaps the data set was cleared and reconstructed."
-      exit _rc
-    }
-
-    if `margins' {
-      cap drop `touse'
-      gen byte `touse' = `hold' & `marginstouse'
-      local sample: copy local touse
-    }
-    else local sample: copy local hold
-
-    return local seed: copy local seed
-
-    if !`julia' {
-      mata boottest_stata("`teststat'", "`df'", "`df_r'", "`p'", "`padj'", "`cimat'", "`plotmat'", "`peakmat'", `level', `ptolerance', ///
-                          `ML', `LIML', 0`fuller', `K', `ar', `null', `scoreBS', `jk', "`weighttype'", "`ptype'", "`statistic'", ///
-                          "`madjust'", `N_h0s', "`Xnames_exog'", "`Xnames_endog'", ///
-                          "`Ynames'", `=cond(`ML', `" "`b'", "`V'" "', `" "","" "')', "`ZExclnames'", "`hold'", "`scnames'", `hasrobust', "`allclustvars'", `NBootClustVar', `NErrClustVar', ///
-                          "`FEname'", `NFE', `FEdfadj', "`wtname'", "`wtype'", "`R1'", "`r1'", "`R'", "`r'", `reps', "`repsname'", "`repsFeasname'", `small', "`svmat'", "`dist'", ///
-                          "`gridmin'", "`gridmax'", "`gridpoints'", `matsizegb', `quietly', "`b0'", "`V0'", "`svv'", "`NBootClustname'")
-    }
-    else {
-      foreach X in R R1 V {
-        if "``X''" != "" jl PutMatToMat ``X'', dest(`X')
-          else _jl: `X' = Matrix{Float`precision'}(undef,0,0)
-      }
-
-      foreach X in gridminvec gridmaxvec gridpointsvec {
-        if "``X''" != "" jl PutMatToMat ``X'', dest(`X')
-          else _jl: `X' = Matrix{Float`precision'}(undef,`=`df'',0)
-      }
-      foreach X in r r1 b {
-        if "``X''" != "" {
-          jl PutMatToMat ``X'', dest(`X')
-          _jl: `X' = vec(`X')
-        }
-        else _jl: `X' = Vector{Float`precision'}(undef,0)
-      }
-      foreach X in Xnames_exog Xnames_endog ZExclnames scnames allclustvars {
-        if "``X''" != "" jl PutVarsToMat ``X'' if `hold', dest(`X')
-          else _jl: `X' = Matrix{Float`precision'}(undef,0,0)
-      }
-      foreach X in Ynames wtname FEname {
-        if "``X''" != "" {
-          jl PutVarsToMat ``X'' if `hold', dest(`X')
-          _jl: `X' = dropdims(`X'; dims=2)
-        }
-        else _jl: `X' = Vector{Float`precision'}(undef,0)
-      }
-      _jl: FEname = iszero(`NFE') ? Vector{Int64}(undef,0) : Vector{Int64}(FEname)
-      _jl: allclustvars = iszero(`hasclust') ? Matrix{Int64}(undef,0,0) : Matrix{Int64}(allclustvars)
-jl: using JLD
-jl: @save "/Users/davidroodman/Downloads/tmp.jld" Ynames Xnames_exog Xnames_endog ZExclnames wtname allclustvars FEname scnames R r R1 r1 gridminvec gridmaxvec gridpointsvec b V
-      _jl: using Random; Random.seed!(rng, `=runiformint(0, 9007199254740992)')  // chain Stata rng to Julia rng
-      _jl: _boottest_jl = wildboottest!(Float`precision', R, r; resp=Ynames, predexog=Xnames_exog, predendog=Xnames_endog, inst=ZExclnames, ///
-                          obswt=wtname, clustid=allclustvars, feid=FEname, scores=scnames, ///
-                          R1, r1, ///
-                          nbootclustvar=`NBootClustVar', nerrclustvar=`NErrClustVar', ///
-                          issorted=true, ///
-                          hetrobust=Bool(`hasrobust'), ///
-                          fedfadj=`FEdfadj', ///
-                          fweights = "`wtype'"=="fweight", ///
-                          maxmatsize=`=0`matsizegb'', ///
-                          ptype="`ptype'", ///
-                          bootstrapc = "`statistic'"=="c", ///
-                          liml=Bool(`LIML'), fuller=`=0`fuller'', `=cond(`K'<.,"kappa=`K',","")' ///
-                          arubin=Bool(`ar'), small=Bool(`small'), ///
-                          scorebs=Bool(`scoreBS'), ///
-                          jk=Bool(`jk'), ///
-                          reps=`reps', imposenull=Bool(`null'), level=`level'/100, ///
-                          auxwttype=:`weighttype', ///
-                          rtol=`ptolerance', ///
-                          madjtype="`madjust'"=="" ? :none : :`madjust', nH0=`N_h0s', ///
-                          ml=Bool(`ML'), beta=b, A=V, ///
-                          gridmin=gridminvec, gridmax=gridmaxvec, gridpoints=gridpointsvec, ///
-                          getdist = Bool("`svmat'"!=""), ///
-                          getci = `level'<100 && "`cimat'" != "", getplot = "`plotmat'"!="", ///
-                          getauxweights = "`svv'"!="", ///
-                          rng=rng)
-      _jl: rand(rng, Int32)  // chain Julia rng back to Stata to advance it replicably
-      set seed `r(ans)'
-      if "`plotmat'"!="" {
-        if `df'==1 {
-          jl GetMatFromMat `plotmat', source([_boottest_jl.plot[:X][1] _boottest_jl.plot[:p]])
-          jl GetMatFromMat `peakmat', source([_boottest_jl.peak[:X][1] _boottest_jl.peak[:p]])
-        }
-        else jl GetMatFromMat `plotmat', source([vcat(vec([[x y] for x in _boottest_jl.plot[:X][1], y in _boottest_jl.plot[:X][2]])...) _boottest_jl.plot[:p]])
-      }
-      if `level'<100 & "`cimat'" != "" jl GetMatFromMat `cimat', source(_boottest_jl.ci)
-      _jl: SF_scal_save("`teststat'", _boottest_jl.stat)
-      _jl: SF_scal_save("`df'", _boottest_jl.dof)
-      _jl: SF_scal_save("`df_r'", _boottest_jl.dof_r)
-      _jl: SF_scal_save("`p'", _boottest_jl.p)
-      _jl: SF_scal_save("`padj'", _boottest_jl.padj)
-      _jl: SF_scal_save("`repsname'", _boottest_jl.reps)
-      _jl: SF_scal_save("`repsFeasname'", _boottest_jl.repsfeas)
-      _jl: SF_scal_save("`NBootClustname'", _boottest_jl.nbootclust)
-      jl GetMatFromMat `b0', source(_boottest_jl.b)
-      jl GetMatFromMat `V0', source(_boottest_jl.V)
-      if "`dist'"!="" jl GetMatFromMat `dist', source(_boottest_jl.`=cond("`svmat'"=="t", "dist", "numerdist")'')
-      if "`svv'" !="" jl GetMatFromMat `svv', source(_boottest_jl.auxweights)
-    }
-
-		_estimates unhold `hold'
-
-    if !`quietly' & 2^`NBootClustname' < `reps' & inlist("`weighttype'", "rademacher", "mammen") {
-      di _n "Warning: with " `NBootClustname' " bootstrap clusters, the number of replications, `reps', exceeds the universe of " strproper("`weighttype'") " draws, 2^"`NBootClustname' " = " 2^`NBootClustname' ". " _c
-      if "`weighttype'"=="rademacher" di "Sampling each once." _c
-      di _n "Consider Webb weights instead, using {cmd:weight(webb)}."
-    }
-    local reps = `repsname'  // in case reduced to 2^G
-    if !`quietly' & `reps' & (`NBootClustname'>12 | "`weighttype'" != "rademacher") & floor(`level'/100 * (`reps'+1)) != `level'/100 * (`reps'+1) {
-      di _n "Note: The bootstrap usually performs best when the confidence level (here, `level'%)" _n "      times the number of replications plus 1 (`reps'+1=" `reps'+1 ") is an integer."
-    }
-
-		if !`ML' & `reps' & `NErrClustVar'>1 & `teststat'<. {
-			return scalar repsFeas = `repsFeasname'
-			if `repsFeasname' < `reps' di _n "Warning: " `reps' - `repsFeasname' " replications returned an infeasible test statistic and were deleted from the bootstrap distribution."
-		}
-		
-		if `N_h0s'>1 local _h _`h'
-
-		if `df'==1 {
-			local tz = cond(`small', "t", "z")
-			return scalar `tz'`_h' = `teststat'
-		}
-
-		di
-		if `reps' {
-      di as txt strproper("`boottype'") " bootstrap-`statistic', null " cond(0`null', "", "not ") "imposed, " _c
-      if `jk' di "jackknifed residuals, " _c
-      di as txt `reps' as txt " replications, " _c
-    }
-		di as txt cond(`ar', "Anderson-Rubin ", "") cond(!`reps' & `null' & "`boottype'"=="score", "Rao score (Lagrange multiplier)", "Wald") " test" _c
-		if "`cluster'"!="" di ", clustering by " as res "`cluster'" _c
-		if ("`bootcluster'"!="" | `NErrClustVar' > 1) & `reps' di as txt ", bootstrap clustering by " as res "`bootcluster'" _c
-		if `reps'	di as txt ", " strproper("`weighttype'") " weights" _c
-		di as txt ":"
-		
-		if `margins' di `"  `:word `h' of "`marginsnames'""'
-    else {
-    	foreach c in `h0_`h'' {
-        di "  " _c
-        if !0`anythingh0' di as txt %4.0g `c' ": " _c
-        di as res "`:constraint `c''"
-      }
-    }
-
-		if `df'==1 {
-			local line1 = cond(`small', "t(`=`df_r'')", "z")
-			di _n as txt _col(`=33-strlen("`line1'")') "`line1' = " as res %10.4f `teststat' _n _col(`=33-strlen("``ptype''")') as txt "``ptype'' = " as res %10.4f `p'
-			local `teststat' = `teststat' * `teststat'
-		}
-		else {
-			if `small' {
-				local line1 F(`=`df'', `=`df_r'')
-				local line2 Prob > F
-			}
-			else {
-				local line1 chi2(`=`df'')
-				local line2 Prob > chi2
-			}
-			di _n as txt _col(`=27-strlen("`line1'")') "`line1' = " as res %10.4f `teststat' _n as txt _col(`=27-strlen("`line2'")') "`line2' = " as res %10.4f `p'
-		}
-
-		if "`madjust'" != "" {
-			di _col(`=strlen("bonferroni")-strlen("`madjust'")+3') as txt strproper("`madjust'") "-adjusted prob = " as res %10.4f `padj'
-			return scalar padj`_h' = `padj'
-		}
-
-		if `NErrClustVar' > 1 {
-			cap mat `t' = syminv(`V0')
-			cap noi if diag0cnt(`t') di _n "Test statistic could not be computed. The multiway-clustered variance estimate " cond(`df'==1, "", "matrix ") "is not positive" cond(`df'==1, "", "-definite") "."
-		}
-		cap mat colnames `b0' = `h0text'
-		cap mat colnames `V0' = `h0text'
-		cap mat rownames `V0' = `h0text'
-    cap return matrix b`_h' = `b0'
-		cap return matrix V`_h' = `V0'
-
-		cap confirm mat `plotmat'
-		if _rc == 0 {
-			tempvar X1 Y _plotmat
-			mat `_plotmat' = `plotmat'
-			return matrix plot`_h' = `plotmat'
-			mat `plotmat' = `_plotmat'
-
-			if "`graph'"=="" {
-				cap confirm matrix `peakmat'
-				if !_rc {
-					mata st_matrix("`plotmat'", st_matrix("`plotmat'") \ st_matrix("`peakmat'"))
-					return matrix peak`_h' = `peakmat'
-				}
-				cap confirm matrix `cimat'
-				if _rc mat `_plotmat' = `plotmat'
-				else {
-					mata st_matrix("`_plotmat'", st_matrix("`plotmat'") \ ((st_matrix("`cimat'")[,1] \ st_matrix("`cimat'")[,2]), J(2*`=rowsof(`cimat')', 1, 1-`level'/100)))
-				}
-
-        if colsof(`_plotmat')==3 tempvar X2
-				mat colnames `_plotmat' = `X1' `X2' `Y'
-				local _N = _N
-        qui svmat `_plotmat', names(col)
-				label var `Y' " "  // in case user turns on legend
-				if `"`graphname'"'=="Graph" cap graph drop Graph`_h'
-
-				if colsof(`_plotmat')==2 {
-        	cap mata st_local("nonmiss", strofreal(nonmissing(st_matrix("`cimat'"))))
-          if 0`nonmiss' > 1 {
-            mata _boottestm = (-min(-st_matrix("`cimat'")) - min(st_matrix("`cimat'"))) / 2 / (`nonmiss' + 1)  // margin
-            mata _boottestt = min(select(st_matrix("`plotmat'")[,1], st_matrix("`plotmat'")[,1] :> max(st_matrix("`cimat'")) + _boottestm)); st_local("plotmax", rows(_boottestt)? strofreal(_boottestt * (1 + sign(_boottestt)*1e-6)) : .)
-            mata _boottestt = max(select(st_matrix("`plotmat'")[,1], st_matrix("`plotmat'")[,1] :< min(st_matrix("`cimat'")) - _boottestm)); st_local("plotmin", rows(_boottestt)? strofreal(_boottestt * (1 - sign(_boottestt)*1e-6)) : .)
-          }
-          else {
-          	local plotmin .
-            local plotmax .
-          }
-          
-					format `X1' `X2' %5.0g
-
-					local 0, `graphopt'
-					syntax, [LPattern(passthru) LWidth(passthru) LColor(passthru) LStyle(passthru) *]
-
-					line `Y' `X1', sort(`X1') `lpattern' `lwidth' `lcolor' `lstyle' || scatter `Y' `X1' if _n>rowsof(`plotmat'), mlabel(`X1') mlabpos(6) `mlabformat' xtitle("`constraintLHS1'") ///
-            || if (`gridmin'<. | -`X1'<=-`plotmin') & (`gridmax'<. | `X1'<=`plotmax'), ///
-						ytitle(`"`=strproper("`madjust'") + cond("`madjust'"!="","-adjusted ", "")' p value"') ///
-						yscale(range(0 .)) name(`graphname'`_h', `replace') ///
-						`=cond(`level'<100, "yline(`=1-`level'/100') ylabel(#6 `=1-`level'/100')", "")' legend(off) `options'
-				}
-				else {
-					foreach var in Y X1 X2 {
-						if "``var''" != "" {
-							cap drop _boottest``var''
-              ren ``var'' _boottest``var'' // work-around for bug in twoway contour, rejecting temp vars
-							local `var' _boottest``var''
-						}
-					}
-					c_local contourvars `Y' `X1' `X2' // pass these to calling program for dropping in case twoway contour crashes
-					
-					twoway contour `Y' `X2' `X1' if _n<=rowsof(`plotmat'), xtitle("`constraintLHS1'") ytitle("`constraintLHS2'") ///
-						ztitle(`"`=strproper("`madjust'")+ cond("`madjust'"!="","-adjusted ", "")' p value"', orient(rvert)) ///
-						name(`graphname'`_h', `replace') crule(linear) scolor(gs5) ecolor(white) ccut(0(.05)1) plotregion(margin(zero)) /// // defaults copied from weakiv
-						`graphopt'
-				}
-        qui keep in 1/`_N'
-			}
-		}
-
-		cap confirm mat `cimat'
-		if _rc==0 {
-			di _n as res `level' "%" as txt " confidence set for null hypothesis expression: " _c
-      local CIstr
-      local infty = cond(c(stata_version)>=14, "∞", ".")
-      local neginfty = cond(c(stata_version)>=14, "-∞", ".")
-      local union = cond(c(stata_version)>=14, "∪", "U")
-			forvalues i=1/`=rowsof(`cimat')' {
-				if `i'>1 local CIstr = "`CIstr' `union' "
-				local CIstr = "`CIstr'" + cond(`cimat'[`i',1]==., "(`neginfty'", "[" + strofreal(`cimat'[`i',1], "`format'")) + ", " + cond(`cimat'[`i',2]==., "`infty')", strofreal(`cimat'[`i',2], "`format'") + "]")
-			}
-      local CIstr = subinstr("`CIstr'", "-", "−", .)  // proper minus sign
-			di as res "`CIstr'"
-
-			if inlist("`ptype'", "symmetric", "equaltail") {
-				tempname t
-				mata st_numscalar("`t'", anyof(st_matrix("`cimat'"), .))
-				if `t' di "(A confidence set could not be bounded. Try widening the search range with the {cmd:gridmin()} and {cmd:gridmax()} options.)"
-			}
-			mat colnames `cimat' = lo hi
-      cap mat rownames `cimat' = `h0text'
-			return matrix CI`_h' = `cimat'
-			return local CIstr`_h': copy local CIstr
-		}
-		
-		if "`statistic'"=="c" & `df'==1 {
-			di "Note: denominator for `tz' statistic computed from the bootstrap replications of the numerator."
-		}
-		
-		return scalar `=cond(`small', "F", "chi2")'`_h' = cond(`df'==1, `teststat'*`teststat', `teststat')
-		if `small' return scalar df_r`_h' = `df_r'
-		return scalar df`_h' = `df'
-		return scalar p`_h' = `p'
-		if `hasrobust' return local robust robust
-		if "`svmat'"!="" return matrix dist`_h' = `dist'
-    if "`svv'" != "" return matrix v`_h' = `svv'
-	}  // loop over independent H0s
-
-  cap mat_put_rr `C'  // can fail in boottest, margins
-	return scalar level = `level'
-	return scalar ptol = `ptolerance'
-	return local statistic: copy local statistic
-	return local weighttype: copy local weighttype
-	return local boottype: copy local boottype
-	return local clustvars: copy local clustvars
-	return scalar null = `null'
-	return scalar reps = `repsname'
-  return scalar NH0s = `N_h0s'
+  if 0`julia' qui jl SetEnv `env' // revert to original Julia environment
 end
 
 cap program _julia_boottest, plugin using(jl.plugin)  // create an extra handle to the plugin to reduce the chance that Stata unloads it
 
 
 * Version history
+* 4.5.2  Revert one 4.5.1 change (51192a82d181920ca7009f95cc7744a2f031c9bf) because it created a new bug.
+*        Add algorithm() option.
+*        Fix: jl SetEnv to restore caller's environment was zapping r() macros
+* 4.5.1  Fix bugs causing crashes under certain circumstances
 * 4.5.0  Add sameseed option. No longer sort return value from svmat.
 * 4.4.14 Add reference to jl.plugin to reduce chance Stata unloads it and causes crash
 * 4.4.13 Check for and support used of contrast operators in margins

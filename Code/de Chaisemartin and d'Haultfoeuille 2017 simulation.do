@@ -1,5 +1,8 @@
 * this file first implements a stripped-down version of de Chaisemartin & d'Haultfoeuille's fuzzy DID in Mata, then runs the simulations in the appendix
 
+*** Need to cd to root of this archive. For example:
+cd "/Users/davidroodman/Downloads/Duflo-2001-main 2"
+
 mata
 mata clear
 mata set matastrict on
@@ -119,7 +122,7 @@ program define construction_groups, rclass sortpreserve
   }
 end
 
-use "D:\OneDrive\Documents\Work\Clients & prospects\GiveWell\Education\Duflo 2001\inpresdata", clear
+use data/inpresdata, clear
 gen byte age74 = 74 - p504thn
 gen byte young = age74 <= 6
 gen byte old = age74 <= 17 & age74 >= 12
@@ -218,11 +221,11 @@ end
 mat C = 1 \ 0 \ 1  // lower triangle of error covariance matrix
 simulate Nm1=r(Nm1) N0=r(N0) Np1=r(Np1) W_DID=r(W_DID) W_CIC=r(W_CIC) W_IV=r(W_IV), reps(100) seed(12983710): sim
 estpost tabstat *, stat(mean sd) columns(statistics)
-est store rho00
+eststo rho00
 
 mat C = 1 \ .95 \ 1
 simulate Nm1=r(Nm1) N0=r(N0) Np1=r(Np1) W_DID=r(W_DID) W_CIC=r(W_CIC) W_IV=r(W_IV), reps(100) seed(12983710): sim
 estpost tabstat *, stat(mean sd) columns(statistics)
-est store rho95
+eststo rho95
 
-esttab rho?? using CH.rtf, replace cells("mean(fmt(3)) sd(fmt(3))") nostar unstack nonumber msign("–") stat(N, lab("Simulations") fmt(0)) fonttbl(\f0\fnil Cambria;)
+esttab rho?? using output/CH.rtf, replace cells("mean(fmt(3)) sd(fmt(3))") nostar unstack nonumber msign("–") stat(N, lab("Simulations") fmt(0)) fonttbl(\f0\fnil Cambria;)
