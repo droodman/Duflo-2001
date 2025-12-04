@@ -1,0 +1,489 @@
+{smcl}
+{* 10jul2006}{...}
+{cmd:help mata mm_bs()}
+{hline}
+
+{title:Title}
+
+{pstd}
+{bf:mm_bs() -- Bootstrap estimation}
+
+
+{title:Syntax}
+
+{p 11 18 2}
+{it:bs} = {cmd:mm_bs(}{it:f}{cmd:,} {it:X} [{cmd:,}
+{it:w}{cmd:,}
+{it:reps}{cmd:,}
+{it:d}{cmd:,}
+{it:nodots}{cmd:,}
+{it:strata}{cmd:,}
+{it:cluster}{cmd:,}
+{it:stat}{cmd:,}
+{it:...}]{cmd:)}
+
+{p 11 18 2}
+{it:bs} = {cmd:mm_bs2(}{it:f}{cmd:,} {it:X} [{cmd:,}
+{it:w}{cmd:,}
+{it:reps}{cmd:,}
+{it:d}{cmd:,}
+{it:nodots}{cmd:,}
+{it:strata}{cmd:,}
+{it:cluster}{cmd:,}
+{it:stat}{cmd:,}
+{it:...}]{cmd:)}
+
+{p 4 4 2}
+where
+
+{p 12 18 2}
+  {it:f}:  {it:pointer scalar} containing address of function to be
+  bootstrapped, i.e. {it:f} = {cmd:&}{it:functionname}{cmd:()}
+  {p_end}
+{p 12 18 2}
+  {it:X}:  {it:real matrix} containing data (rows are observations,
+  columns variables)
+  {p_end}
+{p 12 18 2}
+  {it:w}:  {it:real colvector} containing weights
+  {p_end}
+{p 9 18 2}
+  {it:reps}:  {it:real scalar} specifying number of replications
+  (default: 50)
+  {p_end}
+{p 12 18 2}
+  {it:d}:  {it:real scalar} specifying reduction of bootstrap sample size
+  (default: 0)
+  {p_end}
+{p 7 18 2}
+  {it:nodots}:  {it:real scalar} indicating that replication dots be
+  suppressed
+  {p_end}
+{p 7 18 2}
+  {it:strata}:  {it:real colvector} containing (sorted) strata ID variable
+  {p_end}
+{p 6 18 2}
+  {it:cluster}:  {it:real colvector} containing (sorted) cluster ID variable
+  {p_end}
+{p 9 18 2}
+  {it:stat}:  {it:real matrix} containing the results of {it:f}
+  using the original data, i.e., the "observed" value of {it:f}
+  {p_end}
+{p 10 18 2}
+  {it:...}:  up to 10 optional arguments to pass through to {it:f}
+  {p_end}
+
+
+{p 4 18 2}
+{it:real matrix} {cmd:mm_bs_report(}{it:bs} [{cmd:,}
+{it:what}{com:,}
+{it:level}{cmd:,}
+{it:mse}{cmd:,}
+{it:jk}]{cmd:)}
+
+{p 4 4 2}
+where
+
+{p 9 18 2}
+  {it:what}:  {it:string vector} containing statistics to be
+  reported, where the available statistics are: {cmd:"b"}
+or {cmd:"theta"} ("observed" value),
+{cmd:"mean"} (bootstrap mean),
+{cmd:"bias"} (bootstrap mean - observed value),
+{cmd:"v"} (variance-covariance matrix),
+{cmd:"se"} (standard error; the default),
+{cmd:"ci"} or {cmd:"n"}  (normal-approximation confidence interval),
+{cmd:"basic"} (basic confidence interval),
+{cmd:"p"} (percentile confidence interval),
+{cmd:"bc"} (bias-corrected confidence interval),
+{cmd:"bca"} (bias-corrected and accelerated confidence interval),
+{cmd:"t"} (percentile-t confidence interval){p_end}
+{p 8 18 2}
+  {it:level}:  {it:real scalar} containing the confidence level
+  for confidence intervals (default is 95 or as
+  set by {helpb set level})
+  {p_end}
+{p 10 18 2}
+  {it:mse}:  {it:real scalar} indicating that the mean squared
+  errors formula be used
+  {p_end}
+{p 11 18 2}
+  {it:jk}:  {it:struct mm_jkstats} containing results from
+  {helpb mf_mm_jk:mm_jk()} (required if {it:what} contains
+  {cmd:"bca"})
+  {p_end}
+
+{pstd}{it:bs} is a variable used for communication between
+{cmd:mm_bs()} and {cmd:mm_bs_report()}. If you declare {it:bs},
+declare it to be {it:transmorphic}.
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_bs(}{it:f}{cmd:,} {it:X}{cmd:,} {it:w}{cmd:)}
+applies function {it:f} to bootstrap samples of the
+data {it:X} (and weights {it:w}) and returns the results as a
+structure. To be precise, {it:f} is a pointer to a function,
+i.e. {bind:{it:f} = {cmd:&}{it:functionname}{cmd:()}}, e.g.
+{bind:{it:f} = {cmd:&mean()}} (see {helpb m2_ftof:[M-2] ftof}).
+{cmd:mm_bs()} expects function {it:f} to return a
+{it:real rowvector} of parameter estimates to be bootstrapped or,
+optionally, a {it:real matrix} containing parameter estimates in the first row
+and associated standard errors in the second row (the standard
+errors are required for percentile-t confidence intervals; see
+Remarks below). Furthermore, function {it:f} must take the data as the
+first argument and weights as the second argument.
+
+{pstd}
+Note that the weights {it:w} are not relevant for the bootstrap
+resampling process. That is, {cmd:mm_bs()} always draws simple
+(i.e. equal probability) random samples (with replacement),
+no matter whether weights are
+specified or not. However, weights are passed through
+to the internal calls of function {it:f}. Omit {it:w}, or specify
+{it:w} as 1 to obtain unweighted results. {it:w}=1 is passed to
+function {it:f} if {it:w} is omitted.
+
+{pstd}{it:reps} specifies the number of desired bootstrap replicates.
+The default is 50, which is too low for most applications. The default
+sample size for the single bootstrap samples is the number of
+observations in the data (or number of clusters, if {it:cluster} is
+specified). However, {it:d}>0 causes the default bootstrap sample
+size to be reduced by {it:d} (within each stratum if {it:strata}
+is specified). For example, specify {it:d}=1 to produce
+bootstrap samples containing only N-1 observations. Specify, {it:d}=0
+to not change the default sample size.
+
+{pstd}{it:nodots}!=0 indicates that replication dots be suppressed.
+By default, a single dot character is displayed for each successful replication and
+a single red 'x' is displayed for each unsuccessful replication. A
+replication is considered unsuccessful if the replication result
+contains one or more missing values. {cmd:mm_bs()} only returns
+results from successful replications.
+
+{pstd}{it:strata} and {it:cluster} may be used to specify a strata ID
+variable and a cluster ID variable. {cmd:mm_bs()} will then draw
+stratified samples of clusters. Note that {cmd:mm_bs()} does not
+sort the data: A new stratum begins each time
+{it:strata} changes from one row to the next, a new cluster begins
+each time {it:cluster} (or {it:strata}) changes from one row to the
+next. Omit {it:strata} or specify {it:strata}=. if the sample is
+unstratified; omit {it:cluster} or specify
+{it:cluster}=. if the sample does not contain clusters.
+
+{pstd}By default, {cmd:mm_bs()} first applies {it:f} to the original
+data to obtain the "observed" value of {it:f} given {it:X} and
+{it:w}. Alternatively, the "observed" value may be provided as
+{it:stat}, where {it:stat} is a {it: real matrix} containing point estimates
+in the first row and, optionally, associated standard errors in the
+second row. Omit {it:stat} or specify {it:stat}=. if you do not want to provide
+the "observed" value.
+
+{pstd}{cmd:mm_bs2()} is an alternative version of {cmd:mm_bs()}. Instead of
+physically sampling the data, {cmd:mm_bs2()}
+implements bootstrap estimation by multiplying {it:w}
+by the number of times an observation belongs to the bootstrap sample. {cmd:mm_bs2()} requires less memory than
+{cmd:mm_bs()} but it is slower and cannot be used in all situations (i.e. only
+if, for the statistic in question, multiplying {it:w} is a correct way to
+represent multiple drawn observations).
+
+{pstd}The results produced by {cmd:mm_bs()} and {cmd:mm_bs2()} depend
+on the the initial value of random-number seed. Use {helpb set seed}
+or {helpb mf_uniformseed:uniformseed()} to set the seed.
+
+{pstd}{cmd:mm_bs_report()} is used to analyze the bootstrap
+replications computed by {cmd:mm_bs()} or {cmd:mm_bs2()}. It
+returns a matrix of statistics such as
+bootstrap means, bootstrap standard errors, or various versions
+of bootstrap confidence intervals (see the {it:what} argument above).
+Multiple statistics are arranged beneath one another in the specified
+order. For example, {cmd:mm_bs_report(}{it:bs}{cmd:, ("b","se","ci"))} will
+return the observed values in the first row, the standard errors in the
+second row, and the lower and upper bounds of the normal-approximation
+confidence intervals in the third and forth row.
+
+{pstd}
+{it:level} specifies the confidence level, as a percentage, for confidence
+intervals.  The default is {it:level}=95 or as set by
+{helpb set level}.
+
+{pstd} {it:mse}!=0 indicates that variances and standard errors be
+computed using deviations of the replicates from the "observed"
+value. By default, variances and standard errors are computed
+using deviations from the average of the replicates.
+
+{pstd}
+{it:jk} provides jackknife statistics as returned by
+{helpb mf_mm_jk:mm_jk()}. {it:jk} is required for bias-corrected and
+accelerated confidence intervals ({cmd:"bca"}). Omit {it:jk} or
+specify {it:jk}=. if no bias-corrected and
+accelerated confidence intervals are computed.
+
+
+{title:Remarks}
+
+{pstd}Remarks are presented under the headings
+
+{phang2}{it:{help mf_mm_bs##r1:Introduction}}{p_end}
+{phang2}{it:{help mf_mm_bs##r2:BCa confidence intervals}}{p_end}
+{phang2}{it:{help mf_mm_bs##r3:Percentile-t confidence intervals}}{p_end}
+{phang2}{it:{help mf_mm_bs##r4:Methods and formulas}}{p_end}
+
+
+{marker r1}{pstd}{ul:{it:Introduction}}
+
+{pstd}The following example illustrates the basic usage of
+{cmd:mm_bs()} and {cmd:mm_bs_report()}:
+
+        {com}: x = uniform(75,2)
+        {res}
+        {com}: B = mm_bs(&mean(), x, 1, 200)
+        {res}{txt}
+        Bootstrap replications ({res}200{txt})
+        {txt}{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5
+        ..................................................    50
+        ..................................................   100
+        ..................................................   150
+        ..................................................   200
+
+        {com}: mm_bs_report(B, ("b", "se"))
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.5059552237   .4677170853{txt}  {c |}
+          2 {c |}  {res}.0307029664   .0333863864{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}
+
+        {com}: mm_bs_report(B, "ci")
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.4454103082   .4018805821{txt}  {c |}
+          2 {c |}  {res}.5665001392   .5335535885{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+{pstd}{cmd:mm_bs()} first produces 200 bootstrap replicates of the
+means of the two variables contained in {cmd:x}. {cmd:mm_bs_report()} then reports the "observed"
+values, i.e. the means of the two variables in {cmd:x} (first row) and the
+bootstrap standard errors of the means (second row). The second call
+of {cmd:mm_bs_report()} displays the 95% normal-approximation
+confidence intervals for the two means (lower bound in first row,
+upper bound in second row).
+
+
+{marker r2}{pstd}{ul:{it:BCa confidence intervals}}
+
+{pstd}Bias-corrected and accelerated confidence intervals require the
+user to provide jackknife replicates of the parameter estimates. Use
+the {helpb mf_mm_jk:mm_jk()} function to compute these
+statistics. Example:
+
+        {com}: J = mm_jk(&mean(), x, 1)
+        {res}{txt}
+        Jackknife replications ({res}75{txt})
+        {txt}{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5
+        ..................................................    50
+        .........................
+
+        {com}: mm_bs_report(B, "bca", 95, 0, J)
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.4468480011   .4088091557{txt}  {c |}
+          2 {c |}  {res}.5566050638   .5391249383{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+
+{marker r3}{pstd}{ul:{it:Percentile-t confidence intervals}}
+
+{pstd}The formula for the (1-alpha) percentile-t confidence interval is
+
+        [ b - t(1-alpha/2) * se, b - t(alpha/2) * se ]
+
+{pstd}where b is the original parameter estimate, se is an estimate of
+the standard error of b and t({it:p}) is the {it:p}-quantile of
+the asymptotically pivotal statistic
+
+        t_i = (b_i - b)/se_i,  i = 1, ..., B
+
+{pstd}where the i indicates the bootstrap replicates.
+
+{pstd}To enable the computation of percentile-t confidence intervals,
+function {it:f} provided to {cmd:mm_bs()} must return standard
+error estimates along with the point estimates of the parameters
+(point estimates in the first row, standard errors in the second
+row). The following
+example illustrates the procedure using the textbook formula
+for the standard error of the mean:
+
+        {com}: real matrix meanse(x, w)
+        > {c -(}
+        >         if (w!=1) _error(3498, "w must be 1")
+        >         return(mean(x, 1) \
+        >          sqrt(diagonal(variance(x, 1))'/rows(x)))
+        > {c )-}
+
+        : meanse(x,1)
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.5059552237   .4677170853{txt}  {c |}
+          2 {c |}  {res}.0326460175   .0347510918{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}
+
+        {com}: B = mm_bs(&meanse(), x, 1, 200)
+        {res}{txt}
+        Bootstrap replications ({res}200{txt})
+        {txt}{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5
+        ..................................................    50
+        ..................................................   100
+        ..................................................   150
+        ..................................................   200
+
+        {com}: mm_bs_report(B, "t")
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.4442775319    .406048357{txt}  {c |}
+          2 {c |}  {res}.5645887108    .537843043{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+{pstd}An alternative approach may be to
+compute the standard errors by the bootstrap, i.e. to perform
+bootstrap-within-bootstrap or nested bootstrap. Example:
+
+        {com}: real matrix meanbsse(x, w)
+        > {c -(}
+        >         if (w!=1) _error(3498, "w must be 1")
+        >         return(mean(x, 1) \
+        >          mm_bs_report(mm_bs(x,1,&mean(),50,0,1),"se"))
+        > {c )-}
+
+        : meanbsse(x,1)
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.5059552237   .4677170853{txt}  {c |}
+          2 {c |}  {res}.0294400659   .0297055941{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}
+
+        {com}: B = mm_bs(&meanbsse(), x, 1, 200)
+        {res}{txt}
+        Bootstrap replications ({res}200{txt})
+        {txt}{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5
+        ..................................................    50
+        ..................................................   100
+        ..................................................   150
+        ..................................................   200
+
+        {com}: mm_bs_report(B, "t")
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res} .438978656   .4096034266{txt}  {c |}
+          2 {c |}  {res}.5833692536    .552163646{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+
+{marker r4}{pstd}{ul:{it:Methods and formulas}}
+
+{pstd}The formulas for the percentile-t confidence intervals can be
+found above. Also see, e.g., Poi (2004).
+
+{pstd}The basic confidence interval is defined as
+
+        [ 2*b - q(1-alpha/2), 2*b - q(alpha/2) ]
+
+{pstd}where b is the original parameter estimate and q({it:p}) is the
+{it:p}-quantile of the bootstrap distribution of b (see, e.g., Davison and Hinkley
+1997).
+
+{pstd}For all other formulas see {bf:[R] bootstrap}. Note that, other than
+indicated in {bf:[R] bootstrap}, 1/k is used instead of
+1/(k-1) in the mean squared errors formula (the same is true for
+official Stata's {cmd:bootstrap}).
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_bs(}{it:f}{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,}
+{it:reps}{cmd:,} {it:d}{cmd:,} {it:nodots}{cmd:,}
+{it:strata}{cmd:,} {it:cluster}{cmd:,} {it:stat}{cmd:,}
+{it:...}{cmd:)},
+{p_end}
+{pstd}
+{cmd:mm_bs2(}{it:f}{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,}
+{it:reps}{cmd:,} {it:d}{cmd:,} {it:nodots}{cmd:,}
+{it:strata}{cmd:,} {it:cluster}{cmd:,} {it:stat}{cmd:,}
+{it:...}{cmd:)}:
+{p_end}
+           {it:f}:  1 {it:x} 1
+           {it:X}:  {it:n x k}
+           {it:w}:  {it:n x} 1 or 1 {it:x} 1
+        {it:reps}:  1 {it:x} 1
+           {it:d}:  1 {it:x} 1
+      {it:nodots}:  1 {it:x} 1
+      {it:strata}:  {it:n x} 1 or {it:strata}=.
+     {it:cluster}:  {it:n x} 1 or {it:cluster}=.
+        {it:stat}:  {it:m x p}, m>0, or {it:stat}=.
+         {it:...}:  (depending on {it:f})
+      {it:result}:  {it:struct mm_bsstats}
+
+{pstd}
+{cmd:(*}{it:f}{cmd:)(}{it:X}{cmd:,} {it:w}{cmd:,} {it:...}{cmd:)}:
+{p_end}
+           {it:X}:  {it:n x k}
+           {it:w}:  {it:n x} 1 or 1 {it:x} 1
+         {it:...}:  (depending on {it:f})
+      {it:result}:  {it:m x p}, m>0
+
+{pstd}
+{cmd:mm_bs_report(}{it:bs}{cmd:,}
+{it:what}{cmd:,} {it:level}{cmd:,}
+{it:mse}{com:,} {it:jk}{cmd:)}:
+{p_end}
+          {it:bs}:  {it:struct mm_bsstats}
+        {it:what}:  {it:s x} 1 or 1 {it:x s}
+       {it:level}:  1 {it:x} 1
+         {it:mse}:  1 {it:x} 1
+          {it:jk}:  {it:struct mm_jkstats} or {it:jk}=.
+      {it:result}:  {it:r x p}
+
+
+{title:Diagnostics}
+
+{pstd}{cmd:mm_bs()} and {cmd:mm_bs2()} cannot be used with built-in
+functions (use wrappers).
+
+{pstd}{cmd:mm_bs_report()} will abort with error if {it:what}
+contains {cmd:"bca"} and no jackknife estimates are provided.
+
+{pstd}{cmd:mm_bs_report()} with {it:what}
+containing {cmd:"t"} will abort with error if applied to
+bootstrap replicates that do not contain information on standard
+errors.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_bs:mm_bs.mata}
+
+
+{title:References}
+
+{phang}Davison, A.C., Hinkley, D.V. (1997). Bootstrap Methods and
+Their Application. Cambridge University Press.
+
+{phang}Poi, B.P. (2004). From the help desk: Some bootstrapping
+techniques. Stata Journal 4(3):312-328.
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help bootstrap}},
+{bf:{help mf_mm_jk:mm_jk()}},
+{bf:{help moremata}}
+{p_end}

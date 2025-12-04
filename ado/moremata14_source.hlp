@@ -1,0 +1,112 @@
+*! Source of lmoremata14.mlib
+
+
+*! {smcl}
+*! {marker _mm_pieces14}{bf:_mm_pieces14.mata}{asis}
+*! version 1.0.0, Ben Jann, 01jun2015
+version 14.0
+mata:
+
+string rowvector _mm_pieces14(
+    string scalar s,
+    real scalar w,
+    real scalar nobr)
+{
+    real scalar      i, j, k, n, l, b
+    string scalar    c
+    string rowvector res
+
+    l = udstrlen(s)
+    if (w>=l | (l=ustrlen(s))<2) return(ustrtrim(s))
+    res = J(1, _mm_npieces14(s, w, nobr), "")
+    j = k = n = 0
+    b = 1
+    for (i=1; i<=l; i++) {
+        c = usubstr(s, i, 1)
+        if (j<1) { // skip to first nonblank character
+            if (ustrtrim(c)=="") {
+                b++
+                continue
+            }
+        }
+        j = j + udstrlen(c)
+        if (i==l) {
+            if (w>1 & !nobr) { // add extra row if last char is ud
+                if (j>w) {
+                    res[++n] = ustrtrim(usubstr(s, b, i-b))
+                    b = i
+                }
+            }
+            res[++n] = ustrtrim(usubstr(s, b, .))
+        }
+        else {
+            if (ustrtrim(c)=="") k = i
+            if (j>=w) {
+                if (k<1) {
+                    if (nobr) continue
+                    if (i>b & j>w) k = i-1
+                    else           k = i
+                }
+                else {
+                    if (ustrtrim(usubstr(s, i+1, 1))=="") k = i
+                }
+                res[++n] = ustrtrim(usubstr(s, b, k-b+1))
+                j = udstrlen(usubstr(s, k+1, i-k))
+                b = k + 1
+                k = 0
+            }
+        }
+    }
+    return(res)
+}
+
+real scalar _mm_npieces14(
+    string scalar s,
+    real scalar w,
+    real scalar nobr)
+{
+    real scalar   i, j, k, n, l, b
+    string scalar c
+
+    l = udstrlen(s)
+    if (w>=l | (l=ustrlen(s))<2) return(1)
+    j = k = n = 0
+    b = 1
+    for (i=1; i<=l; i++) {
+        c = usubstr(s, i, 1)
+        if (j<1) { // skip to first nonblank character
+            if (ustrtrim(c)=="") {
+                b++
+                continue
+            }
+        }
+        j = j + udstrlen(c)
+        if (i==l) {
+            if (w>1 & !nobr) { // add extra row if last char is ud
+                if (j>w) n++
+            }
+            n++
+        }
+        else {
+            if (ustrtrim(c)=="") k = i
+            if (j>=w) {
+                if (k<1) {
+                    if (nobr) continue
+                    if (i>b & j>w) k = i-1
+                    else           k = i
+                }
+                else {
+                    if (ustrtrim(usubstr(s, i+1, 1))=="") k = i
+                }
+                n++
+                j = udstrlen(usubstr(s, k+1, i-k))
+                b = k + 1
+                k = 0
+            }
+        }
+    }
+    if (n==0) n++
+    return(n)
+}
+
+end

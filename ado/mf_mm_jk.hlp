@@ -1,0 +1,299 @@
+{smcl}
+{* 20dec2007}{...}
+{cmd:help mata mm_jk()}
+{hline}
+
+{title:Title}
+
+{pstd}
+{bf:mm_jk() -- Jackknife estimation}
+
+
+{title:Syntax}
+
+{p 11 18 2}
+{it:jk} = {cmd:mm_jk(}{it:f}{cmd:,}
+{it:X} [{cmd:,}
+{it:w}{cmd:,}
+{it:nodots}{cmd:,}
+{it:strata}{cmd:,}
+{it:cluster}{cmd:,}
+{it:subpop}{cmd:,}
+{it:fpcvar}{cmd:,}
+{it:stat}{cmd:,}
+{it:...}]{cmd:)}
+
+{p 4 4 2}
+where
+
+{p 12 18 2}
+  {it:f}:  {it:pointer scalar} containing address of function to be
+  bootstrapped, i.e. {it:f} = {cmd:&}{it:functionname}{cmd:()}
+  {p_end}
+{p 12 18 2}
+  {it:X}:  {it:real matrix} containing data (rows are observations,
+  columns variables)
+  {p_end}
+{p 12 18 2}
+  {it:w}:  {it:real colvector} containing weights
+  {p_end}
+{p 7 18 2}
+  {it:nodots}:  {it:real scalar} indicating that replication dots be
+  suppressed
+  {p_end}
+{p 7 18 2}
+  {it:strata}:  {it:real colvector} containing (ordered) strata ID variable
+  {p_end}
+{p 6 18 2}
+  {it:cluster}:  {it:real colvector} containing (ordered) cluster ID variable
+  {p_end}
+{p 7 18 2}
+  {it:subpop}:  {it:real colvector} containing subpopulation identifier
+  {p_end}
+{p 7 18 2}
+  {it:fpcvar}:  {it:real colvector} containing sampling fractions for finite
+  population correction
+  {p_end}
+{p 9 18 2}
+  {it:stat}:  {it:real rowvector} containing the results of {it:f}
+  using the original data, i.e., the "observed" value of {it:f}
+  {p_end}
+{p 10 18 2}
+  {it:...}:  up to 10 optional arguments to pass through to {it:f}
+  {p_end}
+
+
+{p 4 18 2}
+{it:real matrix} {cmd:mm_jk_report(}{it:jk} [{cmd:,}
+{it:what}{com:,}
+{it:level}{cmd:,}
+{it:mse}{cmd:,}
+{it:fpc}]{cmd:)}
+
+{p 4 4 2}
+where
+
+{p 9 18 2}
+  {it:what}:  {it:string vector} containing statistics to be
+  reported, where the available statistics are:
+{cmd:"b"} or {cmd:"theta"} ("observed" value),
+{cmd:"pseudo"} (jackknife pseudovalues),
+{cmd:"mean"} (jackknife mean),
+{cmd:"bias"} (jackknife mean - observed value),
+{cmd:"v"} (variance-covariance matrix),
+{cmd:"se"} (standard error; the default),
+{cmd:"ci"} (confidence interval){p_end}
+{p 8 18 2}
+  {it:level}:  {it:real scalar} containing the confidence level
+  for confidence intervals (default is 95 or as
+  set by {helpb set level})
+  {p_end}
+{p 10 18 2}
+  {it:mse}:  {it:real scalar} indicating that the mean squared
+  errors formula be used
+  {p_end}
+{p 10 18 2}
+  {it:fpc}:  {it:real vector} containing sampling fractions for finite
+  population correction
+  {p_end}
+
+{pstd}{it:jk} is a variable used for communication between
+{cmd:mm_jk()} and {cmd:mm_jk_report()}. If you declare {it:jk},
+declare it to be {it:transmorphic}.
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_jk(}{it:f}{cmd:,} {it:X}{cmd:,} {it:w}{cmd:)}
+computes the jackknife (leave-one-out) replicates of
+function {it:f} applied to the data {it:X} (and weights {it:w};
+omit {it:w}, or specify {it:w} as 1 to obtain unweighted results)
+and returns the results as a
+structure. To be precise, {it:f} is a pointer to a function,
+i.e. {bind:{it:f} = {cmd:&}{it:functionname}{cmd:()}}, e.g.
+{bind:{it:f} = {cmd:&mean()}} (see {helpb m2_ftof:[M-2] ftof}).
+{cmd:mm_jk()} expects function {it:f} to return a
+{it:real rowvector} of parameter estimates to be jackknifed.
+Furthermore, function {it:f} must take the data as the
+first argument and weights as the second argument. Note that 
+{cmd:mm_jk()} leaves out observations by setting their weights 
+to zero. Make sure that function {it:f} properly handles these 
+observations. The results from {it:f} should be the same as if the
+observation would have been deleted.
+
+{pstd}{it:nodots}!=0 indicates that replication dots be suppressed.
+By default, a single dot character is displayed for each successful
+replication and
+a single red 'x' is displayed for each unsuccessful replication. A
+replication is considered unsuccessful if the replication result
+contains one or more missing values. {cmd:mm_jk()} only returns
+results from successful replications.
+
+{pstd}{it:strata} and {it:cluster} may be used to specify a strata ID
+variable and a cluster ID variable. {cmd:mm_jk()} will then produce
+jackknife results for stratified and clustered data. Note that
+{cmd:mm_jk()} does not
+sort the data: A new stratum begins each time
+{it:strata} changes from one row to the next, a new cluster begins
+each time {it:cluster} (or {it:strata}) changes from one row to the
+next. Omit {it:strata} or specify {it:strata}=. if the sample is
+unstratified; omit {it:cluster} or specify
+{it:cluster}=. if the sample does not contain clusters.
+
+{pstd}{it:subpop} specifies that estimates be computed for the
+subpopulation for which {it:subpop}!=0. Providing only the data for which
+{it:subpop}!=0 and omitting {it:subpop} produces different results than
+providing all data and specifying {it:subpop}. See
+{bf:[SVY] subpopulation estimation} for information.
+Omit {it:subpop} or specify {it:subpop}=. if the estimates be based
+on all observations.
+
+{pstd}{it:fpcvar} provides sampling fractions to be stored with the
+jackknife replicates. The stored sampling rates are then used by
+{cmd:mm_jk_report()} for finite population correction of variance
+estimates. Note that {it:fpcvar}
+should contain the same number of rows as {it:x} and is assumed to
+be constant within each stratum. You may specify {it:fpcvar}=. to set the
+sampling fractions to zero (and, therefore, omit finite population correction).
+
+{pstd}By default, {cmd:mm_jk()} first applies {it:f} to the original
+data to obtain the "observed" value of {it:f} given {it:X} and
+{it:w}. Alternatively, the "observed" value may be provided as
+{it:stat}, where {it:stat} is a {it: real rowvector} of point estimates.
+Omit {it:stat} or specify {it:stat}=. if you do not want to provide
+the "observed" value.
+
+{pstd}{cmd:mm_jk_report()} is used to analyze the jackknife
+replicates computed by {cmd:mm_jk()}. It
+returns a matrix of statistics such as
+jackknife means, jackknife standard errors, or jackknife
+confidence intervals (see the {it:what} argument above).
+Multiple statistics are arranged beneath one another in the specified
+order. For example, {cmd:mm_jk_report(}{it:jk}{cmd:, ("b","se","ci"))} will
+return the observed values in the first row, the standard errors in the
+second row, and the lower and upper bounds of the
+confidence intervals in the third and forth row.
+
+{pstd}
+{it:level} specifies the confidence level, as a percentage, for confidence
+intervals.  The default is {it:level}=95 or as set by
+{helpb set level}.
+
+{pstd} {it:mse}!=0 indicates that variances and standard errors be
+computed using deviations of the replicates from the "observed"
+value. By default, variances and standard errors are computed
+using deviations of the pseudovalues from their mean.
+
+{pstd}{it:fpc} may be used to provide sampling fractions for
+finite population correction of variance estimates. The length of
+{it:fpc} should equal the number of strata. {it:fpc} can be omitted
+if {it:fpcvar} was provided to {cmd:mm_jk()}.
+
+{title:Remarks}
+
+{pstd}The following example illustrates the basic usage of
+{cmd:mm_jk()} and {cmd:mm_jk_report()}:
+
+        {com}: x = uniform(75,2)
+        {res}
+        {com}: J = mm_jk(&mean(), x, 1)
+        {res}{txt}
+        Jackknife replications ({res}75{txt})
+        {txt}{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5
+        ..................................................    50
+        .........................
+
+        {com}: mm_jk_report(J, ("b", "se"))
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.4512322009   .4951004972{txt}  {c |}
+          2 {c |}  {res} .032499494   .0333034185{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}
+
+        {com}: mm_jk_report(J, "ci")
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.3864755455   .4287419872{txt}  {c |}
+          2 {c |}  {res}.5159888562   .5614590071{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+{pstd}{cmd:mm_jk()} first produces the 75 jackknife leave-one-out estimates
+of the means of the two variables contained in {cmd:x}. {cmd:mm_jk_report()}
+then reports the "observed"
+values, i.e. the means of the two variables in {cmd:x} (first row) and the
+jackknife standard errors of the means (second row). The second call
+of {cmd:mm_jk_report()} displays the 95% jackknife
+confidence intervals for the two means (lower bound in first row,
+upper bound in second row).
+
+{pstd}Methods and formulas are as described in {bf:[R] jackknife}
+and {bf:[SVY] variance estimation}. Delete-{it:k} jackknife is
+not supported.
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_jk(}{it:f}{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,}
+{it:nodots}{cmd:,} {it:strata}{cmd:,} {it:cluster}{cmd:,} {it:subpop}{cmd:,}
+{it:fpcvar}{cmd:,} {it:stat}{cmd:,}
+{it:...}{cmd:)}:
+{p_end}
+           {it:f}:  1 {it:x} 1
+           {it:X}:  {it:n x k}
+           {it:w}:  {it:n x} 1 or 1 {it:x} 1
+      {it:nodots}:  1 {it:x} 1
+      {it:strata}:  {it:n x} 1 or {it:strata}=.
+     {it:cluster}:  {it:n x} 1 or {it:cluster}=.
+      {it:subpop}:  {it:n x} 1 or {it:subpop}=.
+      {it:fpcvar}:  {it:n x} 1 or {it:fpcvar}=.
+        {it:stat}:  {it:1 x p} or {it:2 x p} or {it:stat}=.
+         {it:...}:  (depending on {it:f})
+      {it:result}:  {it:struct mm_jkstats}
+
+{pstd}
+{cmd:(*}{it:f}{cmd:)(}{it:X}{cmd:,} {it:w}{cmd:,} {it:...}{cmd:)}:
+{p_end}
+           {it:X}:  {it:n x k}
+           {it:w}:  {it:n x} 1 or 1 {it:x} 1
+         {it:...}:  (depending on {it:f})
+      {it:result}:  {it:1 x p} or {it:2 x p}
+
+{pstd}
+{cmd:mm_jk_report(}{it:jk}{cmd:,}
+{it:what}{cmd:,} {it:level}{cmd:,}
+{it:mse}{cmd:,} {it:fpc}{cmd:)}:
+{p_end}
+          {it:bs}:  {it:struct mm_jkstats}
+        {it:what}:  {it:s x} 1 or 1 {it:x s}
+       {it:level}:  1 {it:x} 1
+         {it:mse}:  1 {it:x} 1
+         {it:fpc}:  {it:m x} 1 or {it:fpc}=. ({it:m}: n. of strata)
+      {it:result}:  {it:r x p}
+
+
+{title:Diagnostics}
+
+{pstd}None.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_jk:mm_jk.mata}
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help jackknife}},
+{bf:{help svy jackknife}},
+{bf:{help mf_mm_bs:mm_bs()}},
+{bf:{help moremata}}
+{p_end}

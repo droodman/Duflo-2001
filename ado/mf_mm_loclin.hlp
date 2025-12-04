@@ -1,0 +1,148 @@
+{smcl}
+{* 13jun2025}{...}
+{cmd:help mata mm_loclin()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_loclin() -- Kernel-weighted local linear smoothing}
+
+
+{title:Syntax}
+
+{p 8 24 2}
+{it:fit} =
+{cmd:mm_loclin(}{it:y}{cmd:,} {it:x}{cmd:,} {it:w}{cmd:,} {it:at}{cmd:,} {it:bw}
+    [{cmd:,} {it:kernel}]{cmd:)}
+
+{p 7 20 2}{bind:     }{it:fit}:  {it:real vector} containing fitted values{p_end}
+{p 7 20 2}{bind:       }{it:y}:  {it:real colvector} containing dependent variable{p_end}
+{p 7 20 2}{bind:       }{it:x}:  {it:real colvector} containing predictor{p_end}
+{p 7 20 2}{bind:       }{it:w}:  {it:real colvector} containing weights; specify {cmd:1} for unweighted results{p_end}
+{p 7 20 2}{bind:      }{it:at}:  {it:real vector} containing evaluation points{p_end}
+{p 7 20 2}{bind:      }{it:bw}:  {it:real vector} containing bandwidth(s){p_end}
+{p 7 20 2}{bind:  }{it:kernel}:  {it:string scalar} specifying the kernel function; {it:kernel} may be
+    {cmd:"{ul:e}panechnikov"}, {cmd:"epan2"} (the default), {cmd:"{ul:b}iweight"},
+    {cmd:"{ul:t}riweight"}, {cmd:"{ul:c}osine"}, {cmd:"{ul:g}aussian"},
+    {cmd:"{ul:p}arzen"}, {cmd:"{ul:r}ectangle"} or {cmd:"{ul:tria}ngle"};
+    omitting {it:kernel} or specifying {cmd:""} is equivalent to {cmd:"epan2"}{p_end}
+
+{p 9 24 2}
+{it:bw} =
+{cmd:mm_loclin_bw(}{it:y}{cmd:,} {it:x}
+    [{cmd:,} {it:w} {cmd:,} {it:kernel}{cmd:,} {it:fw}]{cmd:)}
+    {p_end}
+{p 9 24 2}
+{it:bw} =
+{cmd:mm_loclin_bw2(}{it:y}{cmd:,} {it:x}
+    [{cmd:,} {it:w} {cmd:,} {it:kernel}{cmd:,} {it:fw}]{cmd:)}
+
+{p 7 20 2}{bind:      }{it:bw}:  {it:real scalar} containing the computed rule-of-thumb bandwidth{p_end}
+{p 7 20 2}{bind:      }...  arguments {it:y}, {it:x}, {it:w}, and {it:kernel} as above {p_end}
+{p 7 20 2}{bind:      }{it:fw}:  {it:real scalar} setting the type of weights; specify
+    {it:fw}!=0 for frequency weights{p_end}
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_loclin()} returns the fitted values of a kernel-weighted local
+    linear regression of {it:y} on {it:x} evaluated at the points provided by
+    {it:at}. {cmd:mm_loclin()} uses naive (direct) estimation; this means that
+    computing time is proportional to the number of evaluation points. See
+    below on how to save time by applying {cmd:mm_loclin()} to aggregated data from
+    {helpb mf_mm_linbin2:mm_linbin2()}.
+
+{pstd}
+    Argument {it:bw} in {cmd:mm_loclin()} sets the bandwidth (half-width
+    of the kernel). The larger the bandwidth, the higher the degree of
+    smoothing. Specify {it:bw} as a scalar to use the same (global) bandwidth
+    for all evaluation points. Alternatively, specify {it:bw} as a vector
+    to use a separate bandwidth for each evaluation point; in this case
+    {it:bw} must have the same length as {it:at}.
+
+{pstd}
+    {cmd:mm_loclin_bw()} computes a rule-of-thumb bandwidth from the data
+    in the same way as Stata command {helpb lpoly}. {cmd:mm_loclin_bw2()} computes the
+    rule-of-thumb bandwidth in a somewhat different way that is more in line
+    with the procedure suggested by Fan and Gijbels (1996, page 111).
+
+
+{title:Examples}
+
+{pstd}
+    Comparison between {helpb lpoly} and {cmd:mm_loclin()}
+
+        . {stata sysuse auto, clear}
+        . {stata lpoly price turn, degree(1) n(10) generate(at fit) nograph}
+        . {stata display r(bwidth)}
+        . {stata list fit at in 1/10}
+        . {stata "mata:"}
+        : {stata y = st_data(., "price")}
+        : {stata x = st_data(., "turn")}
+        : {stata at = st_data((1,10), "at")}
+        : {stata bw = mm_loclin_bw(y, x, 1, "epanechnikov")}
+        : {stata bw}
+        : {stata fit = mm_loclin(y, x, 1, at, bw, "epanechnikov")}
+        : {stata fit, at}
+        : {stata end}
+
+{pstd}
+    {helpb lpoly} returns missing for the
+    last evaluation point because there is only a single observation within
+    the range of the kernel at this point. Other than {helpb lpoly},
+    {cmd:mm_loclin()} returns a valid result in this case.
+
+{pstd}
+    Aggregating data using {helpb mf_mm_linbin2:mm_linbin2()}
+
+        . {stata "mata:"}
+        : {stata n = 1e6} // 1 mio observations
+        : {stata y = rnormal(n,1,0,1)}
+        : {stata x = rnormal(n,1,0,1)}
+        : {stata at = rangen(-3,3,100)} // 100 evaluation points
+        : {stata fit = mm_loclin(y, x, 1, at, 0.5)} // slow
+        : {stata S = mm_linbin2(y, x, 1, 1000)} // aggregate data
+        : {stata fit2 = mm_loclin(S.y, S.x, S.w, at, 0.5)} // fast
+        : {stata corr(variance((fit,fit2)))[1,2]} // result is almost the same
+        : {stata end}
+
+{pstd}
+    Even if applying {cmd:mm_loclin()} to aggregated data is much faster, the
+    overall reduction in computing time is not dramatic (about 70% in the above example)
+    because aggregating the data also takes time. How much time can be saved
+    depends on the number of evaluation points (the larger the number of
+    evaluation points, the more time can be saved).
+
+
+{title:Diagnostics}
+
+{pstd}
+    The functions return invalid results if {it:y}, {it:x}, or {it:w} contain
+    missing values.
+
+
+{title:References}
+
+{phang} Fan, J., I. Gijbels (1996). Local Polynomial Modelling and Its
+    Applications. Chapman & Hall/CRC.
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_loclin:mm_loclin.mata}
+
+
+{title:Author}
+
+{pstd}
+    Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{helpb moremata}, {helpb mf_mm_linbin2:mm_linbin2()}, {helpb lpoly}

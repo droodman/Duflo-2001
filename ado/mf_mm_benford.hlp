@@ -1,0 +1,166 @@
+{smcl}
+{* 12dec2007}{...}
+{cmd:help mata mm_benford()}
+{hline}
+
+{title:Title}
+
+{p 4 14 2}
+{bf:mm_benford() -- Benford's Law (distribution of digits)}
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real vector}{space 1}
+{cmd:mm_benford(}{it:digits} [{cmd:,} {it:position}{cmd:,} {it:base}]{cmd:)}
+
+
+{pstd}
+where
+
+{p 7 16 2}
+{it:digits}:  {it:real vector} providing the digits for which the probabilities 
+be computed; the digits must be in {c -(}0,...,{it:base}-1{c )-}
+
+{p 5 16 2}
+{it:position}:  {it:real scalar} specifying the position of the digits
+
+{p 9 16 2}
+{it:base}:  {it:real scalar} specifying the base of the numeric system
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_benford()} returns the probabilities of the specified {it:digits} according 
+to Benford's Law (Newcomb 1881, Benford 1938, Hill 1998). The formula for the 
+1st (leading) digit in the base 10 number system is:
+
+        P(d) = log10(1 + 1/d)
+
+{pstd}
+with d in {c -(}1,...,9{c )-}.
+
+{pstd}The general formula for the p-th digit in the base b number system is
+                                         
+                           b^(p-1) - 1
+                              {hline 3}
+                       1      \      {c TLC}      1   {c TRC} 
+        P(d, p, b) = {hline 5}         ln{c |}1 + {hline 5} {c |}
+                     ln(b)    /      {c BLC}    k*b+d {c BRC} 
+                              {hline 3}
+                           k = b^(p-2)
+
+{pstd}
+with d in {c -(}0,...,b-1{c )-} (see, e.g., 
+{browse "http://www.mathpages.com/home/kmath302/kmath302.htm"}). 
+
+{pstd}The limit of 
+P(d) with rising p is 1/b. Computation becomes exceedingly 
+intensive with rising p since the number of operations is in the order
+of b^p - b^(p-1).
+
+{title:Remarks}
+
+{pstd} Examples
+
+{pstd} Fist digit Benford distribution:
+
+        {com}: (1::9), mm_benford(1::9)
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}          1   .3010299957{txt}  {c |}
+          2 {c |}  {res}          2   .1760912591{txt}  {c |}
+          3 {c |}  {res}          3   .1249387366{txt}  {c |}
+          4 {c |}  {res}          4    .096910013{txt}  {c |}
+          5 {c |}  {res}          5    .079181246{txt}  {c |}
+          6 {c |}  {res}          6   .0669467896{txt}  {c |}
+          7 {c |}  {res}          7    .057991947{txt}  {c |}
+          8 {c |}  {res}          8   .0511525224{txt}  {c |}
+          9 {c |}  {res}          9   .0457574906{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+        
+{pstd} Second digit Benford distribution:
+
+        {com}: (0::9), mm_benford(0::9,2)
+        {res}        {txt}          1             2
+             {c TLC}{hline 29}{c TRC}
+           1 {c |}  {res}          0   .1196792686{txt}  {c |}
+           2 {c |}  {res}          1   .1138901034{txt}  {c |}
+           3 {c |}  {res}          2    .108821499{txt}  {c |}
+           4 {c |}  {res}          3   .1043295602{txt}  {c |}
+           5 {c |}  {res}          4   .1003082023{txt}  {c |}
+           6 {c |}  {res}          5   .0966772358{txt}  {c |}
+           7 {c |}  {res}          6   .0933747358{txt}  {c |}
+           8 {c |}  {res}          7   .0903519893{txt}  {c |}
+           9 {c |}  {res}          8   .0875700536{txt}  {c |}
+          10 {c |}  {res}          9   .0849973521{txt}  {c |}
+             {c BLC}{hline 29}{c BRC}{txt}
+
+{pstd} Second digit Benford distribution in base 6:
+
+        {com}: (0::5), mm_benford(0::5,2,6)
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}          0   .2019648465{txt}  {c |}
+          2 {c |}  {res}          1   .1841218513{txt}  {c |}
+          3 {c |}  {res}          2   .1697091954{txt}  {c |}
+          4 {c |}  {res}          3   .1577441976{txt}  {c |}
+          5 {c |}  {res}          4   .1476009617{txt}  {c |}
+          6 {c |}  {res}          5   .1388589474{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+    
+
+{title:Conformability}
+
+    {cmd:mm_benford(}{it:digits}{cmd:,} {it:position}{cmd:,} {it:base}{cmd:)}:
+    {it:digits}:  {it:r x} 1 or 1 {it:x c}
+  {it:position}:  1 {it:x} 1
+      {it:base}:  1 {it:x} 1
+    {it:result}:  {it:r x} 1 or 1 {it:x c}.
+   
+
+{title:Diagnostics}
+
+{p 4 4 2}{cmd:mm_benford(0,1,}{it:base}{cmd:)} evaluates to missing.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_benford:mm_benford.mata}
+
+
+{title:References}
+
+{phang}
+Benford, Frank (1938). The law of anomalous numbers. Proceedings of the 
+American Philosophical Society 78: 551-572.
+
+{phang}
+Hill, Theodore P. (1998). The first digit phenomenon. American Scientist 86: 358. 
+
+{phang}
+Newcomb, Simon (1881). Note on the frequency of use of the different 
+digits in natural numbers. American Journal of Mathematics 4: 39-40.
+{p_end}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help m4_statistical:[M-4] statistical}},
+{bf:{help moremata}}
+{p_end}
+
+
+
+
+
+

@@ -1,0 +1,793 @@
+/*
+  grc1leg2 - combine multiple graphs with a single common legend and b1title
+
+  based on the file:
+  graph_combine.dlg VERSION 2.1.2  18may2015 for Stata's graph combine
+
+*   VERSION 1.1  12apr2016
+*!  dialog grc1leg2, Version 2.2 21Jun2022
+
+*/
+
+VERSION 13.1
+
+INCLUDE _std_mlarge
+DEFINE _dlght  285   // minimum height of 285 for overall tab
+INCLUDE header
+HELP hlp1, view("help grc1leg2")
+RESET res1
+
+DEFINE _clwd 15
+
+SCRIPT PREINIT
+BEGIN
+	create STRING browseResults
+	setscale_hadj resource GRAPH_COMBINE_DLG_HSCALE
+END
+
+DIALOG main, label(grc1leg2 - Combine graphs with common legend)			///
+	tabtitle("Main")
+BEGIN
+  TEXT     tx_version		100	_top	400		.,		///
+	label("Dialog for version 2.2 of -grc1leg2-")
+  TEXT     tx_graphs		_lft	_xls	_iwd	.,		///
+	label(resource GRAPH_COMBINE_MAIN_TX_GRAPHS)
+  EDIT     ed_graphs		@	_ss	@	.,		///
+	label(resource GRAPH_COMBINE_MAIN_TX_GRAPHS)
+
+  BUTTON   bu_select		_lft	_xls	80	.,		///
+	label(resource LBL_BU_BROWSE)					///
+	tooltip(resource GRAPH_COMBINE_MAIN_BU_SELECT)			///
+	onpush(script show_browse_dialog)
+	
+  TEXT     tx_altshrink		_lft	_xls	400		.,		///
+	label("The following checkbox invokes gr combine's option -altshrink-:")
+  CHECKBOX ck_altshrink		_lft	_ms		.		.,		///
+	label("See the help file for graph combine's -altshrink-, or just try it here") 	///
+	option(altshrink)
+  TEXT     tx_overall1		_lft	_xls	400		.,		///
+	label("See the -Overall- tab (the last tab in this dialog) for more options")
+  TEXT     tx_overall2		_lft	_vss	400		.,		///
+	label("that affect the look of the entire combined graph")
+	
+END
+
+SCRIPT show_browse_dialog
+BEGIN
+	create CHILD gr_combine_browse_opts AS browse
+	browse.setExitString browseResults
+	browse.setExitAction "script getBrowseResults"
+END
+
+SCRIPT getBrowseResults
+BEGIN
+	browseResults.withvalue main.ed_graphs.smartinsert `"@"'
+END
+
+DIALOG options, tabtitle("gr combine")
+BEGIN
+  TEXT     tx_lfrom1	_lft	_top	430		.,		///
+	label("Options on this tab are passed through to -gr combine-:")
+  CHECKBOX ck_colf		_lft	_ls		_iwd	.,		///
+	label(resource GRAPH_COMBINE_OPTIONS_CK_COLF) 			///
+	option(colfirst)
+  CHECKBOX ck_ycom		@	_ms	@	.,		///
+	label(resource GRAPH_COMBINE_OPTIONS_CK_YCOM) option(ycommon)
+  CHECKBOX ck_xcom		@	_ms	@	.,		///
+	label(resource GRAPH_COMBINE_OPTIONS_CK_XCOM) option(xcommon)
+  		
+  		
+  TEXT     tx_margin	_lft	_ls		_vnwd	.,		///
+	label(resource LBL_MARGINS)
+	DEFINE y @y
+  COMBOBOX cb_margin		@	_ss		@		.,		///
+	label(resource LBL_MARGINS) option(imargin) contents(margin)	///
+	dropdownlist
+
+  TEXT     tx_holes		180		y		_vnwd	.,		///
+	label(resource LBL_HOLES)
+  EDIT     ed_holes		@	_ss	@	.,		///
+	label(resource LBL_HOLES) option(holes)
+  BUTTON   bu_holes		_vnsep	@	_clwd	., 		///
+	label(resource LBL_?) onpush(view help numlist##|_new)
+  TEXT     tx_layout         	_lft	_ls	_vnwd	., 		///
+	label(resource LBL_LAYOUT)
+  DEFINE y @y
+  COMBOBOX cb_layout		@	_ss	_vnwd	.,		///
+	label(resource LBL_LAYOUT) contents(opt_layout) dropdownlist	///
+	onselchangelist(opt_layout_action)
+  
+  TEXT     tx_scale		180	y	_vnwd	.,		///
+	label(resource LBL_SCALE_TEXT)
+  EDIT     en_scale		@	_ss	@	.,		///
+	label(resource LBL_SCALE_TEXT) numonly option(iscale) default(1.0)
+  
+  TEXT     tx_rows		_lft	_ls	100	.,		///
+	label(resource LBL_ROWS)
+  TEXT     tx_cols		@	@	@	.,		///
+	label(resource LBL_TX_COLUMNS)
+  SPINNER  sp_rows		@	_ss	_spwd	.,		///
+	label(resource LBL_NUMBER_OF_ROWS) default(1) min(1) max(100) 	///
+	option(rows)
+  SPINNER  sp_cols		@	@	@	.,		///
+	label(resource LBL_NUMBER_OF_COLUMNS) min(1) default(1) max(100) ///
+	option(cols)
+
+END
+
+*	Hacked by Mead Over, 1Apr2016, 11Nov2019, 23Jan2021
+DIALOG options2, tabtitle("Legend layout")
+BEGIN
+  TEXT     tx_lfrom1	_lft	_top	430		.,		///
+	label("Name of graph whose legend becomes common legend (legendfrom):")
+  TEXT     tx_lfrom2	@		_ss		@		.,		///
+	label("    (Leave blank to use the first graph)")
+  CHECKBOX ck_hide		250	    +0		_iwd	.,		///
+	label("Option: hidelegendfrom (See help)") 	///
+	option(hidelegendfrom)
+
+  EDIT     en_lfrom		_lft		_ss		@		.,		///
+	label("legendfrom") option(legendfrom)
+	
+  TEXT     tx_lpos		_lft	_ms		_iwd	.,		///
+	label("Legend position (position(#))")
+  SPINNER     sp_lpos	180		+0		50		.,		///
+	label("Legend position") option(position) min(0) max(12) default(6)
+  
+  TEXT     tx_rpos		 250	+0		_iwd	.,		///
+	label("Ring position (ring(#))")
+  SPINNER     sp_rpos	 400	+0		50		.,		///
+	label("Ring position") option(ring) min(0) default(1)
+  
+  TEXT     tx_xoff		_lft	_ms		_iwd	.,		///
+	label("Horizontal offset")
+  SPINNER     sp_xoff	180		+0		50		.,		///
+	label("X-Offset") option(lxoffset) min(-1000) max(1000) default(0)
+	
+  TEXT     tx_yoff		 250	+0		_iwd	.,		///
+	label("Vertical offset")
+  SPINNER     sp_yoff	 400	+0		50		.,		///
+	label("Y-Offset") option(lyoffset) min(-1000) max(1000) default(0)
+
+  CHECKBOX ck_span		_lft	_ms		_iwd	.,		///
+	label("Center the legend over the entire width or height of the graph region (span)") 	///
+	option(span)
+
+  TEXT     tx_lholes	250		_ms		_vnwd	.,		///
+	label("Legend holes (lholes):")
+  DEFINE y @y
+  EDIT     ed_lholes	@		_ss		@		.,		///
+	label(resource LBL_HOLES) option(lholes)
+  BUTTON   bu_lholes		_vnsep	@	_clwd	., 		///
+	label(resource LBL_?) onpush(view help numlist##|_new)
+
+  TEXT     tx_llayout	_lft	y		_vnwd	., 		///
+	label("Legend layout:")
+  DEFINE y @y
+  COMBOBOX cb_llayout	@		_ss		_vnwd	.,		///
+	label(resource LBL_LAYOUT) contents(opt_layout) dropdownlist	///
+	onselchangelist(opt2_layout_action)
+	
+  TEXT     tx_lrows		_lft	+0		100	.,		///
+	label(resource LBL_ROWS)
+  TEXT     tx_lcols		@	@	@	.,		///
+	label(resource LBL_TX_COLUMNS)
+  SPINNER  sp_lrows		@	_ss	_spwd	.,		///
+	label(resource LBL_NUMBER_OF_ROWS) default(1) min(1) max(100) 	///
+	option(lrows)
+  SPINNER  sp_lcols		@	@	@	.,		///
+	label(resource LBL_NUMBER_OF_COLUMNS) min(1) default(1) max(100) ///
+	option(lcols)
+
+  TEXT     tx_legscale	_lft	_ss		_iwd	.,		///
+	label("Scale all legend elements (legscale):")
+  EDIT     en_legscale	210		+0		80		.,		///
+	label("Scale all legend elements (legscale):") option(legscale) default() tooltip(`"Typically a multiple such as "*0.8" or "*1.1""')
+  BUTTON 	help 		295 	+0 		20		., label("?") onpush("view help size")
+	
+  TEXT     tx_labsize	_lft	_ms		_iwd	.,		///
+	label(Label size (labsize):)
+  EDIT     en_labsize	150		+0		60		.,		///
+	label("Label size (labsize):") option(labsize) default() tooltip(`"Typically a relative size such as "*0.8" or "*1.1""')
+  BUTTON  help_labsize	215 	+0 		20		., label("?") onpush("view help size")
+
+  TEXT     tx_lmsize	250		+0		_iwd	.,		///
+	label("Marker size. (lmsize)")
+  EDIT     en_lmsize	370		+0		60		.,		///
+	label("Marker size. (lmsize)") option(lmsize) default() tooltip(`"Typically a relative size such as "*0.8" or "*1.1""')
+  BUTTON  help_lmsize 	435 	+0 		20		., label("?") onpush("view help size")
+	
+  TEXT     tx_symx		_lft	_ms		_iwd	.,		///
+	label("Symbol width (symxsize):")
+  EDIT     en_symx		150		+0		60		.,		///
+	label("Symbol width (symxsize):") option(symxsize) default() tooltip(`"Typically a relative size such as "*0.8" or "*1.1""')
+  BUTTON  help_symx		215 	+0 		20		., label("?") onpush("view help size")
+/*
+  COMBOBOX cb_symx		150		+0		80		.,		///
+	option(symxsize) dropdownlist contents(_textsizes) default(default)
+*/
+	
+  TEXT     tx_symy		250		+0		_iwd	.,		///
+	label("Symbol ht. (symysize):")
+  EDIT     en_symy	370		+0		60		.,		///
+	label("Symbol ht. (symysize):") option(symysize) default() tooltip(`"Typically a relative size such as "*0.8" or "*1.1""')
+  BUTTON  help_symy 	435 	+0 		20		., label("?") onpush("view help size")
+/*
+  COMBOBOX cb_symy		370		+0		80		.,		///
+	option(symysize) dropdownlist contents(_textsizes) default(default)
+*/
+
+END
+
+
+DIALOG options3, tabtitle("Legend titles")
+BEGIN
+  TEXT     tx_ltitle	_lft	_top		150		.,		///
+	label("Legend title (ltitle):")
+  TEXT     tx_ltsize	355		+0		_iwd	.,		///
+	label("Title text size:")
+  EDIT     en_ltitle	_lft	_ss		350		.,		///
+	label("ltitle") option(ltitle)
+  COMBOBOX cb_ltsize	370		+0		80		.,		///
+	option(ltsize) dropdownlist contents(_textsizes) default(default)
+
+  TEXT     tx_lsubti	_lft	_ms		150		.,		///
+	label("Legend subtitle (lsubtitle):")
+  TEXT     tx_lsubts	355		+0		_iwd	.,		///
+	label("Subtitle text size:")
+  EDIT     en_lsubti	_lft	_ss		350		.,		///
+	label("lsubttitle") option(lsubtitle)
+  COMBOBOX cb_lsubts	370		+0		80		.,		///
+	option(lsubtsize) dropdownlist contents(_textsizes) default(default)
+	
+  TEXT     tx_loff	_lft	_ls		400	.,		///
+	label("The following checkbox suppresses the display of any legend:")
+  CHECKBOX ck_loff		_lft	_ms		.		.,		///
+	label("Hide the combined legend") 	///
+	option(loff)
+
+
+END
+
+
+DIALOG options4, tabtitle("Borrowed titles")
+BEGIN
+  CHECKBOX ck_xtob		_lft	_top	_iwd		.,		///
+	label("Move one of individual x-axis titles to overall x-title (xtob1title)") 	///
+	option(xtob1title)
+
+  TEXT     tx_xfrom1	@		_ms		@		.,		///
+	label("Name of graph whose x-axis title becomes overall x-axis title (xtitlefrom)")
+
+  TEXT     tx_xfrom2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_xfrom3	340		+0		_iwd	.,		///
+	label("X-title text size:")
+
+  EDIT     en_xfrom		_lft	_ss		300		.,		///
+	label("xtitlefrom") option(xtitlefrom)
+
+  COMBOBOX cb_xfromsize	340		+0		80		.,		///
+	option(xtsize) dropdownlist contents(_textsizes) default(default)
+  	
+
+	
+  CHECKBOX ck_ytol		_lft		_ms		_iwd		.,		///
+	label("Move one of individual y-axis titles to overall y-title (ytol1title)") 	///
+	option(ytol1title)
+
+  TEXT     tx_yfrom1	@		_ms		@		.,		///
+	label("Name of graph whose y-axis title becomes overall y-axis title (ytitlefrom)")
+
+  TEXT     tx_yfrom2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_yfrom3	340		+0		_iwd	.,		///
+	label("Y-title text size:")
+
+  EDIT     en_yfrom		_lft	_ss		300		.,		///
+	label("ytitlefrom") option(ytitlefrom)
+
+  COMBOBOX cb_yfromsize	340		+0		80		.,		///
+	option(ytsize) dropdownlist contents(_textsizes) default(default)
+
+	
+	
+  CHECKBOX ck_mtol		_lft	_ms		_iwd		.,		///
+	label("Move one of individual main titles to overall top (maintotoptitle)") 	///
+	option(maintotoptitle)
+
+  TEXT     tx_mfrom1	@		_ms		@		.,		///
+	label("Name of graph whose main title becomes overall main title (maintitlefrom)")
+
+  TEXT     tx_mfrom2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_mfrom3	340		+0		_iwd	.,		///
+	label("Main-title text size:")
+
+  EDIT     en_mfrom		_lft	_ss		300		.,		///
+	label("mtitlefrom") option(maintitlefrom)
+
+  COMBOBOX cb_mfromsize	340		+0		80		.,		///
+	option(mtsize) dropdownlist contents(_textsizes) default(default)
+
+END
+
+DIALOG options5, tabtitle("More borrowed titles")
+BEGIN
+*	This section fixed.  Now add sections for y2tor1 and r1tor1  (25Mar2021)	
+  CHECKBOX ck_l1tol		_lft		_top		_iwd		.,		///
+	label("Move one of individual l1-axis titles to overall l1-title (l1tol1title)") 	///
+	option(l1tol1title)
+
+  TEXT     tx_l1from1	@		_ms		@		.,		///
+	label("Name of graph whose l1-axis title becomes overall l1-axis title (l1titlefrom)")
+
+  TEXT     tx_l1from2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_l1from3	340		+0		_iwd	.,		///
+	label("l1-title text size:")
+
+  EDIT     en_l1from		_lft	_ss		300		.,		///
+	label("l1titlefrom") option(l1titlefrom)
+
+  // Use a common option, -ytsize- for both -yt0l1- and -l1tol1-
+  COMBOBOX cb_l1fromsize	340		+0		80		.,		///
+	option(ytsize) dropdownlist contents(_textsizes) default(default)
+
+
+  CHECKBOX ck_y2tor		_lft	_ms		_iwd		.,		///
+	label("Move one of individual y2-axis titles to overall r1-title (y2tor1title)") 	///
+	option(y2tor1title)
+
+  TEXT     tx_y2from1	@		_ms		@		.,		///
+	label("Name of graph whose y2-axis title becomes overall r1-axis title (y2titlefrom)")
+
+  TEXT     tx_y2from2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_y2from3	340		+0		_iwd	.,		///
+	label("r1-title text size:")
+
+  EDIT     en_y2from		_lft	_ss		300		.,		///
+	label("y2titlefrom") option(y2titlefrom)
+
+  // Use a common option, -y2tsize- for both -y2t0r1- and -r1tor1-
+  COMBOBOX cb_y2fromsize	340		+0		80		.,		///
+	option(y2tsize) dropdownlist contents(_textsizes) default(default)
+
+	
+  CHECKBOX ck_r1tor		_lft	_ms		_iwd		.,		///
+	label("Move one of individual r1-axis titles to overall r1-title (r1tor1title)") 	///
+	option(r1tor1title)
+
+  TEXT     tx_r1from1	@		_ms		@		.,		///
+	label("Name of graph whose r1-axis title becomes overall r1-axis title (r1titlefrom)")
+
+  TEXT     tx_r1from2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_r1from3	340		+0		_iwd	.,		///
+	label("r1-title text size:")
+
+  EDIT     en_r1from		_lft	_ss		300		.,		///
+	label("r1titlefrom") option(r1titlefrom)
+
+  // Use a common option, -y2tsize- for both -y2t0r1- and -r1tor1-
+  COMBOBOX cb_r1fromsize	340		+0		80		.,		///
+	option(y2tsize) dropdownlist contents(_textsizes) default(default)
+	
+
+END
+
+DIALOG options6, tabtitle("Even more borrowed titles")
+BEGIN
+*	(21Jun2022)	
+*	Move a -subtitle- to combined graph.
+  CHECKBOX ck_sttost		_lft		_top		_iwd		.,		///
+	label("Move one of individual subtitles to overall subtitle (subtosubtitle)") 	///
+	option(subtosubtitle)
+
+  TEXT     tx_stfrom1	@		_ms		@		.,		///
+	label("Name of graph whose subtitle becomes overall subtitle (subfrom)")
+
+  TEXT     tx_stfrom2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_stfrom3	340		+0		_iwd	.,		///
+	label("subtitle text size:")
+
+  EDIT     en_stfrom		_lft	_ss		300		.,		///
+	label("subfrom") option(subfrom)
+
+  COMBOBOX cb_stfromsize	340		+0		80		.,		///
+	option(stsize) dropdownlist contents(_textsizes) default(default)
+
+*	Move a -note- to combined graph.
+ CHECKBOX ck_nttont		_lft	_xls		_iwd		.,		///
+	label("Move one of individual notes to overall note (notetonote)") 	///
+	option(notetonote)
+
+  TEXT     tx_ntfrom1	@		_ms		@		.,		///
+	label("Name of graph whose note becomes overall note (notefrom)")
+
+  TEXT     tx_ntfrom2	@		_ss		@		.,		///
+	label("        (Leave blank to use the first graph)")
+
+  TEXT     tx_ntfrom3	340		+0		_iwd	.,		///
+	label("note text size:")
+
+  EDIT     en_ntfrom		_lft	_ss		300		.,		///
+	label("notefrom") option(notefrom)
+
+  COMBOBOX cb_ntfromsize	340		+0		80		.,		///
+	option(ntsize) dropdownlist contents(_textsizes) default(default)
+END
+
+*	End of hack by MO
+
+INCLUDE gr_titles
+
+SCRIPT overall_PREINIT
+BEGIN
+	create STRING regionResults
+END
+
+SCRIPT overall_POSTINIT
+BEGIN
+	program overall_checkRegionResults
+END
+ 
+DIALOG overall, tabtitle(resource LBL_OVERALL)
+BEGIN
+  TEXT	tx_scheme	_lft	_top	120	.,		///
+	label(resource LBL_SCHEME)
+  COMBOBOX cb_scheme	@	_ss	@	.,		///
+	option(scheme) dropdownlist contents(schemes)
+
+  TEXT     tx_name	180	_top	120	.,		///
+	label(resource LBL_NAME_OF_GRAPH)
+  EDIT     ed_name	180	_ss	120	.,
+  CHECKBOX ck_replace	+125	@	120	.,		///
+	label(resource LBL_REPLACE) nomemory
+	
+  CHECKBOX ck_common	_lft	_ls	_iwd	.,		///
+	label(resource GRAPH_COMBINE_OVERALL_CK_COMMON)		///
+	option(commonscheme)	
+	
+  GROUPBOX gb_size	_lft	+30	_iwd	_ht4h,		///
+	label(resource LBL_GRAPH_SIZE)
+  TEXT     tx_width	_ilft	_ss	_vnwd	.,		///
+	label(resource LBL_WIDTH_INCHES)
+  DEFINE y @y
+  EDIT     ed_width	@	_ss	@	.,		///
+	numonly option(xsize)
+  TEXT     tx_height	180	y	_vnwd	.,		///
+	label(resource LBL_HEIGHT_INCHES)
+  EDIT     ed_height	@	_ss	@	.,		///
+	numonly option(ysize)
+	
+  CHECKBOX ck_scale	_lft	+50	_iwd	60,		///
+	label(resource GRAPH_COMBINE_OVERALL_CK_SCALE) 		///
+	groupbox						///
+	onclickon(script overall_scale_on)			///
+	onclickoff(script overall_scale_off)
+  EDIT	   ed_scale	+10	_ms	40	.,		///
+	numonly option(scale) default(1)			///
+	label(resource LBL_SCALE)
+  TEXT     tx_scale	+45	@	150	.,		///
+	label(resource LBL_SCALE_MULTIPLIER)
+
+  BUTTON   bu_region	_lft	+50	120	.,		///
+	label(resource LBL_REGION_PROPERTIES)				///
+	onpush(script get_region_options)			///
+	tooltip(resource LBL_PROPERTIES_AFFECT_BOTH_GRAPH_PLOT_REGIONS)
+END
+
+SCRIPT overall_scale_on
+BEGIN
+	overall.ed_scale.enable
+	overall.tx_scale.enable
+END
+
+SCRIPT overall_scale_off
+BEGIN
+	overall.ed_scale.disable
+	overall.tx_scale.disable
+END
+
+
+SCRIPT get_region_options
+BEGIN
+	create CHILD gr_region_options AS region, allowsubmit
+	region.setExitString regionResults
+	region.settitle resource LBL_REGION_OPTIONS
+	region.setExitAction "program overall_checkRegionResults"
+	region.setSubmitAction "program overall_regionSubmit"
+END
+PROGRAM overall_checkRegionResults
+BEGIN
+	if regionResults.iseq("") {
+		call overall.bu_region.formatlabel "resource LBL_REGION_PROPERTIES_FMT" "  "
+	}
+	if ! regionResults.iseq("") {
+		call overall.bu_region.formatlabel "resource LBL_REGION_PROPERTIES_FMT" " *"
+	}
+END
+PROGRAM overall_regionSubmit
+BEGIN
+	call program overall_checkRegionResults
+	call Submit
+END
+
+PROGRAM overall_name_output
+BEGIN
+	put overall.ed_name
+END
+
+PROGRAM overall_output
+BEGIN
+	optionarg overall.cb_scheme
+	option overall.ck_common
+	if overall.ed_name {
+		put " name("
+		put /program overall_name_output
+		if overall.ck_replace {
+			put ", replace"
+		}
+		put ") "
+	}
+
+	optionarg overall.ed_width
+	optionarg overall.ed_height
+
+	if overall.ck_scale {
+		require overall.ed_scale
+		optionarg overall.ed_scale
+	}
+	put " " regionResults " "
+END
+
+
+LIST opt_layout
+BEGIN
+	Default
+	Rows
+	Columns
+END
+
+LIST opt_layout_action
+BEGIN
+	script opt_hide_rc
+	script opt_rows_show
+	script opt_cols_show
+END
+
+SCRIPT opt_rows_show
+BEGIN
+	options.tx_rows.show
+	options.sp_rows.show
+	options.tx_cols.hide
+	options.sp_cols.hide
+END
+
+SCRIPT opt_cols_show
+BEGIN
+	options.tx_cols.show
+	options.sp_cols.show
+	options.tx_rows.hide
+	options.sp_rows.hide
+END
+
+SCRIPT opt_hide_rc
+BEGIN
+	options.tx_cols.hide
+	options.tx_rows.hide
+	options.sp_rows.hide
+	options.sp_cols.hide
+END
+
+*	Hacked by Mead Over, 23Jan2021
+LIST opt2_layout_action
+BEGIN
+	script opt2_hide_rc
+	script opt2_rows_show
+	script opt2_cols_show
+END
+
+SCRIPT opt2_rows_show
+BEGIN
+	options2.tx_lrows.show
+	options2.sp_lrows.show
+	options2.tx_lcols.hide
+	options2.sp_lcols.hide
+END
+
+SCRIPT opt2_cols_show
+BEGIN
+	options2.tx_lcols.show
+	options2.sp_lcols.show
+	options2.tx_lrows.hide
+	options2.sp_lrows.hide
+END
+
+SCRIPT opt2_hide_rc
+BEGIN
+	options2.tx_lcols.hide
+	options2.tx_lrows.hide
+	options2.sp_lrows.hide
+	options2.sp_lcols.hide
+END
+*	End of hack by MO
+
+PROGRAM command
+BEGIN
+	require main.ed_graphs
+	put "grc1leg2 "
+	put main.ed_graphs
+	beginoptions
+		option options.ck_colf
+		option options.ck_ycom
+		option options.ck_xcom		
+		optionarg options.sp_cols
+		optionarg options.sp_rows
+		optionarg options.ed_holes
+		if !default(options.en_scale) {
+			if (options.en_scale) {
+				put " iscale(*" options.en_scale ")"
+			}
+		}
+
+*	Hacked by Mead Over, 1Apr2016, 11Nov2019, 23Jan2021, 26Mar2021
+*	Invoke altshrink option from -main- 
+		if !default(main.ck_altshrink) {  
+			option main.ck_altshrink
+		}
+*	Execute options from -options2- 
+		if (options2.en_lfrom) {
+			put " legendfrom(" options2.en_lfrom ")"
+		}
+		if !default(options2.ck_hide) {  
+			option options2.ck_hide
+		}
+		if !default(options2.sp_lpos) {
+			optionarg options2.sp_lpos
+		}
+		if !default(options2.sp_rpos) {
+			optionarg options2.sp_rpos
+		}
+		
+*	Execute added options from -options2- 
+		if !default(options2.sp_xoff) {
+			optionarg options2.sp_xoff
+		}
+		if !default(options2.sp_yoff) {
+			optionarg options2.sp_yoff
+		}
+		option options2.ck_span
+		optionarg options2.sp_lcols
+		optionarg options2.sp_lrows
+		optionarg options2.ed_lholes
+
+		if (options2.en_legscale) {
+			optionarg options2.en_legscale
+		}
+
+		if (options2.en_labsize) {
+			optionarg options2.en_labsize
+		}
+		if (options2.en_lmsize) {
+			optionarg options2.en_lmsize
+		}
+
+		if (options2.en_symx) {
+			optionarg options2.en_symx
+		}
+		if (options2.en_symy) {
+			optionarg options2.en_symy
+		}
+		
+*	Execute options from -options3- 
+		if !default(options3.en_ltitle) {
+			optionarg options3.en_ltitle
+		}
+		if !default(options3.cb_ltsize) {
+			optionarg options3.cb_ltsize
+		}
+		if !default(options3.en_lsubti) {
+			optionarg options3.en_lsubti
+		}
+		if !default(options3.cb_lsubts) {
+			optionarg options3.cb_lsubts
+		}
+		if !default(options3.ck_loff) {
+			option options3.ck_loff
+		}
+
+*	Execute options from -options4- 
+		option options4.ck_xtob
+		if (options4.en_xfrom) {
+			put " xtitlefrom(" options4.en_xfrom ")"
+		}
+		if !default(options4.ck_xtob) & !default(options4.cb_xfromsize) {
+			put " xtsize(" options4.cb_xfromsize ")"
+		}
+
+		option options4.ck_ytol
+		if (options4.en_yfrom) {
+			put " ytitlefrom(" options4.en_yfrom ")"
+		}
+		if !default(options4.ck_ytol) & !default(options4.cb_yfromsize) {
+			put " ytsize(" options4.cb_yfromsize ")"
+		}
+	
+		option options4.ck_mtol
+		if (options4.en_mfrom) {
+			put " mtitlefrom(" options4.en_mfrom ")"
+		}
+		if !default(options4.ck_mtol) & !default(options4.cb_mfromsize) {
+			put " mtsize(" options4.cb_mfromsize ")"
+		}
+		
+*	Execute options from -options5- 
+		option options5.ck_l1tol
+		if (options5.en_l1from) {
+			put " l1titlefrom(" options5.en_l1from ")"
+		}
+		if !default(options5.ck_l1tol) & !default(options5.cb_l1fromsize) {
+			put " ytsize(" options5.cb_l1fromsize ")"
+		}
+	
+		option options5.ck_y2tor
+		if (options5.en_y2from) {
+			put " y2titlefrom(" options5.en_y2from ")"
+		}
+		if !default(options5.ck_y2tor) & !default(options5.cb_y2fromsize) {
+			put " y2tsize(" options5.cb_y2fromsize ")"
+		}
+
+		option options5.ck_r1tor
+		if (options5.en_r1from) {
+			put " r1titlefrom(" options5.en_r1from ")"
+		}
+		if !default(options5.ck_r1tor) & !default(options5.cb_r1fromsize) {
+			put " y2tsize(" options5.cb_r1fromsize ")"
+		}
+		
+*	Execute options from -options6- 
+		option options6.ck_sttost
+		if (options6.en_stfrom) {
+			put " subfrom(" options6.en_stfrom ")"
+		}
+		if !default(options6.ck_sttost) & !default(options6.cb_stfromsize) {
+			put " stsize(" options6.cb_stfromsize ")"
+		}
+	
+		option options6.ck_nttont
+		if (options6.en_ntfrom) {
+			put " notefrom(" options6.en_ntfrom ")"
+		}
+		if !default(options6.ck_nttont) & !default(options6.cb_ntfromsize) {
+			put " nttsize(" options6.cb_ntfromsize ")"
+		}
+
+*	End of hack by MO
+		
+		optionarg options.cb_margin
+		put " " /program gr_titles_output
+		put " " /program overall_output
+	endoptions
+
+END
+
+*	1.4  24Mar2021  Add the -options5- tab "More borrowed options"
+*	1.41 26Mar2021  Add the -altshrink- option to the -main- tab
+*	1.42 29Mar2021
+*	1.60 15Jun2021  Options on the -Overall- tab now work. Add version on the -Main- tab.
+*	2.00 3Mar2022   Add options -legscale-, -lmsize-.
+*		Replace COMBO boxes with EDIT boxes for all size and scale options on options2
+*	2.10 12Mar2022  Change version number on Main tab.
+*	2.20 21Jun2022  Add the tab: -Even more borrowed titles-

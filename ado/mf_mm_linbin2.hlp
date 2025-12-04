@@ -1,0 +1,91 @@
+{smcl}
+{* 27may2025}{...}
+{cmd:help mata mm_linbin2()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_linbin2() -- Aggregate data by linear binning}
+
+{title:Syntax}
+
+{p 8 24 2}
+{it:S} =
+{cmd:mm_linbin2(}{it:y}{cmd:,} {it:x}{cmd:,} {it:w}{cmd:,} {it:n} [{cmd:,} {it:e}]{cmd:)}
+
+{p 7 18 2}{bind:     }{it:y}:  {it:real matrix} containing data to be aggregated{p_end}
+{p 7 18 2}{bind:     }{it:x}:  {it:real colvector} containing binning variable{p_end}
+{p 7 18 2}{bind:     }{it:w}:  {it:real colvector} containing weights; specify {cmd:1} for unweighted results{p_end}
+{p 7 18 2}{bind:     }{it:n}:  {it:real scalar} specifying the grid size (number of grid points){p_end}
+{p 7 18 2}{bind:     }{it:e}:  {it:real scalar} specifying amount of padding to be added to the grid
+    range or {it:real vector} specifying the minimum and maximum of the grid range;
+    if {it:e} is a scalar, the grid range is determined as
+    [{cmd:min(}{it:x}{cmd:)}-{it:e}, {cmd:max(}{it:x}{cmd:)}+{it:e}];
+    if {it:e} is a vector, the grid range is determined as
+    [{it:e}{cmd:[1]}, {it:e}{cmd:[2]}];
+    the default is {it:e} = {cmd:0}
+
+{p 8 8 2}
+{it:S} is a structure containing the following elements:
+
+{p 7 18 2}{bind:   }{it:S}{cmd:.y}:  {it:real matrix} containing aggregated data (average of {it:y} at each grid point){p_end}
+{p 7 18 2}{bind:   }{it:S}{cmd:.x}:  {it:real colvector} containing grid points (discretized {it:x}){p_end}
+{p 7 18 2}{bind:   }{it:S}{cmd:.w}:  {it:real colvector} containing aggregated counts (sum of weights at each grid point){p_end}
+{p 7 18 2}{bind:   }{it:S}{cmd:.n}:  {it:real scalar} containing grid size (number of grid points){p_end}
+{p 7 18 2}{bind:   }{it:S}{cmd:.d}:  {it:real scalar} containing step size between grid points{p_end}
+
+{p 8 8 2}
+Within functions, declare {it:S} as
+
+{p 12 12 2}
+    {cmd:struct mm_linbin2_struct scalar} {it:S}
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_linbin2()} aggregates data using linear binning by a regular
+    grid. Let {it:d} be the step size between grid points and let {it:a} and {it:b} be the
+    two nearest grid points below and above an observation {it:x}. Then
+    {it:h_a} = {it:w} * ({it:b}-{it:x})/{it:d} is added to the count of point {it:a}
+    and {it:h_b} = {it:w} * ({it:x}-{it:a})/{it:d} is added to the count of point
+    {it:b}, where {it:w} is the weight associated with {it:x}. Likewise, {it:h_a}/{it:H_a} * {it:y}
+    is added to the aggregated data at point {it:a} and {it:h_b}/{it:H_b} * {it:y}
+    is added to the aggregated data at point {it:b}, where {it:H_a} ({it:H_b})
+    is the total count of point {it:a} ({it:b}). Note that the aggregated data
+    will be set to zero (rather than missing) if the total count of a point is
+    zero.
+
+
+{title:Example}
+
+    . {stata "mata:"}
+    : {stata y = rnormal(100,2,0,1)}
+    : {stata x = runiform(100,1)}
+    : {stata S = mm_linbin2(y, x, 1, 10)}  // grid from min(x) to max(x)
+    : {stata S.y, S.x, S.w}
+    : {stata S = mm_linbin2(y, x, 1, 10, (0,1))}  // grid from 0 to 1
+    : {stata S.y, S.x, S.w}
+    : {stata S = mm_linbin2(J(0,0,.), x, 1, 10, (0,1))}  // obtain count only
+    : {stata S.y, S.x, S.w}
+    : {stata end}
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_linbin2:mm_linbin2.mata}
+
+
+{title:Author}
+
+{pstd}
+    Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{helpb moremata}, {helpb mf_mm_linbin:mm_linbin()}

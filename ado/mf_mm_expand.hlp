@@ -1,0 +1,179 @@
+{smcl}
+{* 03mar2008}{...}
+{cmd:help mata mm_expand()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_expand() -- Duplicate rows and columns}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:t. matrix}
+{cmd:mm_expand(}{it:X}{cmd:,}
+{it:real vector nr} [{cmd:,} {it:real vector nc}{cmd:,} {it:sort}]{cmd:)}
+
+{p 8 23 2}
+{it:void}{space 5}
+{cmd:_mm_expand(}{it:X}{cmd:,}
+{it:real vector nr}{cmd:,} {it:real vector nc}{cmd:,} {it:sort}{cmd:)}
+
+
+{p 8 23 2}
+{it:t. matrix}
+{cmd:mm_repeat(}{it:X}{cmd:,}
+{it:real scalar nr} [{cmd:,} {it:real scalar nc}]{cmd:)}
+
+{p 8 23 2}
+{it:void}{space 5}
+{cmd:_mm_repeat(}{it:X}{cmd:,}
+{it:real scalar nr}{cmd:,} {it:real scalar nc}{cmd:)}
+
+
+{pstd}
+where {it:X} is a transmorphic matrix and {it:sort} is a real scalar.
+
+
+{title:Description}
+
+{pstd} {cmd:mm_expand()} duplicates rows and columns in {it:X}
+and returns the result as a new matrix. Vector {it:nr}
+specifies for each row the desired number of duplicates (with 1
+indicating that no copies are added). {it:nr} may also be scalar, in
+which case {it:nr} duplicates are returned of each row. {it:nc}
+analogously specifies the column duplicates.
+
+{pstd}The default for {cmd:mm_expand()} is to append additional copies of
+rows at the bottom of {it:X} and append additional copies of
+columns at the right. Alternatively, {it:sort}!=0 causes duplicates
+to be tied together and arranged in the original
+sort order of {it:X}.
+
+{pstd}
+{cmd:mm_repeat()} returns a matrix composed of repetitions of
+{it:X}. {it:nr} specifies the desired number of
+repetitions of {it:X} in the direction of rows. {it:nc}
+specifies the desired number of
+repetitions of {it:X} in the direction of columns.
+
+{pstd}{cmd:_mm_expand()} and {cmd:_mm_repeat()} expand
+{it:X} in place.
+
+{pstd}With all
+of the above functions, values less than 1 or missing values
+are interpreted as if they were 1 in {it:nr} and {it:nc}. See help
+for {helpb mf_select:select()} if you want to delete rows or columns from a
+matrix.
+
+{pstd}With the 25feb2008 update of Stata 10 a matrix version of 
+the {helpb mf_j:J()} function has been introduced, which supersedes the 
+{cmd:mm_repeat()} function.
+
+
+{title:Remarks}
+
+{pstd}Some examples:
+
+        {com}: X = (1,2)'
+        {res}
+        {com}: X
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}1{txt}  {c |}
+          2 {c |}  {res}2{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}
+
+        {com}: mm_expand(X,(3,2))
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}1{txt}  {c |}
+          2 {c |}  {res}2{txt}  {c |}
+          3 {c |}  {res}1{txt}  {c |}
+          4 {c |}  {res}1{txt}  {c |}
+          5 {c |}  {res}2{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}
+
+        {com}: mm_expand(X,(3,2),1,1)
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}1{txt}  {c |}
+          2 {c |}  {res}1{txt}  {c |}
+          3 {c |}  {res}1{txt}  {c |}
+          4 {c |}  {res}2{txt}  {c |}
+          5 {c |}  {res}2{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}
+
+        {com}: mm_expand(X',2,(3,2))
+        {res}       {txt}1   2   3   4   5
+            {c TLC}{hline 21}{c TRC}
+          1 {c |}  {res}1   2   1   1   2{txt}  {c |}
+          2 {c |}  {res}1   2   1   1   2{txt}  {c |}
+            {c BLC}{hline 21}{c BRC}
+
+        {com}: mm_expand(X',2,(3,2),1)
+        {res}       {txt}1   2   3   4   5
+            {c TLC}{hline 21}{c TRC}
+          1 {c |}  {res}1   1   1   2   2{txt}  {c |}
+          2 {c |}  {res}1   1   1   2   2{txt}  {c |}
+            {c BLC}{hline 21}{c BRC}
+
+        {com}: S = ("a","b")\("c","d")
+        {res}
+        {com}: S
+        {res}       {txt}1   2
+            {c TLC}{hline 9}{c TRC}
+          1 {c |}  {res}a   b{txt}  {c |}
+          2 {c |}  {res}c   d{txt}  {c |}
+            {c BLC}{hline 9}{c BRC}
+
+        {com}: mm_repeat(S,3,2)
+        {res}       {txt}1   2   3   4
+            {c TLC}{hline 17}{c TRC}
+          1 {c |}  {res}a   b   a   b{txt}  {c |}
+          2 {c |}  {res}c   d   c   d{txt}  {c |}
+          3 {c |}  {res}a   b   a   b{txt}  {c |}
+          4 {c |}  {res}c   d   c   d{txt}  {c |}
+          5 {c |}  {res}a   b   a   b{txt}  {c |}
+          6 {c |}  {res}c   d   c   d{txt}  {c |}
+            {c BLC}{hline 17}{c BRC}
+
+        {com}: _mm_repeat(S,3,2)
+        {res}
+        {com}: S
+        {res}       {txt}1   2   3   4
+            {c TLC}{hline 17}{c TRC}
+          1 {c |}  {res}a   b   a   b{txt}  {c |}
+          2 {c |}  {res}c   d   c   d{txt}  {c |}
+          3 {c |}  {res}a   b   a   b{txt}  {c |}
+          4 {c |}  {res}c   d   c   d{txt}  {c |}
+          5 {c |}  {res}a   b   a   b{txt}  {c |}
+          6 {c |}  {res}c   d   c   d{txt}  {c |}
+            {c BLC}{hline 17}{c BRC}{txt}
+
+
+{title:Diagnostics}
+
+{pstd}Non-integer values in {it:nr} and {it:nc} are truncated.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_expand:mm_expand.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_select:[M-5] select()}},
+{bf:{help moremata}}
+{p_end}

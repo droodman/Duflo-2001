@@ -1,0 +1,118 @@
+{smcl}
+{* 09aug2007}{...}
+{cmd:help mata mm_cauchy()}
+{hline}
+
+{title:Title}
+
+{pstd}
+    {bf:mm_cauchy() -- Cauchy-Lorentz distribution}
+
+
+{title:Syntax}
+
+{p 8 27 2}
+    {it:real matrix}{space 1}
+    {cmd:mm_cauchyden(}{it:x}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)}
+
+{p 8 27 2}
+    {it:real matrix}{space 1}
+    {cmd:mm_cauchy(}{it:x}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)}
+
+{p 8 27 2}
+    {it:real matrix}{space 1}
+    {cmd:mm_cauchytail(}{it:x}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)}
+
+{p 8 27 2}
+    {it:real matrix}{space 1}
+    {cmd:mm_invcauchy(}{it:p}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)}
+
+
+{pstd}
+where
+
+{p 12 16 2}
+{it:x}:  {it:real matrix x} 
+
+{p 12 16 2}
+{it:p}:  {it:real matrix p} 
+
+{p 11 16 2}
+{it:x0}:  {it:real scalar x0}
+
+{p 8 16 2}
+{it:gamma}:  {it:real scalar gamma}
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_cauchyden()} returns the density of the Cauchy-Lorentz distribution for the
+    location parameter {it:x0} and the scale parameter {it:gamma}.
+
+{pstd}
+    {cmd:mm_cauchy()} returns the cumulative distribution function of the Cauchy-Lorentz distribution for the
+    location parameter {it:x0} and the scale parameter {it:gamma}.
+
+{pstd}
+    {cmd:mm_cauchytail()} returns the right tail probability function of the Cauchy-Lorenz distribution for the
+    location parameter {it:x0} and the scale parameter {it:gamma}.
+    
+{pstd}
+    {cmd:mm_invcauchy()} returns the inverse cumulative distribution function of the Cauchy-Lorentz distribution for the
+    location parameter {it:x0} and the scale parameter {it:gamma}.
+    
+
+{title:Remarks}
+
+{pstd}
+    cauchy(x,0,1) (the standard Cauchy distribution) is the Student t distribution with one degree of freedom. 
+
+
+{title:Conformability}
+
+    {cmd:mm_cauchyden(}{it:x}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)},
+    {cmd:mm_cauchy(}{it:x}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)},
+    {cmd:mm_cauchytail(}{it:x}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)}:    
+         {it:x}:  {it:r x c}
+        {it:x0}:  1 {it:x} 1
+     {it:gamma}:  1 {it:x} 1
+    {it:result}:  {it:r x c}.
+
+    {cmd:mm_invcauchy(}{it:p}{cmd:,} {it:x0}{cmd:,} {it:gamma}{cmd:)}:
+         {it:p}:  {it:r x c}
+        {it:x0}:  1 {it:x} 1
+     {it:gamma}:  1 {it:x} 1
+    {it:result}:  {it:r x c}.
+
+
+{title:Diagnostics}
+
+{pstd}
+    The functions return missing if {it:gamma} is not strictly 
+    positive. {cmd:mm_invcauchy()} returns missing if {it:p} is not 
+    in the unit interval.
+    
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_cauchy:mm_cauchy.mata}
+
+
+{title:References}
+
+{phang}
+    Programmed from {browse "http://en.wikipedia.org/wiki/Cauchy_distribution"}.
+
+
+{title:Author}
+
+{pstd}
+    Christopher F Baum, Boston College
+
+
+{title:Also see}
+
+{psee}
+    Online:  help for {helpb moremata}

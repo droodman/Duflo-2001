@@ -1,0 +1,285 @@
+{smcl}
+{* 17may2019}{...}
+{cmd:help mata mm_greedy()}
+{hline}
+
+{title:Title}
+
+{pstd}
+    {bf:mm_greedy() -- Greedy one-to-one and one-to-many matching without replacement}
+
+
+{title:Syntax}
+
+{p 8 21 2}
+    {it:P} = {cmd:mm_greedy(}{it:T}{cmd:,} {it:C}{cmd:,} {it:n}{cmd:,} {it:caliper}{cmd:,} {it:f} [{cmd:,} {it:arg}]{cmd:)}
+
+{p 8 21 2}
+    {it:E} = {cmd:mm_greedy2(}{it:T}{cmd:,} {it:C}{cmd:,} {it:n}{cmd:,} {it:caliper}{cmd:,} {it:f} [{cmd:,} {it:arg}]{cmd:)}
+
+{p 8 21 2}
+    {it:E} = {cmd:mm_greedy_pairs(}{it:P}{cmd:)}
+
+{p 8 8 2}
+    where
+
+{p 12 16 2}
+    {it:P}:  {it:real matrix} of dimension {it:nT x n} containing the indices
+             of the matched controls, where {it:nT} is the number of rows of
+             {it:T}; the rows of {it:P} correspond to the rows of {it:T} and
+             the indices stored in {it:P} refer to rows of {it:C}; for example,
+             value 3 in row 5 would mean that treatment observation 5 was
+             matched with control observation 3; elements of {it:P} are set to
+             missing in cases where no suitable control observation is found;
+             for example, if you request five matches ({it:n}=5), but for a
+             particular treatment observation only three matching controls are
+             available, then the 4th and 5th elements in the corresponding row
+             of {it:P} will be set to missing
+
+{p 12 16 2}
+    {it:E}:  {it:real matrix} of dimension {it:M x 3} containing and
+             edge-list of treatment-control pairs,
+             where {it:M} is the total number of matched pairs; column 1 contains
+             treatment observation indices, column 2 contains control
+             observation indices, column 3 contains weights defined as
+             1/{it:k_i}, where {it:k_i} is the total number of controls that have
+             been matched to treatment observation {it:i} (the sum of
+             weights is equal to the number of treatment observations for which
+             at least one match was found)
+
+{p 12 16 2}
+    {it:T}:  {it:transmorphic matrix} containing the treatment observations; rows
+             are observations, columns are variables; {it:T} and {it:C} must have
+             the same number of columns
+
+{p 12 16 2}
+    {it:C}:  {it:transmorphic matrix} containing the control observations; rows
+             are observations, columns are variables; {it:T} and {it:C} must have
+             the same number of columns
+
+{p 12 16 2}
+    {it:n}:  {it:real scalar} specifying the number of control observations to be
+             matched with each treatment observation; {it:n}>=. and {it:n}<1 will
+             be interpreted as {it:n}=1
+
+{p 6 16 2}
+{it:caliper}:  {it:real scalar} specifying a caliper; if the distance between
+             a pair of observations is larger than the caliper, the pair will
+             not be considered as a potential match; set {it:caliper}=. to allow
+             all pairs as potential matches
+
+{p 12 16 2}
+    {it:f}:  {it:pointer scalar} containing the address of the function to be
+        used to compute the distances between treatment and control
+        observations; usually this is coded as
+        {cmd:&}{it:functionname}{cmd:()}; function {it:f} must return a
+        {it:real colvector} (the computed distances between a single treatment
+        observation and each control, in the same order as {it:C});
+        {cmd:mm_greedy()} calls function {it:f} repeatedly (one time for each
+        treatment observation); in each call, the following three arguments will be
+        passed on to {it:f}: a single row from {it:T} (1st argument), {it:C} (2nd
+        argument), and {it:arg} (3rd argument)
+
+{p 10 16 2}
+  {it:arg}:  argument that will be passed on to function {it:f}; {it:arg} can be
+             of any type
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_greedy()} matches controls to treatment observations using a greedy
+    algorithm without replacement. It first matches the pair with the smallest
+    distance, then the pair with the 2nd smallest distance, and so on. Any
+    scalar distance metric can be used by providing function {it:f} computing
+    the distances. Each control will be matched to a treatment observation at
+    most once; if a control has been used, it will no longer be available for
+    further matching. Ties (multiple pairs with the same distance) will be processed
+    in random order. Set the sort seed if you want to obtain stable results
+    (see {helpb set sortseed}).
+
+{pstd}
+    The computational complexity of the algorithm implemented in
+    {cmd:mm_greedy()} is of order {it:nT}*{it:nC}, where {it:nT} and {it:nC}
+    are the numbers of observations in the two groups. For example, in an exercise with
+    1000 treatment observations and 10'000 control observations, 10'000'000
+    distances will have to be evaluated. This means that the
+    algorithm is slow in large datasets
+
+{pstd}
+    {cmd:mm_greedy2()} is like {cmd:mm_greedy()}, but returns the
+    result in a different format. Whereas {cmd:mm_greedy()} returns a matrix
+    of control indices with one row per treatment observation, {cmd:mm_greedy2()}
+    returns an edge-list of matched pairs with treatment indices in the first
+    column, control indices in the second column, and weights in
+    the third column. The weights are defined as the inverse of the total number
+    of controls that have been matched to a single treatment observation. Depending
+    on application, either the format returned by {cmd:mm_greedy()}
+    or the format returned by {cmd:mm_greedy2()} may be more convenient.
+
+{pstd}
+    {cmd:mm_greedy_pairs()} can be used to transform the result returned by
+    {cmd:mm_greedy()} into an edge-list as returned by {cmd:mm_greedy2()}.
+
+
+{title:Examples}
+
+{dlgtab:One-to-one matching}
+
+{pstd}
+    In the following example a matched sample is generated based on absolute
+    differences in the estimated propensity score. To compute the differences,
+    we first have to define an appropriate function that can then be used by
+    {cmd:mm_greedy()}:
+
+        . {stata "mata: function absdif(T, C, arg) return(abs(C:-T))"}
+
+{pstd}
+    We can now get some data and apply one-to-one matching:
+
+        . {stata sysuse auto, clear}
+        . {stata logit foreign weight mpg turn}
+        . {stata predict ps, pr}
+        . {stata generate byte domestic = 1 - foreign}
+        . {stata "mata:"}
+        : {stata T = st_data(., "ps", "foreign")}
+        : {stata C = st_data(., "ps", "domestic")}
+        : {stata P = mm_greedy(T, C, 1, ., &absdif())}
+        : {stata end}
+
+{pstd}
+    Vector {cmd:P} contains the index numbers of the matched controls. Here is a
+    table showing the index numbers, the propensity scores of the treated, the
+    propensity scores of the matched controls, and the propensity-score differences:
+
+        . {stata "mata: P, T, C[P], C[P] - T"}
+
+{pstd}
+    Here is how you could compute a mean difference
+    based on the matched sample:
+
+        . {stata "mata:"}
+        : {stata T_price = st_data(., "price", "foreign")}
+        : {stata C_price = st_data(., "price", "domestic")}
+        : {stata mean(T_price) - mean(C_price)}     {it:(raw difference)}
+        : {stata mean(T_price) - mean(C_price[P])}  {it:(matched difference)}
+        : {stata end}
+
+{dlgtab:One-to-one matching with caliper}
+
+{pstd}
+    Some of the matches in the above example are not very good. For example, for treatment
+    observation 2, the matched control's propensity score deviates by
+    about 0.7 (see table above). To prevent such bad matches, we could set a
+    caliper. To set the maximum acceptable difference at 0.2 you could type:
+
+        . {stata "mata: P = mm_greedy(T, C, 1, 0.2, &absdif())"}
+
+{pstd}
+    For some of the treatment observations no suitable control could be
+    found due to the caliper. In this cases, {cmd:P} is set to missing:
+
+        . {stata "mata: P"}
+
+{pstd}
+    Let us generate a permutation vector for the non-missing elements:
+
+        . {stata "mata: p = select(1::rows(P), P:<.)"}
+
+{pstd}
+    With the help of {cmd:p} we can now display a similar table as above
+
+        . {stata "mata: P[p], T[p], C[P[p]], C[P[p]] - T[p]"}
+
+{pstd}
+    and compute the matched mean difference:
+
+        . {stata "mata: mean(T_price[p]) - mean(C_price[P[p]])"}
+
+{pstd}
+    The matching quality is much better now and the result for the outcome
+    difference changed somewhat.
+
+{pstd}
+    Instead of selecting the relevant elements from
+    {cmd:P} we could also {cmd:mm_greedy2()} to directly
+    obtain a matrix containing appropriate permutation vectors for
+    treated and controls:
+
+        . {stata "mata:"}
+        : {stata E = mm_greedy2(T, C, 1, 0.2, &absdif())}
+        : {stata E}
+        : {stata mean(T_price[E[,1]]) - mean(C_price[E[,2]])}
+        : {stata end}
+
+{pstd}
+    Alternatively, {cmd:P} could be transformed into {cmd:E} using
+    {cmd:mm_greedy_pairs()}:
+
+        . {stata "mata: mm_greedy_pairs(P)"}
+
+{dlgtab:One-to-many matching}
+
+{pstd}
+    Use argument {it:n} to set the number of controls that should be matched to
+    each treatment observation. Here is an example with 3 matches each:
+
+        . {stata "mata: P = mm_greedy(T, C, 3, ., &absdif())"}
+
+{pstd}
+    The columns of {cmd:P} contains the index numbers of the different
+    matches. Because the number of controls is smaller than the three times the number
+    of treatment observations, not all treatment observations received three
+    matches (and some did not receive any matches at all):
+
+        . {stata "mata: P"}
+
+{pstd}
+    For one-to-many matching, working with the edge-list returned by
+    {cmd:mm_greedy2()} is typically more convenient than working with
+    the matrix of control indices returned by {cmd:mm_greedy2()}:
+
+        . {stata "mata:"}
+        : {stata E = mm_greedy2(T, C, 3, ., &absdif())}
+        : {stata E}
+        : {stata mean(T_price[E[,1]]) - mean(C_price[E[,2]], E[,3])}
+        : {stata end}
+
+{pstd}
+    {cmd:E[,3]} contains the appropriate weights to be applied to the
+    selected control group observations.
+
+{dlgtab:Mahalanobis distance matching}
+
+{pstd}
+    For Mahalanobis distance matching we need to define a different distance
+    function and provide the separate X variables as well as the inverted
+    variance matrix to the matching procedure:
+
+        . {stata "mata:"}
+        : {stata "function mahasq(T, C, S) return(rowsum(((C:-T)*S):*(C:-T)))"}
+        : {stata T = st_data(., tokens("weight mpg turn"), "foreign")}
+        : {stata C = st_data(., tokens("weight mpg turn"), "domestic")}
+        : {stata S = invsym(variance((T\C)))}
+        : {stata P = mm_greedy(T, C, 1, ., &mahasq(), S)}
+        : {stata P, mahasq(T, C[P,], S)}
+        : {stata end}
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_greedy:mm_greedy.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for {bf:{help moremata}}
+{p_end}
+

@@ -1,0 +1,182 @@
+{smcl}
+{* 11jul2020}{...}
+{cmd:help mata mm_clip()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_clip() -- Clip values in matrix}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real matrix}{bind: }
+{cmd:mm_clip(}{it:X}{cmd:,} {it:min}{cmd:,} {it:max} [{cmd:,} {it:missing}]{cmd:)}
+
+{p 8 23 2}
+{it:real matrix}{bind: }
+{cmd:mm_clipmin(}{it:X}{cmd:,} {it:min}{cmd:)}
+
+{p 8 23 2}
+{it:real matrix}{bind: }
+{cmd:mm_clipmax(}{it:X}{cmd:,} {it:max} [{cmd:,} {it:missing}]{cmd:)}
+
+{p 8 23 2}
+{it:void}{bind:        }
+{cmd:_mm_clip(}{it:X}{cmd:,} {it:min}{cmd:,} {it:max} [{cmd:,} {it:missing}]{cmd:)}
+
+{p 8 23 2}
+{it:void}{bind:        }
+{cmd:_mm_clipmin(}{it:X}{cmd:,} {it:min}{cmd:)}
+
+{p 8 23 2}
+{it:void}{bind:        }
+{cmd:_mm_clipmax(}{it:X}{cmd:,} {it:max} [{cmd:,} {it:missing}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 14 18 2}{it:X}:  {it:real matrix} containing values to be clipped
+{p_end}
+{p 12 18 2}{it:min}:  {it:real scalar} specifying lower limit
+{p_end}
+{p 12 18 2}{it:max}:  {it:real scalar} specifying upper limit
+{p_end}
+{p 8 18 2}{it:missing}:  {it:real scalar} requesting that missing values not be clipped
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_clip()} limits the values in {it:X} at {it:min} and {it:max}. That is, 
+values in {it:X} that are smaller than {it:min} will be reset to {it:min}; values
+that are larger than {it:max} will be reset to {it:max}.
+
+{pstd}
+Argument {it:missing}!=0 requests that missing values in {it:X} be exempted from
+clipping. By default, missing values are treated like any other values
+(remember that in Stata missing values are larger than the largest possible 
+non-missing value).
+
+{pstd}
+{cmd:mm_clipmin()} and {cmd:mm_clipmax()} are like {cmd:mm_clip()}, but only limit
+the minimum or the maximum, respectively.
+
+{pstd}
+{cmd:_mm_clip()}, {cmd:_mm_clipmin()}, and {cmd:_mm_clipmax()} do the same
+as {cmd:mm_clip()}, {cmd:mm_clipmin()}, and {cmd:mm_clipmax()}, except that
+{it:X} is clipped in place.
+
+
+{title:Example}
+
+    {com}: X = (-10, 23, -3, 5) \ (0, 1, .,.z)
+    {res}
+    {com}: X
+    {res}       {txt}  1     2     3     4
+        {c TLC}{hline 25}{c TRC}
+      1 {c |}  {res}-10    23    -3     5{txt}  {c |}
+      2 {c |}  {res}  0     1     .    .z{txt}  {c |}
+        {c BLC}{hline 25}{c BRC}
+
+    {com}: mm_clip(X, -1, 10)
+    {res}       {txt} 1    2    3    4
+        {c TLC}{hline 21}{c TRC}
+      1 {c |}  {res}-1   10   -1    5{txt}  {c |}
+      2 {c |}  {res} 0    1   10   10{txt}  {c |}
+        {c BLC}{hline 21}{c BRC}
+
+    {com}: mm_clip(X, -1, 10, 1)
+    {res}       {txt} 1    2    3    4
+        {c TLC}{hline 21}{c TRC}
+      1 {c |}  {res}-1   10   -1    5{txt}  {c |}
+      2 {c |}  {res} 0    1    .   .z{txt}  {c |}
+        {c BLC}{hline 21}{c BRC}
+
+    {com}: mm_clipmin(X, -1)
+    {res}       {txt} 1    2    3    4
+        {c TLC}{hline 21}{c TRC}
+      1 {c |}  {res}-1   23   -1    5{txt}  {c |}
+      2 {c |}  {res} 0    1    .   .z{txt}  {c |}
+        {c BLC}{hline 21}{c BRC}
+
+    {com}: mm_clipmax(X, 10)
+    {res}       {txt}  1     2     3     4
+        {c TLC}{hline 25}{c TRC}
+      1 {c |}  {res}-10    10    -3     5{txt}  {c |}
+      2 {c |}  {res}  0     1    10    10{txt}  {c |}
+        {c BLC}{hline 25}{c BRC}
+
+    {com}: mm_clipmax(X, 10, 1)
+    {res}       {txt}  1     2     3     4
+        {c TLC}{hline 25}{c TRC}
+      1 {c |}  {res}-10    10    -3     5{txt}  {c |}
+      2 {c |}  {res}  0     1     .    .z{txt}  {c |}
+        {c BLC}{hline 25}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_clip(}{it:X}{cmd:,} {it:min}{cmd:,} {it:max}{cmd:,} {it:missing}{cmd:)}:
+             {it:X}:  {it:r x c}
+           {it:min}:  1 {it:x} 1
+           {it:max}:  1 {it:x} 1
+       {it:missing}:  1 {it:x} 1
+        {it:result}:  {it:r x c}
+
+    {cmd:mm_clipmin(}{it:X}{cmd:,} {it:min}{cmd:)}:
+             {it:X}:  {it:r x c}
+           {it:min}:  1 {it:x} 1
+        {it:result}:  {it:r x c}
+
+    {cmd:mm_clipmax(}{it:X}{cmd:,} {it:max}{cmd:,} {it:missing}{cmd:)}:
+             {it:X}:  {it:r x c}
+           {it:max}:  1 {it:x} 1
+       {it:missing}:  1 {it:x} 1
+        {it:result}:  {it:r x c}
+
+    {cmd:_mm_clip(}{it:X}{cmd:,} {it:min}{cmd:,} {it:max}{cmd:,} {it:missing}{cmd:)}:
+             {it:X}:  {it:r x c}
+           {it:min}:  1 {it:x} 1
+           {it:max}:  1 {it:x} 1
+       {it:missing}:  1 {it:x} 1
+        {it:result}:  {it:void}
+
+    {cmd:_mm_clipmin(}{it:X}{cmd:,} {it:min}{cmd:)}:
+             {it:X}:  {it:r x c}
+           {it:min}:  1 {it:x} 1
+        {it:result}:  {it:void}
+
+    {cmd:_mm_clipmax(}{it:X}{cmd:,} {it:max}{cmd:,} {it:missing}{cmd:)}:
+             {it:X}:  {it:r x c}
+           {it:max}:  1 {it:x} 1
+       {it:missing}:  1 {it:x} 1
+        {it:result}:  {it:void}
+
+
+{title:Diagnostics}
+
+{pstd}
+None.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_clip:mm_clip.mata}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help mf_editvalue:[M-5] editvalue()}},
+{bf:{help moremata}}

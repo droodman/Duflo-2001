@@ -1,0 +1,535 @@
+{smcl}
+{* 28may2025}{...}
+{cmd:help moremata}{...}
+{right:{browse "http://github.com/benjann/moremata/"}}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:moremata -- Various Mata functions}
+
+
+{title:Contents}
+
+{col 5}  {bf:Online}
+{col 5}{bf:help entry{col 22}Function{col 41}Purpose}
+{col 5}{hline}
+
+{col 5}   {c TLC}{hline 18}{c TRC}
+{col 5}{hline 3}{c RT}{it: Scalar functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 18}{c BRC}
+
+{col 5}{bf:{help mf_mm_kern:mm_kern()}}{...}
+{col 22}{cmd:mm_kern()}{...}
+{col 41}various kernel functions
+{col 22}{cmd:mm_kint()}{...}
+{col 41}kernel integral functions
+{col 22}{cmd:mm_kderiv()}{...}
+{col 41}kernel derivative functions
+{col 22}{cmd:mm_kdel0()}{...}
+{col 41}canonical bandwidth of kernel
+
+{col 5}   {c TLC}{hline 23}{c TRC}
+{col 5}{hline 3}{c RT}{it: Statistical functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 23}{c BRC}
+
+{col 5}{it:Quantiles, ranks, frequencies, & summary statistics}
+
+{col 5}{bf:{help mf_mm_quantile:mm_quantile()}}{...}
+{col 22}{cmd:mm_quantile()}{...}
+{col 41}compute quantiles
+{col 22}{cmd:mm_median()}{...}
+{col 41}compute median
+{col 22}{cmd:mm_iqrange()}{...}
+{col 41}compute inter-quartile range
+
+{col 5}{bf:{help mf_mm_hdq:mm_hdq()}}{...}
+{col 22}{cmd:mm_hdq()}{...}
+{col 41}compute Harrell-Davis quantiles
+{col 22}{cmd:mm_hdmed()}{...}
+{col 41}compute Harrell-Davis median
+{col 22}{cmd:mm_hdiqr()}{...}
+{col 41}compute Harrell-Davis inter-quartile range
+
+{col 5}{bf:{help mf_mm_ecdf:mm_ecdf()}}{...}
+{col 22}{cmd:mm_ecdf()}{...}
+{col 41}compute cumulative distribution function
+{col 22}{cmd:mm_ecdf2()}{...}
+{col 41}cumulative distribution at unique values
+
+{col 5}{bf:{help mf_mm_ranks:mm_ranks()}}{...}
+{col 22}{cmd:mm_ranks()}{...}
+{col 41}compute ranks/cumulative frequencies
+
+{col 5}{bf:{help mf_mm_relrank:mm_relrank()}}{...}
+{col 22}{cmd:mm_relrank()}{...}
+{col 41}compute relative ranks (grade transformation)
+
+{col 5}{bf:{help mf_mm_density:mm_density()}}{...}
+{col 22}{cmd:mm_density()}{...}
+{col 41}compute density
+
+{col 5}{bf:{help mf_mm_ddens:mm_ddens()}}{...}
+{col 22}{cmd:mm_ddens()}{...}
+{col 41}compute density by diffusion
+
+{col 5}{bf:{help mf_mm_freq:mm_freq()}}{...}
+{col 22}{cmd:mm_freq()}{...}
+{col 41}compute frequency counts
+
+{col 5}{bf:{help mf_mm_histogram:mm_histogram()}}{...}
+{col 22}{cmd:mm_histogram()}{...}
+{col 41}produce histogram data
+
+{col 5}{bf:{help mf_mm_mgof:mm_mgof()}}{...}
+{col 22}{cmd:mm_mgof()}{...}
+{col 41}multinomial goodness-of-fit tests
+
+{col 5}{bf:{help mf_mm_collapse:mm_collapse()}}{...}
+{col 22}{cmd:mm_collapse()}{...}
+{col 41}summary statistics by subgroups
+{col 22}{cmd:_mm_collapse()}{...}
+{col 41}summary statistics by subgroups, without sorting
+{col 22}{cmd:mm_collapse2()}{...}
+{col 41}summary statistics by subgroups (expanded)
+{col 22}{cmd:_mm_collapse2()}{...}
+{col 41}summary stats by subgroups (expanded), without sorting
+
+{col 5}{bf:{help mf_mm_gini:mm_gini()}}{...}
+{col 22}{cmd:mm_gini()}{...}
+{col 41}Gini coefficient
+
+{col 5}{bf:{help mf_mm_nobs:mm_nobs()}}{...}
+{col 22}{cmd:mm_nobs()}{...}
+{col 41}number of observations
+
+{col 5}{it:Means, variances, & correlations}
+
+{col 5}{bf:{help mf_mm_colvar:mm_colvar()}}{...}
+{col 22}{cmd:mm_colvar()}{...}
+{col 41}variance, by column
+{col 22}{cmd:mm_meancolvar()}{...}
+{col 41}mean and variance, by column
+{col 22}{cmd:mm_variance0()}{...}
+{col 41}population variance
+{col 22}{cmd:mm_meanvariance0()}{...}
+{col 41}mean and population variance
+{col 22}{cmd:mm_mse()}{...}
+{col 41}mean squared error
+{col 22}{cmd:mm_colmse()}{...}
+{col 41}mean squared error, by column
+{col 22}{cmd:mm_sse()}{...}
+{col 41}sum of squared errors
+{col 22}{cmd:mm_colsse()}{...}
+{col 41}sum of squared errors, by column
+
+{col 5}{bf:{help mf_mm_mloc:mm_mloc()}}{...}
+{col 22}{cmd:mm_mloc()}{...}
+{col 41}robust M estimate of location
+{col 22}{cmd:mm_mscale()}{...}
+{col 41}robust M estimate of scale
+
+{col 5}{bf:{help mf_mm_hl:mm_hl()}}{...}
+{col 22}{cmd:mm_hl()}{...}
+{col 41}Hodges-Lehmann location estimator
+{col 22}{cmd:mm_qn()}{...}
+{col 41}Qn scale coefficient
+{col 22}{cmd:mm_mc()}{...}
+{col 41}Medcouple skewness measure
+
+{col 5}{it:Regression}
+
+{col 5}{bf:{help mf_mm_ls:mm_ls()}}{...}
+{col 22}{cmd:mm_ls()}{...}
+{col 41}linear (least-squares) regression
+
+{col 5}{bf:{help mf_mm_areg:mm_areg()}}{...}
+{col 22}{cmd:mm_areg()}{...}
+{col 41}linear regression with absorbing factor
+
+{col 5}{bf:{help mf_mm_qr:mm_qr()}}{...}
+{col 22}{cmd:mm_qr()}{...}
+{col 41}quantile regression
+
+{col 5}{bf:{help mf_mm_aqreg:mm_aqreg()}}{...}
+{col 22}{cmd:mm_aqreg()}{...}
+{col 41}quantile regression with absorbing factor
+
+{col 5}{bf:{help mf_mm_loclin:mm_loclin()}}{...}
+{col 22}{cmd:mm_loclin()}{...}
+{col 41}kernel-weighted local linear smoothing
+
+{col 5}{it:Matching/reweighting}
+
+{col 5}{bf:{help mf_mm_greedy:mm_greedy()}}{...}
+{col 22}{cmd:mm_greedy()}{...}
+{col 41}one-to-one and one-to-many matching w/o replacement
+{col 22}{cmd:mm_greedy2()}{...}
+{col 41}like {cmd:mm_greedy()}, but returning edge-list
+{col 22}{cmd:mm_greedy_pairs()}{...}
+{col 41}transform result from {cmd:mm_greedy()} into edge-list
+
+{col 5}{bf:{help mf_mm_ebalance:mm_ebalance()}}{...}
+{col 22}{cmd:mm_ebalance()}{...}
+{col 41}entropy balancing
+
+{col 5}{bf:{help mf_mm_wbal:mm_wbal()}}{...}
+{col 22}{cmd:mm_wbal()}{...}
+{col 41}wrapper for {cmd:mm_ebalance()}
+
+{col 5}{bf:{help mf_mm_ebal:mm_ebal()}}{...}
+{col 22}{cmd:mm_ebal()}{...}
+{col 41}entropy balancing, older version
+
+{col 5}{it:Sampling, resampling, & combinations}
+
+{col 5}{bf:{help mf_mm_sample:mm_sample()}}{...}
+{col 22}{cmd:mm_sample()}{...}
+{col 41}draw random sample
+{col 22}{cmd:mm_srswr()}{...}
+{col 41}SRS with replacement
+{col 22}{cmd:mm_srswor()}{...}
+{col 41}SRS without replacement
+{col 22}{cmd:mm_upswr()}{...}
+{col 41}UPS with replacement
+{col 22}{cmd:mm_upswor()}{...}
+{col 41}UPS without replacement
+
+{col 5}{bf:{help mf_mm_bs:mm_bs()}}{...}
+{col 22}{cmd:mm_bs()}{...}
+{col 41}bootstrap estimation
+{col 22}{cmd:mm_bs2()}{...}
+{col 41}bootstrap estimation
+{col 22}{cmd:mm_bs_report()}{...}
+{col 41}report bootstrap results
+
+{col 5}{bf:{help mf_mm_jk:mm_jk()}}{...}
+{col 22}{cmd:mm_jk()}{...}
+{col 41}jackknife estimation
+{col 22}{cmd:mm_jk_report()}{...}
+{col 41}report jackknife results
+
+{col 5}{bf:{help mf_mm_subset:mm_subset()}}{...}
+{col 22}{cmd:mm_subset()}{...}
+{col 41}obtain subsets, one at a time
+{col 22}{cmd:mm_composition()}{...}
+{col 41}obtain compositions, one by one
+{col 22}{cmd:mm_ncompositions()}{...}
+{col 41}determine number of compositions
+{col 22}{cmd:mm_partition()}{...}
+{col 41}obtain partitions, one at a time
+{col 22}{cmd:mm_npartitionss()}{...}
+{col 41}determine number of partitions
+{col 22}{cmd:mm_rsubset()}{...}
+{col 41}draw random subset
+{col 22}{cmd:mm_rcomposition()}{...}
+{col 41}draw random composition
+
+{col 5}{it:Distributions}
+
+{col 5}{bf:{help mf_mm_benford:mm_benford()}}{...}
+{col 22}{cmd:mm_benford()}{...}
+{col 41}Benford distribution
+
+{col 5}{bf:{help mf_mm_cauchy:mm_cauchy()}}{...}
+{col 22}{cmd:mm_cauchy()}{...}
+{col 41}cumulative Cauchy-Lorentz dist.
+{col 22}{cmd:mm_cauchyden()}{...}
+{col 41}Cauchy-Lorentz density
+{col 22}{cmd:mm_cauchytail()}{...}
+{col 41}reverse cumulative Cauchy-Lorentz
+{col 22}{cmd:mm_invcauchy()}{...}
+{col 41}inverse cumulative Cauchy-Lorentz
+
+{col 5}{bf:{help mf_mm_rbinomial:mm_rbinomial()}}{...}
+{col 22}{cmd:mm_rbinomial()}{...}
+{col 41}generate binomial random numbers
+{col 22}{cmd:mm_cebinomial()}{...}
+{col 41}cond. expect. of binomial r.v.
+
+{col 5}   {c TLC}{hline 30}{c TRC}
+{col 5}{hline 3}{c RT}{it: Other mathematical functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 30}{c BRC}
+
+{col 5}{bf:{help mf_mm_root:mm_root()}}{...}
+{col 22}{cmd:mm_root()}{...}
+{col 41}Brent's univariate zero finder
+
+{col 5}{bf:{help mf_mm_nrroot:mm_nrroot()}}{...}
+{col 22}{cmd:mm_nrroot()}{...}
+{col 41}Newton-Raphson zero finder
+
+{col 5}{bf:{help mf_mm_minim:mm_minim()}}{...}
+{col 22}{cmd:mm_minim()}{...}
+{col 41}Brent's univariate minimum finder
+
+{col 5}{bf:{help mf_mm_finvert:mm_finvert()}}{...}
+{col 22}{cmd:mm_finvert()}{...}
+{col 41}univariate function inverter
+
+{col 5}{bf:{help mf_mm_integrate:mm_integrate()}}{...}
+{col 22}{cmd:mm_integrate_sr()}{...}
+{col 41}univariate function integration (Simpson's rule)
+{col 22}{cmd:mm_integrate_38()}{...}
+{col 41}univariate function integration (Simpson's 3/8 rule)
+
+{col 5}{bf:{help mf_mm_ipolate:mm_ipolate()}}{...}
+{col 22}{cmd:mm_ipolate()}{...}
+{col 41}linear interpolation
+{col 22}{cmd:_mm_ipolate()}{...}
+{col 41}linear interpolation (assuming sorted data)
+{col 22}{cmd:mm_fastipolate()}{...}
+{col 41}linear interpolation (assuming sorted and unique data)
+
+{col 5}{bf:{help mf_mm_polint:mm_polint()}}{...}
+{col 22}{cmd:mm_polint()}{...}
+{col 41}polynomial inter-/extrapolation
+
+{col 5}{bf:{help mf_mm_sqrt:mm_sqrt()}}{...}
+{col 22}{cmd:mm_sqrt()}{...}
+{col 41}square root of a symmetric positive definite matrix
+
+{col 5}   {c TLC}{hline 21}{c TRC}
+{col 5}{hline 3}{c RT}{it: Graphical functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 21}{c BRC}
+
+{col 5}{bf:{help mf_mm_plot:mm_plot()}}{...}
+{col 22}{cmd:mm_plot()}{...}
+{col 41}Draw twoway plot
+{col 22}{cmd:_mm_plot()}{...}
+{col 41}Draw twoway plot
+
+{col 5}   {c TLC}{hline 26}{c TRC}
+{col 5}{hline 3}{c RT}{it: Matrix utility functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 26}{c BRC}
+
+{col 5}{bf:{help mf_mm_group:mm_group()}}{...}
+{col 22}{cmd:mm_group()}{...}
+{col 41}create group index
+{col 22}{cmd:_mm_group()}{...}
+{col 41}create group index, without sorting
+
+{col 5}{bf:{help mf_mm_panels:mm_panels()}}{...}
+{col 22}{cmd:mm_panels()}{...}
+{col 41}identify nested panel structure
+{col 22}{cmd:_mm_panels()}{...}
+{col 41}identify panel sizes
+{col 22}{cmd:mm_npanels()}{...}
+{col 41}identify number of panels
+
+{col 5}{bf:{help mf_mm_nunique:mm_nunique()}}{...}
+{col 22}{cmd:mm_nunique()}{...}
+{col 41}count number of unique values in vector
+{col 22}{cmd:mm_unique()}{...}
+{col 41}obtain unique values from vector
+{col 22}{cmd:mm_unique_tag()}{...}
+{col 41}tag unique values in vector
+{col 22}{cmd:mm_nuniqrows()}{...}
+{col 41}count number of unique rows in matrix
+{col 22}{cmd:mm_uniqrows()}{...}
+{col 41}obtain unique rows from matrix
+{col 22}{cmd:mm_uniqrows_tag()}{...}
+{col 41}tag unique rows in matrix
+
+{col 5}{bf:{help mf_mm_diff:mm_diff()}}{...}
+{col 22}{cmd:mm_diff()}{...}
+{col 41}compute lagged differences
+{col 22}{cmd:mm_rowdiff()}{...}
+{col 41}compute lagged differences within rows
+{col 22}{cmd:mm_coldiff()}{...}
+{col 41}compute lagged differences within columns
+
+{col 5}{bf:{help mf_mm_isconstant:mm_isconstant()}}{...}
+{col 22}{cmd:mm_isconstant()}{...}
+{col 41}whether matrix is constant
+{col 22}{cmd:mm_issorted()}{...}
+{col 41}whether vector is sorted
+
+{col 5}{bf:{help mf_mm_colrunsum:mm_colrunsum()}}{...}
+{col 22}{cmd:mm_colrunsum()}{...}
+{col 41}running sum of each column
+
+{col 5}{bf:{help mf_mm_prod:mm_prod()}}{...}
+{col 22}{cmd:mm_prod()}{...}
+{col 41}compute product of elements in matrix
+{col 22}{cmd:mm_rowprod()}{...}
+{col 41}compute product within rows
+{col 22}{cmd:mm_colprod()}{...}
+{col 41}compute product within columns
+
+{col 5}{bf:{help mf_mm_linbin:mm_linbin()}}{...}
+{col 22}{cmd:mm_linbin()}{...}
+{col 41}linear binning
+{col 22}{cmd:mm_fastlinbin()}{...}
+{col 41}fast linear binning
+{col 22}{cmd:mm_exactbin()}{...}
+{col 41}exact binning
+{col 22}{cmd:mm_fastexactbin()}{...}
+{col 41}fast exact binning
+{col 22}{cmd:mm_makegrid()}{...}
+{col 41}equally spaced grid points
+
+{col 5}{bf:{help mf_mm_linbin2:mm_linbin2()}}{...}
+{col 22}{cmd:mm_linbin2()}{...}
+{col 41}aggregate data by linear binning
+
+{col 5}{bf:{help mf_mm_seq:mm_seq()}}{...}
+{col 22}{cmd:mm_seq()}{...}
+{col 41}generate regular sequence
+
+{col 5}{bf:{help mf_mm_cut:mm_cut()}}{...}
+{col 22}{cmd:mm_cut()}{...}
+{col 41}categorize data vector
+
+{col 5}{bf:{help mf_mm_posof:mm_posof()}}{...}
+{col 22}{cmd:mm_posof()}{...}
+{col 41}find element in vector
+
+{col 5}{bf:{help mf_mm_which:mm_which()}}{...}
+{col 22}{cmd:mm_which()}{...}
+{col 41}positions of nonzero elements
+
+{col 5}{bf:{help mf_mm_locate:mm_locate()}}{...}
+{col 22}{cmd:mm_locate()}{...}
+{col 41}search an ordered vector
+{col 22}{cmd:mm_hunt()}{...}
+{col 41}consecutive search
+
+{col 5}   {c TLC}{hline 31}{c TRC}
+{col 5}{hline 3}{c RT}{it: Matrix manipulation functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 31}{c BRC}
+
+{col 5}{bf:{help mf_mm_crosswalk:mm_crosswalk()}}{...}
+{col 22}{cmd:mm_crosswalk()}{...}
+{col 41}fast bulk recoding
+
+{col 5}{bf:{help mf_mm_clip:mm_clip()}}{...}
+{col 22}{cmd:mm_clip()}{...}
+{col 41}clip/limit the values in a matrix
+{col 22}{cmd:mm_clipmin()}{...}
+{col 41}limit the minimum
+{col 22}{cmd:mm_clipmax()}{...}
+{col 41}limit the maximum
+
+{col 5}{bf:{help mf_mm_cond:mm_cond()}}{...}
+{col 22}{cmd:mm_cond()}{...}
+{col 41}matrix conditional operator
+
+{col 5}{bf:{help mf_mm_expand:mm_expand()}}{...}
+{col 22}{cmd:mm_expand()}{...}
+{col 41}duplicate single rows/columns
+{col 22}{cmd:_mm_expand()}{...}
+{col 41}duplicate rows/columns in place
+{col 22}{cmd:mm_repeat()}{...}
+{col 41}duplicate contents as a whole
+{col 22}{cmd:_mm_repeat()}{...}
+{col 41}duplicate contents in place
+
+{col 5}{bf:{help mf_mm_sort:mm_sort()}}{...}
+{col 22}{cmd:mm_sort()}{...}
+{col 41}stable sorting
+{col 22}{cmd:mm_order()}{...}
+{col 41}stable ordering
+
+{col 5}{bf:{help mf_mm_unorder2:mm_unorder2()}}{...}
+{col 22}{cmd:mm_unorder2()}{...}
+{col 41}stable version of {cmd:unorder()}
+{col 22}{cmd:mm_jumble2()}{...}
+{col 41}stable version of {cmd:jumble()}
+{col 22}{cmd:mm__jumble2()}{...}
+{col 41}stable version of {cmd:_jumble()}
+
+{col 5}   {c TLC}{hline 18}{c TRC}
+{col 5}{hline 3}{c RT}{it: String functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 18}{c BRC}
+
+{col 5}{bf:{help mf_mm_pieces:mm_pieces()}}{...}
+{col 22}{cmd:mm_pieces()}{...}
+{col 41}break string into pieces
+{col 22}{cmd:mm_npieces()}{...}
+{col 41}count number of pieces
+{col 22}{cmd:_mm_npieces()}{...}
+{col 41}count number of pieces
+
+{col 5}{bf:{help mf_mm_regexr:mm_regexr()}}{...}
+{col 22}{cmd:mm_regexr()}{...}
+{col 41}regular expression replace
+
+{col 5}{bf:{help mf_mm_invtokens:mm_invtokens()}}{...}
+{col 22}{cmd:mm_invtokens()}{...}
+{col 41}reverse of {cmd:tokens()}
+
+{col 5}{bf:{help mf_mm_realofstr:mm_realofstr()}}{...}
+{col 22}{cmd:mm_realofstr()}{...}
+{col 41}convert string into real
+
+{col 5}{bf:{help mf_mm_strexpand:mm_strexpand()}}{...}
+{col 22}{cmd:mm_strexpand()}{...}
+{col 41}expand string argument
+
+{col 5}   {c TLC}{hline 15}{c TRC}
+{col 5}{hline 3}{c RT}{it: I/O functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 15}{c BRC}
+
+{col 5}{bf:{help mf_mm_matlist:mm_matlist()}}{...}
+{col 22}{cmd:mm_matlist()}{...}
+{col 41}display a matrix
+
+{col 5}{bf:{help mf_mm_insheet:mm_insheet()}}{...}
+{col 22}{cmd:mm_insheet()}{...}
+{col 41}read spreadsheet file
+{col 22}{cmd:mm_infile()}{...}
+{col 41}read free-format file
+{col 22}{cmd:mm_outsheet()}{...}
+{col 41}write spreadsheet file
+
+{col 5}{bf:{help mf_mm_read_csv:mm_read_csv()}}{...}
+{col 22}{cmd:mm_read_csv()}{...}
+{col 41}import CSV file
+
+{col 5}   {c TLC}{hline 23}{c TRC}
+{col 5}{hline 3}{c RT}{it: Programming functions }{c LT}{hline}
+{col 5}   {c BLC}{hline 23}{c BRC}
+
+{col 5}{bf:{help mf_mm_callf:mm_callf()}}{...}
+{col 22}{cmd:mm_callf()}{...}
+{col 41}pass optional args to function
+{col 22}{cmd:mm_callf_setup()}{...}
+{col 41}setup for {cmd:mm_callf()}
+
+{col 5}{bf:{help mf_mm_version:mm_version()}}{...}
+{col 22}{cmd:mm_version()}{...}
+{col 41}moremata version
+{col 5}{hline}
+
+
+{title:Description}
+
+{p 4 4 2}
+The functions above are general-purpose add-ons to official Mata.
+
+{p 4 4 2}
+Although many functions have been written in Stata 9, the compiled version
+of {cmd:moremata} requires Stata 11 or newer for all functions.
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, ben.jann@unibe.ch
+
+{p 4 4 2} The Cauchy-Lorentz distribution functions were provided by
+Christopher F Baum, Boston College.
+
+{p 4 4 2}
+    Thanks for citing this software as follows:
+
+{p 8 8 2}
+    Jann, B. 2005. moremata: Stata module (Mata) to provide various functions. Available from
+    http://ideas.repec.org/c/boc/bocode/s455001.html.
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {bf:{help mata}}

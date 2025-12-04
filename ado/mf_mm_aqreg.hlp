@@ -1,0 +1,175 @@
+{smcl}
+{* 15sep2021}{...}
+{cmd:help mata mm_aqreg()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_aqreg() -- Quantile regression with absorbing factor (Machado and Santos Silva 2019)}
+
+
+{title:Syntax}
+
+{pstd}
+Simple syntax
+
+{p 8 24 2}
+{it:b} =
+{cmd:mm_aqregfit(}{it:y}{cmd:,} {it:id} [{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,} {it:tau}{cmd:,} {it:sort}{cmd:,} {it:quad}]{cmd:)}
+
+{p 7 20 2}{bind:       }{it:y}:  {it:real colvector} containing dependent variable{p_end}
+{p 7 20 2}{bind:      }{it:id}:  {it:real colvector} containing categorical factor to be absorbed{p_end}
+{p 7 20 2}{bind:       }{it:X}:  {it:real matrix} containing predictors{p_end}
+{p 7 20 2}{bind:       }{it:w}:  {it:real colvector} containing weights; specify {cmd:1} for unweighted results{p_end}
+{p 7 20 2}{bind:     }{it:tau}:  {it:real vector} containing evaluation probabilities; default is {cmd:0.5} (median regression){p_end}
+{p 7 20 2}{bind:    }{it:sort}:  whether to sort the data; specify {cmd:0} if the data is already sorted{p_end}
+{p 7 20 2}{bind:    }{it:quad}:  whether to use quad precision when computing cross products; specify {cmd:0} to use double precision{p_end}
+
+{pstd}
+Advanced syntax
+
+{pmore}
+Setup
+
+{p 12 24 2}
+{it:S} =
+{cmd:mm_aqreg(}{it:y}{cmd:,} {it:id} [{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,} {it:tau}{cmd:,} {it:sort}{cmd:,} {it:quad}]{cmd:)}
+
+{pmore}
+Retrieve results
+
+{p2colset 9 42 44 2}{...}
+{p2col:{bind:       }{it:b} = {cmd:mm_aqreg_b(}{it:S}{cmd:)}}coefficients, including global constant (column vector){p_end}
+{p2col:{bind:      }{it:xb} = {cmd:mm_aqreg_xb(}{it:S} [{cmd:,} {it:X}]{cmd:)}}a + xb, fitted values{p_end}
+{p2col:{bind:      }{it:ue} = {cmd:mm_aqreg_ue(}{it:S}{cmd:)}}u_i + e_it, the combined residual{p_end}
+{p2col:{bind:     }{it:xbu} = {cmd:mm_aqreg_xbu(}{it:S}{cmd:)}}a + xb + u_i, prediction including fixed effect{p_end}
+{p2col:{bind:       }{it:u} = {cmd:mm_aqreg_u(}{it:S}{cmd:)}}u_i, the fixed effect{p_end}
+{p2col:{bind:       }{it:e} = {cmd:mm_aqreg_e(}{it:S}{cmd:)}}e_it, the idiosyncratic error{p_end}
+{p2col:{bind:   }{it:ymean} = {cmd:mm_aqreg_ymean(}{it:S}{cmd:)}}mean of y{p_end}
+{p2col:{bind:   }{it:means} = {cmd:mm_aqreg_means(}{it:S}{cmd:)}}means of X (row vector){p_end}
+{p2col:{bind:    }{it:omit} = {cmd:mm_aqreg_omit(}{it:S}{cmd:)}}column vector flagging omitted terms{p_end}
+{p2col:{bind:  }{it:k_omit} = {cmd:mm_aqreg_k_omit(}{it:S}{cmd:)}}number of omitted terms{p_end}
+{p2col:{bind:       }{it:N} = {cmd:mm_aqreg_N(}{it:S}{cmd:)}}number of observations (sum of weights){p_end}
+{p2col:{bind:  }{it:levels} = {cmd:mm_aqreg_levels(}{it:S}{cmd:)}}levels (values of groups) in {it:id} {p_end}
+{p2col:{bind:}{it:k_levels} = {cmd:mm_aqreg_k_levels(}{it:S}{cmd:)}}number of levels (groups) in {it:id}{p_end}
+{p2col:{bind:       }{it:n} = {cmd:mm_aqreg_n(}{it:S}{cmd:)}}number of observations per group (unweighted){p_end}
+{p2col:{bind:     }{it:tau} = {cmd:mm_aqreg_tau(}{it:S}{cmd:)}}evaluation probabilities (row vector){p_end}
+{p2col:{bind:       }{it:q} = {cmd:mm_aqreg_q(}{it:S}{cmd:)}}quantiles of the scaled errors (row vector){p_end}
+{p2col:{bind:    }{it:beta} = {cmd:mm_aqreg_beta(}{it:S}{cmd:)}}coefficients from location model, including global constant{p_end}
+{p2col:{bind:   }{it:alpha} = {cmd:mm_aqreg_alpha(}{it:S}{cmd:)}}fixed effects from location model{p_end}
+{p2col:{bind:   }{it:gamma} = {cmd:mm_aqreg_gamma(}{it:S}{cmd:)}}coefficients from scale model, including global constant{p_end}
+{p2col:{bind:   }{it:delta} = {cmd:mm_aqreg_delta(}{it:S}{cmd:)}}fixed effects from scale model{p_end}
+
+{pmore}
+If multiple evaluation probabilities are specified in {it:tau}, then {it:b}, {it:xb}, {it:ue}, 
+{it:xbu}, {it:u}, and {it:e} will contain multiple columns, one for each evaluation probability.
+
+{pmore}
+{it:S} is a structure holding results and settings; declare {it:S} as {it:transmorphic}.
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_aqreg()} fits quantile regressions with an absorbing factor (i.e. fixed effects)
+using the method proposed by Machado and Santos Silva (2019), which is based on a 
+location-scale model assumption.
+
+{pstd}
+Note that the estimator implemented in {cmd:mm_aqreg()} is different from 
+the results one would get from {helpb qreg}, {helpb robreg:robreg q}, or 
+{helpb mm_qr()} with dummy variables for factor levels. It is also different from the
+pairwise-differences estimator available in {helpb xtrobreg:xtrobreg q}. See 
+Machado and Santos Silva (2019) for a discussion of the assumptions and properties
+of the estimator implemented in {cmd:mm_aqreg()}.
+
+{pstd}
+{cmd:mm_aqreg()} uses quad precision when computing X'X and X'y. Specifying {it:quad}=0
+will make {cmd:mm_aqreg()} faster, but less precise. Use {it:quad}=0 only if your data 
+is well-behaved (reasonable means, not much collinearity).
+
+{pstd}
+A Stata implementation of the estimator by Machado and Santos Silva (2019)
+is available as {helpb xtqreg} (Machado and Santos Silva 2018).
+
+
+{title:Examples}
+
+{pstd}
+If you are only interested in the coefficients, you can use
+{cmd:mm_aqregfit()} (simple syntax) to obtain a fit without much typing:
+
+        . {stata sysuse auto, clear}
+        . {stata "mata:"}
+        : {stata y = st_data(., "price")}
+        : {stata X = st_data(., "weight length")}
+        : {stata id = st_data(., "headroom")}
+        : {stata mm_aqregfit(y, id, X)}
+        : {stata end}
+
+{pstd}
+For more sophisticated applications, use the advanced syntax. Function
+{cmd:mm_aqreg()} defines the problem and performs the main calculations. You can then
+use functions such as {cmd:mm_aqreg_b()}, {cmd:mm_aqreg_xb()}, etc. to obtain results. 
+
+        . {stata "mata:"}
+        : {stata S = mm_aqreg(y, id, X)}
+        : {stata mm_aqreg_b(S)}       (coefficients)
+        : {stata mm_aqreg_levels(S)}  (levels of id variable)
+        : {stata end}
+
+{pstd}
+For efficient computation of multiple models across different probabilities,
+specify argument {it:tau} as a vector instead of applying {cmd:mm_aqreg()} for
+each probability individually:
+
+        . {stata "mata:"}
+        : {stata mm_aqregfit(y, id, X, 1, (.25, .5, .75))}
+        : {stata end}
+
+
+{title:References}
+
+{phang}
+    Machado, J.A.F., J.M.C Santos Silva. 2019. Quantiles via moments. Journal of 
+    Econometrics 213:145-173. {browse "http://doi.org/10.1016/j.jeconom.2019.04.009"}
+    {p_end}
+{phang}
+    Machado, J.A.F., J.M.C Santos Silva. 2018. XTQREG: Stata module to compute quantile 
+    regression with fixed effects. Statistical Software Components S458523, Boston 
+    College Department of Economics. {browse "http://ideas.repec.org/c/boc/bocode/s458523.html"}
+    {p_end}
+
+
+{title:Diagnostics}
+
+{pstd}
+{cmd:mm_aqreg()} returns invalid results (or may break) if {it:y}, {it:X}, or {it:w} contain
+missing values.
+
+{pstd}
+Coefficients corresponding to omitted (collinear) terms will be set to zero.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_aqreg:mm_aqreg.mata}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{helpb moremata}, {helpb mf_mm_qr:mm_qr()}, {helpb mf_mm_areg:mm_areg()}, {helpb qreg}
+
+{p 4 13 2}
+From the SSC Archive: {helpb xtqreg}, {helpb xtrobreg}, {helpb robreg}
+

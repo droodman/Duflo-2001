@@ -1,0 +1,118 @@
+{smcl}
+{* 05aug2020}{...}
+{cmd:help mata mm_minim()}
+{hline}
+
+{title:Title}
+
+{p 4 19 2}
+{bf:mm_minim() -- Brent's univariate minimum finder}
+
+
+{title:Syntax}
+
+{p 8 21 2}{it:real scalar} {cmd:mm_minim(}{it:f}{cmd:,}
+{it:lo}{cmd:,} {it:up} [{cmd:,} {it:tol}{cmd:,}
+{it:...}]{cmd:)}
+
+{pstd}
+where
+
+{p 12 16 2}
+{it:f}:  {it:pointer scalar} containing address of function whose minimum
+will be sought for; usually this is coded {cmd:&}{it:funcname}{cmd:()}
+
+{p 11 16 2}
+{it:lo}:  {it:real scalar} containing lower endpoint of the search interval
+
+{p 11 16 2}
+{it:up}:  {it:real scalar} containing upper endpoint of the search interval
+
+{p 10 16 2}
+{it:tol}: {it:real scalar} specifying acceptable tolerance (length of the
+uncertainty interval of the final result); default is {it:tol} =
+epsilon(1)^0.25; specify {cmd:.} (missing) to select the default; {it:tol} must
+be strictly positive
+
+{p 10 16 2}
+{it:...}:  up to 10 additional arguments to pass on to function {it:f}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_minim()} searches the interval from {it:lo} to {it:up}
+for the minimum of function {it:f} with respect to its first argument. That 
+is, {cmd:mm_minim()} returns an approximation of the value of {it:x} within
+[{it:lo},{it:up}] for which {it:f}{cmd:(}{it:x} [{cmd:,} {it:...}]{cmd:)}
+reaches its minimum. There is no guarantee that the global minimum is found if
+{it:f} has multiple local minima.
+
+{pstd}
+{cmd:mm_minim()} is a translation of function Brent_fmin() from file 
+optimize.c that is included in the source of {browse "https://www.r-project.org/":R}
+(version 4.0.2). The algorithm has been proposed by Brent (1973).
+
+
+{title:Examples}
+
+    {com}: function f(x) return(-3*x + 2*x^2)
+
+    : mm_minim(&f(), -5, 5)
+    {res}  .75
+
+    {com}: function f2(x, a, b) return(a*x + b*x^2)
+
+    : a = 2.5; b = 1
+    {res}
+    {com}: mm_minim(&f2(), -5, 5, ., a, b)
+    {res}  -1.25
+
+    {com}: -a/(2*b)
+    {res}  -1.25{txt}
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_minim(}{it:f}{cmd:,} {it:lo}{cmd:,} {it:up}{cmd:,}
+{it:tol}{cmd:,} {it:...}{cmd:)}:{p_end}
+           {it:f}:  1 {it:x} 1
+          {it:lo}:  1 {it:x} 1
+          {it:up}:  1 {it:x} 1
+         {it:tol}:  1 {it:x} 1
+         {it:...}:  (depending on function {it:f})
+      {it:result}:  1 {it:x} 1
+
+
+{title:Diagnostics}
+
+{pstd}{cmd:mm_minim()} may return a solution slightly larger than {it:lo} (slightly smaller than {it:up}) if
+{it:f} is monotonically increasing (monotonically decreasing) within [{it:lo},{it:up}].
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_minim:mm_minim.mata}
+
+
+{title:References}
+
+{phang}
+Brent, R.P. (1973). Algorithms for Minimization without Derivatives. Englewood Cliffs, NJ: Prentice-Hall.
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{helpb mf_mm_root:mm_root()},
+{helpb m2_ftof:[M-2] ftof},
+{helpb mf_optimize:[M-5] optimize()},
+{helpb moremata}

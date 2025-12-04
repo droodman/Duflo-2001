@@ -1,0 +1,93 @@
+{smcl}
+{* 04aug2020}{...}
+{cmd:help mata mm_seq()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_seq() -- generate regular sequence}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:mm_seq(}{it:real scalar a}{cmd:,} {it:real scalar b}{cmd:,} {it:real scalar delta}{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_seq()} returns a column vector going from {it:a} to {it:b} in steps of abs({it:delta}) 
+(if {it:a}<={it:b}) or -abs({it:delta}) (if {it:a}>{it:b}). The first element in the vector
+will be equal to {it:a}; the last element will be equal to the largest (smallest) 
+possible value of the sequence within the range limited by {it:b}. 
+
+{pstd}
+{cmd:mm_seq()} differs from official Stata's {helpb mf_range:range()} 
+in that step size {it:delta} is always preserved. That is, other than 
+{helpb mf_range:range()}, {cmd:mm_seq()} does not adjust {it:delta} if
+{it:b}-{it:a} is not a multiple of {it:delta}. 
+
+
+{title:Examples}
+
+    {com}: mm_seq(1, 8, 2)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}3{txt}  {c |}
+      3 {c |}  {res}5{txt}  {c |}
+      4 {c |}  {res}7{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}
+    
+    {com}: mm_seq(10.5, -5, 1.5)
+    {res}        {txt}   1
+         {c TLC}{hline 8}{c TRC}
+       1 {c |}  {res}10.5{txt}  {c |}
+       2 {c |}  {res}   9{txt}  {c |}
+       3 {c |}  {res} 7.5{txt}  {c |}
+       4 {c |}  {res}   6{txt}  {c |}
+       5 {c |}  {res} 4.5{txt}  {c |}
+       6 {c |}  {res}   3{txt}  {c |}
+       7 {c |}  {res} 1.5{txt}  {c |}
+       8 {c |}  {res}   0{txt}  {c |}
+       9 {c |}  {res}-1.5{txt}  {c |}
+      10 {c |}  {res}  -3{txt}  {c |}
+      11 {c |}  {res}-4.5{txt}  {c |}
+         {c BLC}{hline 8}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_seq(}{it:a}{cmd:,} {it:b}{cmd:,} {it:delta}{cmd:)}
+            {it:a}:  1 {it:x} 1
+            {it:b}:  1 {it:x} 1
+        {it:delta}:  1 {it:x} 1
+       {it:result}:  {it:r x} 1
+
+
+{title:Diagnostics}
+
+{pstd}{cmd:mm_seq()} returns {cmd:J(0,1,.)} if any of the arguments contains missing value.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_seq:mm_seq.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{helpb mf_range:range()},
+{helpb moremata}
+{p_end}

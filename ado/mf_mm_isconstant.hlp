@@ -1,0 +1,75 @@
+{smcl}
+{* 16jul2020}{...}
+{cmd:help mata mm_isconstant()}
+{hline}
+
+{title:Title}
+
+{pstd}
+{bf:mm_isconstant() -- Whether matrix is constant or whether vector is sorted}
+
+
+{title:Syntax}
+
+{p 8 20 2}
+{it:real scalar}{bind: }
+{cmd:mm_isconstant(}{it:X}{cmd:)}
+
+{p 8 20 2}
+{it:real scalar}{bind: }
+{cmd:mm_issorted(}{it:x} [{cmd:,} {it:descending}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 14 18 2}{it:X}:  {it:transmorphic matrix X}
+{p_end}
+{p 14 18 2}{it:x}:  {it:numeric vector x} or {it:string vector x}
+{p_end}
+{p 5 18 2}{it:descending}:  {it:real scalar} requesting descending order
+{p_end}
+
+
+{title:Description}
+
+{pstd}{cmd:mm_isconstant()} returns 1 if all elements in {it:X} are equal
+and returns 0 otherwise. {it:X} can be any kind.
+
+{pstd}{cmd:mm_issorted()} returns 1 if the elements in vector {it:x} are
+sorted and returns 0 otherwise. {it:x} can be numeric or 
+string. Specify {it:descending}!=0 to check for 
+descending sort order. The default is to check for ascending sort order.
+
+
+{title:Remarks}
+
+{pstd}None.
+
+
+{title:Diagnostics}
+
+{pstd}{cmd:mm_isconstant()} returns 1 if {it:X} is void.
+
+{pstd}{cmd:mm_issorted()} returns 1 if {it:x} is void.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_isconstant:mm_isconstant.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_sort:[M-4] sort}},
+{bf:{help mf_mm_sort:mm_sort}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help moremata}}
+{p_end}

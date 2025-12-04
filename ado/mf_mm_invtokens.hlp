@@ -1,0 +1,87 @@
+{smcl}
+{* 10feb2009}{...}
+{cmd:help mata mm_invtokens()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_invtokens() -- Convert a string vector into a string scalar}
+
+{hline}
+{p 2 2 2}Note: An official {cmd:invtokens()} function was introduced
+in Stata 10 (see help {bf:{help mf_invtokens:[M-5] invtokens()}}).
+{p_end}
+{hline}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:string scalar}
+{cmd:mm_invtokens(}{it:string vector s} [{cmd:,} {it:real scalar noclean}]{cmd:)}
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_invtokens()} is the "inverse" of
+{bf:{help mf_tokens:tokens()}}. It returns the elements of {it:s} joined together in
+a single string where the individual elements are separated by blanks.
+
+{p 4 4 2} Elements containing blanks are enclosed in double quotes
+("..."). Elements containing double quotes are enclosed in compound double quotes
+(`"..."'). Empty elements are returned as "".
+
+{p 4 4 2}{it:noclean}!=0 causes all elements to be enclosed in
+compound double quotes.
+
+
+{title:Remarks}
+
+{p 4 4 2}Example:
+
+        {com}: s1 = ("mpg", "weight", "displacement")
+        {res}
+        {com}: s1
+        {res}       {txt}           1              2              3
+            {c TLC}{hline 46}{c TRC}
+          1 {c |}  {res}         mpg         weight   displacement{txt}  {c |}
+            {c BLC}{hline 46}{c BRC}
+
+        {com}: s2 = mm_invtokens(s1)
+        {res}
+        {com}: s2
+        {res}  mpg weight displacement{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_invtokens(}{it:s}{cmd:,} {it:noclean}{cmd:)}
+         {it:s}:  {it:r x} 1 or 1 {it:x c}
+   {it:noclean}:  1 {it:x} 1.
+    {it:result}:  1 {it:x} 1.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}None.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_invtokens:mm_invtokens.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help m4_string:[M-4] string}},
+{bf:{help mf_tokens:tokens()}},
+{bf:{help moremata}}

@@ -1,10 +1,39 @@
-* dependencies: boottest, reghdfejl, julia, xlincom, estout, coefplot, blindschemes, palettes, colrspace, moremata, xlincom, cic, and qrprocess
-* all are from SSC except the last two are from https://sites.google.com/site/blaisemelly/home/computer-programs/cic_stata
+* Code for Roodman comment on Khanna (2023)
 
-cap cd "D:/OneDrive - Open Philanthropy Project"
-cap cd "/Users/davidroodman/Library/CloudStorage/OneDrive-OpenPhilanthropyProject"
-cap cd "W:/"
-cd "Education/Duflo 2001"
+* dependencies (on SSC unless otherwise noted):
+* boottest
+* reghdfejl
+* julia
+* xlincom
+* estout
+* coefplot
+* blindschemes
+* palettes
+* colrspace
+* moremata
+* cic
+* qrprocess
+* grc1leg2 (net install grc1leg2, from(http://digital.cgdev.org/doc/stata/MO/Misc))
+* all are from SSC except the last two are from https://sites.google.com/site/blaisemelly/home/computer-programs/cic_stata
+* Most of these are in this archive's ado folder. But the julia package installation must be done by the replicator in order to get the proper, machine-specific plug-ins.
+
+*** Need to cd to root of this archive. For example:
+cd "/Users/davidroodman/Downloads/Duflo-2001-main"
+// cap noi cd "D:/OneDrive - Open Philanthropy Project/Education/Khanna/Public"
+// cap noi cd "/Users/davidroodman/Library/CloudStorage/OneDrive-OpenPhilanthropyProject/Education/Khanna/Public"
+
+adopath + ado
+
+if c(os)=="Windows" {
+	global font LM Roman 9  // https://www.1001fonts.com/latin-modern-roman-font.html
+}
+else {
+	global font Latin Modern Roman
+}
+
+graph set window fontface "$font"
+set scheme plotplain
+
 
 global source95 NBER  // if "NBER", use primary data owned by NBER; otherwise use processed file for birth years 1950-72, https://github.com/NathanLazarus/Duflo2001/blob/main/inpresdata.dta
 
@@ -16,9 +45,6 @@ if c(os)=="Windows" global font LM Roman 9
 
 graph set window fontface "$font"  // https://www.1001fonts.com/latin-modern-roman-font.html?
 est drop _all
-
-cap log close
-cap log using Public/Output/duflo2001, text replace
 
 scalar age74kink = 12
 
@@ -75,9 +101,9 @@ scalar age74kink = 12
     label var nen71new "Population 5+ non-enrollment rate, 1971, nch71new denominator"
     label var poor "Poor according to Duflo (2001, table 6, note b)"
     label var nin_lch71new "Component of treatment explained by log number of children"
-    saveold "Public/Regency-level vars/Regency-level vars", replace ver(11)
+    saveold "Regency-level vars/Regency-level vars", replace ver(11)
   }
-  else use "Public/Regency-level vars/Regency-level vars", clear
+  else use "Regency-level vars/Regency-level vars", clear
 
   drop if inlist(birthpl,1472,1804,3275,5171,5271,7173,7271,8271,8104)  // drop split child regencies--duplicates in this context
 
@@ -99,7 +125,7 @@ scalar age74kink = 12
 
   * SUPAS 2005
   cap noi odbc load, $odbcopts clear dsn("Duflo 2001") exec("SELECT * FROM dbo.[IPUMS-based dataset (SUPAS)] where year=2005 and female=0 and birthprov<>96")
-  if _rc use SUPAS05, clear
+  if _rc use data/SUPAS05, clear
   else {
     recode educatt (11=1) (12=2) (13=3) (14=4) (15=5) (16 17=6) ///  // primary school
                    (21=7) (22=8) (23 27=9) (31=10) (32=11) (33=12)         (37=12) ///  // junior & senior
@@ -113,12 +139,12 @@ scalar age74kink = 12
     gen birthyr = year - age
     keep year urban yeduc birthyr wt indgen birthpl classwk
     compress
-    save SUPAS05, replace
+    saveold data/SUPAS05, replace ver(11)
   }
 
   * SUSENAS
   cap noi odbc load, $odbcopts clear dsn("Duflo 2001") exec("select * from [SUSENAS dataset] where female=0")
-  if _rc use SUSENAS1119, clear
+  if _rc use data/SUSENAS1119, clear
   else {
     gen birthyr = year - age
     replace wage = . if !inlist(classwk,4,5) | wage/cpi[1,year-1985] < 100000/cpi[1,2007-1985]  // to minimize survey effects, truncate all to highest threshold, 100,000 2007 Rp ~= $10/month today
@@ -132,12 +158,12 @@ scalar age74kink = 12
  
     keep year yeduc birthyr wt birthpl urban classwk wage hrswork
     compress
-    save SUSENAS1119, replace
+    saveold data/SUSENAS1119, replace ver(11)
   }
 
   * 1995 data
   if "$source95"=="NBER" {
-    use supp95_04 if p503==1 & p509prop!=96, clear  // male, not born abroad
+    use data/supp95_04 if p503==1 & p509prop!=96, clear  // male, not born abroad
     ren (p605 p606 p608 p504thn p509prop kp) (hrswork occ classwk birthyr birthprov urban)
 
     gen int year = 1995
@@ -151,7 +177,7 @@ scalar age74kink = 12
     replace yeduc = yeduc + cond(p518<8, p518, completionyears[1, p517] - (p517==6 & p520==2)) if p518<.  // 1 year less for completing Diploma I/II in teaching
   }
   else {
-    use inpresdata, clear  // https://github.com/NathanLazarus/Duflo2001/blob/main/inpresdata.dta
+    use data/inpresdata, clear  // https://github.com/NathanLazarus/Duflo2001/blob/main/inpresdata.dta
     replace birthpl = p509pro * 100 + p509kab
     ren (p608 p504thn) (classwk birthyr)
     gen int year = 1995
@@ -170,10 +196,10 @@ scalar age74kink = 12
   keep year urban yeduc birthyr wt indgen birthpl classwk wage wage hrswork
   compress
 
-  append using SUPAS05 SUSENAS1119
+  append using data/SUPAS05 data/SUSENAS1119
   drop if floor(birthpl/100) == 54  // East Timor--gained independence
 
-  merge m:1 birthpl using "Public/Regency-level vars/Regency-level vars", nogen update
+  merge m:1 birthpl using "Regency-level vars/Regency-level vars", nogen update
 
   gen int dum = cond(birthyr<1962, 1900+100, birthyr) 
   gen byte age74 = 1974 - birthyr
@@ -208,7 +234,7 @@ scalar age74kink = 12
   label var lhwagep "Primary schooling only"
   label var lhwages "Some secondary schooling"
   
-  save analysisdata, replace
+  saveold data/analysisdata, replace ver(11)
 }  // end data prep
 
 
@@ -318,7 +344,7 @@ twoway lpoly hwage age if _yeduc==0 [aw=wt], bw(5) lcolor("`r(p1)'") lwidth(medi
        xtitle(Age, size(medium) margin(medium)) ytitle("Hourly wage (rupiah)", size(medium)) graphregion(margin(zero)) plotregion(fcolor(white)) ///
        legend(on size(medium) order(6 5 4 3 2 1) label(1 "0–3 years") label(2 "4–6 years")  label(3 "7–9 years") label(4 "10–12 years") label(5 "13–15 years") label(6 "16+ years of schooling") cols(1) pos(11) ring(0) margin(zero) region(margin(zero) style(none) lstyle(none))) ///
        xlab(15(10)55, nogrid labsize(medium)) ylab(, labsize(medium)) yscale(log) scheme(plottig)
-graph export "Public/Output/Mincer4.4 left.png", replace width(3000)
+graph export "output/Mincer4.4 left.png", replace width(3000)
 restore
 }
 
@@ -363,7 +389,7 @@ qui forvalues h=1/3 {
   graph combine v1h`h' v2h`h' v3h`h' v4h`h', xcommon imargin(zero) rows(1) l1title(`structname', size(small)) ycommon name(h`h', replace) nodraw `=cond(`h'==3,"fysize(35)","")'
 }
 grc1leg2 h1 h2 /*h3*/, xcommon scheme(plottig) imargin(zero) cols(1) lrows(1) graphregion(margin(zero)) legscale(*1) iscale(*1.25) labsize(vsmall)
-graph export "Public/Output/weightsim.png", replace width(2000)
+graph export "output/weightsim.png", replace width(2000)
 restore
 }
 
@@ -400,35 +426,35 @@ keep if year==1995 & (reallyold | old | young) & lhwage<.
 sum wt, detail
 gen double wtnew = min(wt, r(p50)+4*(r(p75)-r(p25)))  // clip extreme weights to median + 4 * IQR (Potter and Zheng 2015)
 
-cap erase Public/Output/DID2x2.rtf
+cap erase output/DID2x2.rtf
 foreach depvar in yeduc lhwage {
   eststo clear
   eststo: reg `depvar'  young##recp    if old | young
   eststo: reg `depvar'  young##recp    if old | young     [aw=wt   ]
   eststo: reg `depvar'  young##recpnew if old | young               , cluster(birthplnew)
   eststo: reg `depvar'  young##recpnew if old | young     [aw=wtnew], cluster(birthplnew)
-  esttab using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.young#1.recp DID 1.young#1.recpnew DID) fonttbl(\f0\fnil $font;)
+  esttab using output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.young#1.recp DID 1.young#1.recpnew DID) fonttbl(\f0\fnil $font;)
 
   eststo clear
   eststo: reg `depvar'  old##recp      if reallyold | old
   eststo: reg `depvar'  old##recp      if reallyold | old [aw=wt   ]
   eststo: reg `depvar'  old##recpnew   if reallyold | old           , cluster(birthplnew)
   eststo: reg `depvar'  old##recpnew   if reallyold | old [aw=wtnew], cluster(birthplnew)
-  esttab using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.old#1.recp   DID 1.old#1.recpnew   DID) fonttbl(\f0\fnil $font;)
+  esttab using output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(DID) rename(1.old#1.recp   DID 1.old#1.recpnew   DID) fonttbl(\f0\fnil $font;)
 }
 eststo clear
 eststo: ivregress 2sls lhwage young recp    (yeduc = young#recp   ) if old | young               , small
 eststo: ivregress 2sls lhwage young recp    (yeduc = young#recp   ) if old | young     [aw=wt]   , small
 eststo: ivregress 2sls lhwage young recpnew (yeduc = young#recpnew) if old | young               , cluster(birthplnew) small
 eststo: ivregress 2sls lhwage young recpnew (yeduc = young#recpnew) if old | young     [aw=wtnew], cluster(birthplnew) small
-esttab using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc) fonttbl(\f0\fnil $font;)
+esttab using output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc) fonttbl(\f0\fnil $font;)
 
 eststo clear
 eststo: ivregress 2sls lhwage old recp      (yeduc = old#recp     ) if reallyold | old           , small
 eststo: ivregress 2sls lhwage old recp      (yeduc = old#recp     ) if reallyold | old [aw=wt   ], small
 eststo: ivregress 2sls lhwage old recpnew   (yeduc = old#recpnew  ) if reallyold | old           , cluster(birthplnew) small
 eststo: ivregress 2sls lhwage old recpnew   (yeduc = old#recpnew  ) if reallyold | old [aw=wtnew], cluster(birthplnew) small
-esttab using Public/Output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc) fonttbl(\f0\fnil $font;)
+esttab using output/DID2x2.rtf, append b(a2) se(a2) nogap nonotes nonumbers nomtitles noobs msign("–") keep(yeduc) fonttbl(\f0\fnil $font;)
 
 restore
 }
@@ -443,7 +469,7 @@ foreach depvar in yeduc part lhwage {
     nodraw name(`depvar'attrition, replace)
 }
 graph combine yeducattrition partattrition lhwageattrition, rows(1) imargin(small) graphregion(margin(zero)) iscale(*2) ysize(2) b1title(Survey year, size(vlarge)) name(attritioncheck, replace)
-graph export "Public/Output/Attrition check.png", replace width(2000)
+graph export "output/Attrition check.png", replace width(2000)
 }
 
 
@@ -494,7 +520,7 @@ forvalues y=1/3 {
   gen double wt = min(_wt, r(p50)+4*(r(p75)-r(p25)))  // clip extreme weights to median + 4 * IQR (Potter and Zheng 2015)
 
   foreach depvars in yeduc "part lhwage" `=cond(`y'==3,`""yeducp primary""',"")' "lhwagep lhwages" {
-    cap erase "Public/Output/RF`yearname' `depvars'.rtf"
+    cap erase "output/RF`yearname' `depvars'.rtf"
     forvalues c=1(-1)0 {  // control sets, 0=none 1=minimal 2=minimal logged 3=intermediate 4=full
       eststo clear
       foreach depvar in `depvars' {
@@ -548,7 +574,7 @@ forvalues y=1/3 {
           }
         }
       }
-      esttab using "Public/Output/RF`yearname' `depvars'.rtf", append b(a2) se(a2) title(Controls: `controls') eqlabels(,none) nostar nolines nonotes nomtitles noeqlines nogap nonumber msign("–") noobs fonttbl(\f0\fnil $font;)
+      esttab using "output/RF`yearname' `depvars'.rtf", append b(a2) se(a2) title(Controls: `controls') eqlabels(,none) nostar nolines nonotes nomtitles noeqlines nogap nonumber msign("–") noobs fonttbl(\f0\fnil $font;)
 
       eststo clear
       foreach depvar in `depvars' {
@@ -598,14 +624,14 @@ forvalues y=1/3 {
         }
         graph combine RF1 RFwt, name(`depvar', replace) rows(1) graphregion(margin(zero)) imargin(1 1 0 0) ycommon nodraw `=cond(`c'==1 & wordcount("`depvars'")>1, `"t1title("`:var label `depvar''", size(small))"', "")'
       }
-      esttab using "Public/Output/RF`yearname' `depvars'.rtf", append b(a2) se(a2) nostar nolines nonotes noeqlines nomtitles nogap nonumber noobs msign("–") fonttbl(\f0\fnil $font;) ///
+      esttab using "output/RF`yearname' `depvars'.rtf", append b(a2) se(a2) nostar nolines nonotes noeqlines nomtitles nogap nonumber noobs msign("–") fonttbl(\f0\fnil $font;) ///
           `=cond(`c', "", `"stat(corrected clustered weights Nexp Nplac N, label("Data corrections" Clustered Weighted "Experiment N" "Placebo N" "Kink N") fmt(%-1s %-1s %-1s %10.0fc %10.0fc %10.0fc))"')'
 
       local t1title: word `=`c'+1' of "Without the extra controls" "With controls based on number of children"
       graph combine `depvars', rows(1) l1title(`t1title', size(vsmall)) graphregion(margin(zero)) name(RFctl`c', replace)
     }
     graph combine RFctl1 RFctl0, cols(1) imargin(0 0 1 1) xsize(`=1+4*wordcount("`depvars'")') ysize(5.5) graphregion(margin(zero)) b1title(Age in 1974, xoffset(4) size(vsmall)) altshrink iscale(*3)
-    graph export "Public/Output/RF`yearname' `depvars' spline.png", replace width(2000)
+    graph export "output/RF`yearname' `depvars' spline.png", replace width(2000)
   }
 }
 restore
@@ -635,8 +661,8 @@ foreach edvar in yeduc primary {
     cap drop wt
     gen wt = min(_wt, r(p50)+4*(r(p75)-r(p25)))  // clip extreme weights to median + 4 * IQR (Potter and Zheng 2015)
 
-    cap erase "Public/Output/TSLS`edvar' `yearname'.rtf"
-    cap erase "Public/Output/TSLS`edvar' `yearname' by birth year.rtf"
+    cap erase "output/TSLS`edvar' `yearname'.rtf"
+    cap erase "output/TSLS`edvar' `yearname' by birth year.rtf"
     forvalues c=1(-1)0 /*1/4*/ {
       local controls: word `=`c'+1' of "" ch71new lch71new /*"ch71new en71new"*/ "ch71new en71new wsppc"
       forvalues d=1/2 {
@@ -663,12 +689,12 @@ foreach edvar in yeduc primary {
         graph combine `depvar'3w1 `depvar'3wwt, rows(1) imargin(1 0 0 0) `=cond(`c'==1, "title(Kink instrument, size(medium))"        , "")' name(g3`depvar', replace) nodraw
       }
       esttab /*OLS`depvar'c`c'w* */ TSLSpartc`c'1w* TSLSpartc`c'3w* TSLSlhwagec`c'1w* TSLSlhwagec`c'3w* ///
-             using "Public/Output/TSLS`edvar' `yearname'.rtf", append ///
+             using "output/TSLS`edvar' `yearname'.rtf", append ///
              keep(`edvar') b(a2) se(a2) msign("–") nonotes nonumber nogaps nomtitles nostar fonttbl(\f0\fnil $font;) ///
              stat(CIstr widstat `=cond(`c',"","corrected clustered weights trends N")' /*jp*/, labels("Bootstrap CI" "KP F" `=cond(`c',"",`""Data corrections" Clustered Weighted Observations "Pre-trend control""')' /*"Hansen p"*/) fmt(%-1s a2 `=cond(`c',"","%-1s %-1s %~1s %~1s %11.0gc")') /*a2*/)
 
       esttab TSLSpartc`c'2w* TSLSlhwagec`c'2w* ///  // Instruments by birth year: not in main table
-             using "Public/Output/TSLS`edvar' `yearname' by birth year.rtf", append ///
+             using "output/TSLS`edvar' `yearname' by birth year.rtf", append ///
              keep(`edvar') b(a2) se(a2) msign("–") nonotes nonumber nogaps nomtitles nostar fonttbl(\f0\fnil $font;) ///
              stat(CIstr widstat `=cond(`c',"","corrected clustered weights trends N")' /*jp*/, labels("Bootstrap CI" "KP F" `=cond(`c',"",`""Data corrections" Clustered Weighted Observations "Pre-trend control""')' /*"Hansen p"*/) fmt(%-1s a2 `=cond(`c',"","%-1s %-1s %~1s %~1s %11.0gc")') /*a2*/)
 
@@ -677,7 +703,7 @@ foreach edvar in yeduc primary {
       graph combine part lhwage, name(`edvar'c`c'2SLSy`y', replace)
     }
     graph combine `edvar'c12SLSy`y' `edvar'c02SLSy`y', cols(1) ycommon b1title(Coefficient on `=lower("`:var label `edvar''")', size(small)) graphregion(margin(zero)) xsize(8.5) ysize(5) name(TSLS`edvar'y`y', replace) imargin(0 0 1 0) iscale(*1.3)
-    graph export "Public/Output/TSLS`edvar' `yearname'.png", replace width(2000)
+    graph export "output/TSLS`edvar' `yearname'.png", replace width(2000)
   }
 }
 restore
@@ -724,7 +750,7 @@ foreach depvar in yeduc lhwage {
   hetcheck `depvar'
 }
 grc1leg2 hetcheckyeduc hetchecklhwage, lrows(1) imargin(2 2 0 0) graphregion(margin(zero)) 
-graph export "Public/Output/hetcheck.png", replace width(2680) height(1552)
+graph export "output/hetcheck.png", replace width(2680) height(1552)
 restore
 }
 
@@ -779,7 +805,7 @@ forvalues s=1/4 {
   graph combine g1 g2, rows(1) imargin(small) ycommon title("`title'", pos(11) span size(medsmall)) `=cond(`s'==4,"fysize(30)","")' name(r`s', replace) nodraw
 }
 graph combine r1 r2 r3 r4, cols(1) graphregion(margin(zero)) imargin(small) xcommon xsize(6.5) ysize(8) t1title("Experiment                                   Placebo", size(small)) b1title(Years of schooling, size(small) margin(zero)) name(DIDinCDF, replace)
-graph export Public/Output/DIDinCDF.png, replace width(4000)
+graph export output/DIDinCDF.png, replace width(4000)
 
 restore
 }
@@ -835,7 +861,7 @@ forvalues g=1/6 {
               text(-.75 .9 "`caption'", xaxis(2) yaxis(2) place(w) color(black) size(medlarge)) title(Grade `g')
 }
 graph combine `plots', cols(1) xcommon imargin(0 0 1 1) xsize(4) ysize(7) graphregion(margin(zero)) b1title(Age in 1974, xoffset(4) size(vsmall)) name(CDFshiftkink, replace)
-graph export Public/Output/CDFshiftkink.png, replace width(2000)
+graph export output/CDFshiftkink.png, replace width(2000)
 restore
 }
 
@@ -868,7 +894,7 @@ program define mycic
   gen x = .17 if __at<.
   $graph || scatter __at x, msym(none) mlab(label) mlabcolor(black) mlabsize(7pt) mlabpos(9) xscale(range(-.1 .17)) xlab(-.1(.05).1) xline(0, lcolor(gs10) lpat(solid)) xsize(5.5) ysize(5) name(cicw`exp', replace)
 
-  esttab cicw`exp'y? using Public/Output/cic.rtf, append rename(q9 90 q8 80 q7 70 q6 60 q5 50 q4 40 q3 30 q2 20 q1 10) order(90 80 70 60 50 40 30 20 10) nogaps nomtitle msign("–") b(3) se(3) nostar fonttbl(\f0\fnil $font;) ///
+  esttab cicw`exp'y? using output/cic.rtf, append rename(q9 90 q8 80 q7 70 q6 60 q5 50 q4 40 q3 30 q2 20 q1 10) order(90 80 70 60 50 40 30 20 10) nogaps nomtitle msign("–") b(3) se(3) nostar fonttbl(\f0\fnil $font;) ///
                              stats(constant_0 constant_m stoch_dom_pos stoch_dom_neg, labels("No effect (p)" "Constant effect (p)" "All >0 (p)" "All <0 (p)") fmt(%4.2f))
   restore
 end
@@ -877,7 +903,7 @@ preserve
 keep if (young | old) & inlist(year,1995,2011,2012,2013,2014)
 xi i.year i.birthyr i.birthplnew
 set seed 30948573
-cap erase Public/Output/cic.rtf
+cap erase output/cic.rtf
 gen _wt = wt
 foreach wt in 1 wt {
   mycic [pw=`wt']
@@ -892,8 +918,6 @@ gr_edit .legend.plotregion1.key[3].view.style.editstyle marker(fillcolor(plg1)) 
 gr_edit .legend.plotregion1.key[1].view.style.editstyle marker(linestyle(color(black))) editcopy
 gr_edit .legend.plotregion1.key[2].view.style.editstyle marker(linestyle(color(plb1 ))) editcopy
 gr_edit .legend.plotregion1.key[3].view.style.editstyle marker(linestyle(color(plg1 ))) editcopy
-graph export Public/Output/cic.png, replace width(2000)
+graph export output/cic.png, replace width(2000)
 restore
 }
-
-log close

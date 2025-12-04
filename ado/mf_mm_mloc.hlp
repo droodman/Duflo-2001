@@ -1,0 +1,219 @@
+{smcl}
+{* 10dec2021}{...}
+{cmd:help mata mm_mloc()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_mloc() -- Robust M estimation of location and scale}
+
+
+{title:Syntax}
+
+{dlgtab:M estimate of location}
+
+{pstd}
+Optimize
+
+{p 8 24 2}
+{it:S} =
+{cmd:mm_mloc(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:eff}{cmd:,} {it:obj}{cmd:,}
+    {it:b0}{cmd:,} {it:s}{cmd:,} {it:log}{cmd:,}
+    {it:tol}{cmd:,} {it:maxiter}]{cmd:)}
+
+{p 8 12 2}where{p_end}
+{p 7 20 2}{bind:       }{it:X}:  {it:real colvector} containing data{p_end}
+{p 7 20 2}{bind:       }{it:w}:  {it:real colvector} containing weights; specify {cmd:1} for unweighted results{p_end}
+{p 7 20 2}{bind:     }{it:eff}:  {it:real scalar} setting gaussian efficiency; default is {cmd:95}; {it:eff} must be in [63.7,99.9] for {cmd:"huber"} and in [0.1,99.9] for {cmd:"biweight"}{p_end}
+{p 7 20 2}{bind:     }{it:obj}:  {it:string scalar} specifying the objective function, either {cmd:"huber"} (default) or {cmd:"biweight"}{p_end}
+{p 7 20 2}{bind:      }{it:b0}:  {it:real scalar} specifying the staring value; default is the median of {it:X}{p_end}
+{p 7 20 2}{bind:       }{it:s}:  {it:real scalar} specifying the scale; default is the normalized median absolute deviation from {it:b0}{p_end}
+{p 7 20 2}{bind:     }{it:log}:  {it:real scalar} requesting an iteration log; default is {cmd:0} (no log); {it:log}!=0 displays the log{p_end}
+{p 7 20 2}{bind:     }{it:tol}:  {it:real scalar} specifying the convergence tolerance; default is {cmd:1e-10}{p_end}
+{p 7 20 2}{bind: }{it:maxiter}:  {it:real scalar} specifying the maximum number of iterations; default is as set by {helpb maxiter:set maxiter}{p_end}
+
+{pstd}
+Retrieve results
+
+{p2colset 9 34 36 2}{...}
+{p2col:{bind:    }{it:b} =  {cmd:mm_mloc_b(}{it:S}{cmd:)}}location estimate{p_end}
+{p2col:{bind: }{it:conv} =  {cmd:mm_mloc_conv(}{it:S}{cmd:)}}1 if converged, 0 else{p_end}
+{p2col:{bind:    }{it:d} =  {cmd:mm_mloc_d(}{it:S}{cmd:)}}value of convergence criterion{p_end}
+{p2col:{bind: }{it:iter} =  {cmd:mm_mloc_iter(}{it:S}{cmd:)}}number of iterations{p_end}
+{p2col:{bind:    }{it:k} =  {cmd:mm_mloc_k(}{it:S}{cmd:)}}tuning constant{p_end}
+{p2col:{bind:  }{it:eff} =  {cmd:mm_mloc_eff(}{it:S}{cmd:)}}gaussian efficiency (in percent){p_end}
+{p2col:{bind:   }{it:b0} =  {cmd:mm_mloc_b0(}{it:S}{cmd:)}}starting value{p_end}
+{p2col:{bind:    }{it:s} =  {cmd:mm_mloc_s(}{it:S}{cmd:)}}scale{p_end}
+
+{pstd}
+Specifying an optional argument as missing (either {cmd:.} or {cmd:""} depending on type
+of arguments) selects the default. An exception is argument {it:w} for which missing is
+not allowed. {it:S} is a structure holding results and settings; declare {it:S} as {it:transmorphic}.
+
+{dlgtab:M estimate of scale}
+
+{pstd}
+Optimize
+
+{p 8 24 2}
+{it:S} =
+{cmd:mm_mscale(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:bp}{cmd:,}
+    {it:b0}{cmd:,} {it:l}{cmd:,} {it:log}{cmd:,}
+    {it:tol}{cmd:,} {it:maxiter}]{cmd:)}
+
+{p 8 12 2}where{p_end}
+{p 7 20 2}{bind:       }{it:X}:  {it:real colvector} containing data{p_end}
+{p 7 20 2}{bind:       }{it:w}:  {it:real colvector} containing weights; specify {cmd:1} for unweighted results{p_end}
+{p 7 20 2}{bind:      }{it:bp}:  {it:real scalar} setting the breakdown point in [1,50]; default is {cmd:50}{p_end}
+{p 7 20 2}{bind:      }{it:b0}:  {it:real scalar} specifying the starting value; default is the normalized median absolute deviation from {it:l}{p_end}
+{p 7 20 2}{bind:       }{it:l}:  {it:real scalar} specifying the location; default is the median of {it:X}{p_end}
+{p 7 20 2}{bind:     }{it:log}:  {it:real scalar} requesting an iteration log; default is {cmd:0} (no log); {it:log}!=0 displays the log{p_end}
+{p 7 20 2}{bind:     }{it:tol}:  {it:real scalar} specifying the convergence tolerance; default is {cmd:1e-10}{p_end}
+{p 7 20 2}{bind: }{it:maxiter}:  {it:real scalar} specifying the maximum number of iterations; default is as set by {helpb maxiter:set maxiter}{p_end}
+
+{pstd}
+Retrieve results
+
+{p2colset 9 36 38 2}{...}
+{p2col:{bind:    }{it:b} =  {cmd:mm_mscale_b(}{it:S}{cmd:)}}scale estimate{p_end}
+{p2col:{bind: }{it:conv} =  {cmd:mm_mscale_conv(}{it:S}{cmd:)}}1 if converged, 0 else{p_end}
+{p2col:{bind:    }{it:d} =  {cmd:mm_mscale_d(}{it:S}{cmd:)}}value of convergence criterion{p_end}
+{p2col:{bind: }{it:iter} =  {cmd:mm_mscale_iter(}{it:S}{cmd:)}}number of iterations{p_end}
+{p2col:{bind:    }{it:k} =  {cmd:mm_mscale_k(}{it:S}{cmd:)}}tuning constant{p_end}
+{p2col:{bind:   }{it:bp} =  {cmd:mm_mscale_eff(}{it:S}{cmd:)}}breakdown point (in percent){p_end}
+{p2col:{bind:   }{it:b0} =  {cmd:mm_mscale_b0(}{it:S}{cmd:)}}starting value{p_end}
+{p2col:{bind:    }{it:l} =  {cmd:mm_mscale_s(}{it:S}{cmd:)}}location{p_end}
+
+{pstd}
+Specifying an optional argument as missing (either {cmd:.} or {cmd:""} depending on type
+of arguments) selects the default. An exception is argument {it:w} for which missing is not
+allowed. {it:S} is a structure holding results and settings; declare {it:S} as {it:transmorphic}.
+
+{dlgtab:Objective functions}
+
+{pstd}
+Obtain tuning constant from efficiency, efficiency from tuning constant, tuning constant from breakdown point, or breakdown point
+from tuning constant. {it:eff} must be in
+[63.7,99.9] for the Huber function and in [0.1,99.9] for the biweight function. {it:bp} must be in
+[1,50].
+
+        {it:real scalar} {cmd:mm_huber_k(}{it:real scalar eff}{cmd:)}
+        {it:real scalar} {cmd:mm_huber_eff(}{it:real scalar k}{cmd:)}
+        {it:real scalar} {cmd:mm_biweight_k(}{it:real scalar eff}{cmd:)}
+        {it:real scalar} {cmd:mm_biweight_eff(}{it:real scalar k}{cmd:)}
+        {it:real scalar} {cmd:mm_biweight_k_bp(}{it:real scalar bp}{cmd:)}
+        {it:real scalar} {cmd:mm_biweight_bp(}{it:real scalar k}{cmd:)}
+
+{pstd}
+Apply objective functions to (typically standardized) data given tuning constant {it:k}.
+
+        {it:real colvector} {cmd:mm_huber_rho(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+        {it:real colvector} {cmd:mm_huber_psi(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+        {it:real colvector} {cmd:mm_huber_phi(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+        {it:real colvector} {cmd:mm_huber_w(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+        {it:real colvector} {cmd:mm_biweight_rho(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+        {it:real colvector} {cmd:mm_biweight_psi(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+        {it:real colvector} {cmd:mm_biweight_phi(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+        {it:real colvector} {cmd:mm_biweight_w(}{it:real colvector X}{cmd:,} {it:real scalar k}{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_mloc()} computes a fixed-scale M estimate of location using iterative
+reweighting, either based on the Huber objective function or the biweight
+objective function.
+
+{pstd}
+{cmd:mm_mscale()} computes a fixed-location M estimate of scale using iterative
+reweighting, based on the biweight objective function.
+
+{pstd}
+For methodological background and details on algorithms see Maronna et al. (2006),
+in particular chapter 2.
+
+
+{title:Examples}
+
+{pstd}
+Generate standard normally distributed data:
+
+        {com}: x = rnormal(10000, 1, 0, 1){txt}
+
+{pstd}
+Classical mean and standard deviation:
+
+        {com}: mean(x), sqrt(variance(x))
+        {res}       {txt}           1              2
+            {c TLC}{hline 31}{c TRC}
+          1 {c |}  {res}-.0091553032    .9988726582{txt}  {c |}
+            {c BLC}{hline 31}{c BRC}{txt}
+
+{pstd}
+Robust M estimates of location and scale:
+
+        {com}: mm_mloc_b(mm_mloc(x)), mm_mscale_b(mm_mscale(x))
+        {res}       {txt}           1              2
+            {c TLC}{hline 31}{c TRC}
+          1 {c |}  {res}-.0076506477    .9844972461{txt}  {c |}
+            {c BLC}{hline 31}{c BRC}{txt}
+
+{pstd}
+Add 5% contamination at x = 10:
+
+        {com}: x[|1\500|] = J(500, 1, 10){txt}
+
+{pstd}
+Classical mean and standard deviation:
+
+        {com}: mean(x), sqrt(variance(x))
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.4884230517   2.389203199{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+{pstd}
+Robust M estimates of location and scale:
+
+        {com}: mm_mloc_b(mm_mloc(x)), mm_mscale_b(mm_mscale(x))
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}.0781973876   1.055197844{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+
+{title:Diagnostics}
+
+{pstd}
+The functions return {cmd:.} (missing) if {it:X} is void.
+
+{pstd}
+The functions return error if {it:X} or {it:w} contain missing.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata11_source##mm_mloc:mm_mloc.mata}
+
+
+{title:References}
+
+{phang}
+    Maronna, R. A., D. R. Martin, V. J. Yohai (2006). Robust Statistics. Theory
+    and Methods. Chichester: John Wiley & Sons.
+    {p_end}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{helpb moremata}

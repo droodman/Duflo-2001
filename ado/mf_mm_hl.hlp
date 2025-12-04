@@ -1,0 +1,212 @@
+{smcl}
+{* 10dec2021}{...}
+{cmd:help mata mm_hl()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_hl() -- Robust location, scale, and skewness estimators based on pairwise combinations}
+
+{title:Syntax}
+
+{pstd}
+Hodges-Lehmann location estimator
+
+{p 8 24 2}
+{it:real scalar}{bind: }
+{cmd:mm_hl(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:fw}{cmd:,} {it:naive}]{cmd:)}
+
+{pstd}
+Qn scale coefficient
+
+{p 8 24 2}
+{it:real scalar}{bind: }
+{cmd:mm_qn(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:fw}{cmd:,} {it:naive}]{cmd:)}
+
+{pstd}
+Medcouple skewness measure
+
+{p 8 24 2}
+{it:real scalar}{bind: }
+{cmd:mm_mc(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:fw}{cmd:,} {it:naive}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 13 18 2}{it:X}:  {it:real colvector} containing data
+{p_end}
+{p 13 18 2}{it:w}:  {it:real colvector} containing weights
+{p_end}
+{p 12 18 2}{it:fw}:  {it:real scalar} indicating that weights are frequency weights
+{p_end}
+{p 9 18 2}{it:naive}:  {it:real scalar} requesting the naive estimator (slow)
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_hl()}, {cmd:mm_qn()}, and {cmd:mm_mc()} compute robust estimates of
+location, scale, and skewness based on pairwise combinations of
+observations, as suggested by Hodges and Lehmann (1963), Rousseeuw and Croux (1993),
+and Brys et al. (2004), respectively. Note that {cmd:mm_mc()} can also be used to
+compute robust tail-weight (kurtosis) measures suggested by
+Brys et al. (2006) (see examples below).
+
+{pstd}
+Argument {it:X} specifies the data for which the measures be computed.
+
+{pstd}
+Argument {it:w} specifies weights associated with the observations in {it:X}.
+Omit {it:w} or specify {it:w} as 1 to obtain unweighted results.
+
+{pstd}
+Argument {it:fw}!=0 indicates that the weights are to be interpreted as
+frequency weights. The default is to interpret the weights as sampling weights.
+
+{pstd}
+Argument {it:naive}!=0 requests that an algorithm enumerating all pairs be
+used to compute the measures. The default is to use variants of the fast
+algorithm proposed by Johnson and Mizoguchi (1978) (also see Croux and
+Rousseeuw 1992, Brys et al. 2004). The only purpose of the {it:naive} argument
+is to provide a way to confirm that the results from the fast algorithm are
+correct. The naive algorithm will only be feasible in small datasets.
+
+
+{title:Examples}
+
+{pstd}
+Generate standard normally distributed data:
+
+        {com}: x = rnormal(1000, 1, 0, 1){txt}
+
+{pstd}
+Classical mean, standard deviation, and skewness:
+
+        {com}: mean(x), sqrt(variance(x)), mean((x:-mean(x)):^3)/mm_variance0(x)^(3/2)
+        {res}       {txt}           1              2              3
+            {c TLC}{hline 46}{c TRC}
+          1 {c |}  {res} .0042933326    1.031374246   -.0582095664{txt}  {c |}
+            {c BLC}{hline 46}{c BRC}{txt}
+
+{pstd}
+Robust location, scale, and skewness:
+
+        {com}: mm_hl(x), mm_qn(x), mm_mc(x)
+        {res}       {txt}          1             2             3
+            {c TLC}{hline 43}{c TRC}
+          1 {c |}  {res}.0102320223   1.041665907   .0321525454{txt}  {c |}
+            {c BLC}{hline 43}{c BRC}{txt}
+
+{pstd}
+Add 5% contamination at x = 10:
+
+        {com}: x[|1\50|] = J(50, 1, 10){txt}
+
+{pstd}
+Classical mean, standard deviation, and skewness:
+
+        {com}: mean(x), sqrt(variance(x)), mean((x:-mean(x)):^3)/mm_variance0(x)^(3/2)
+        {res}       {txt}          1             2             3
+            {c TLC}{hline 43}{c TRC}
+          1 {c |}  {res}.5062068281   2.400310653   2.975298653{txt}  {c |}
+            {c BLC}{hline 43}{c BRC}{txt}
+
+{pstd}
+Robust location, scale, and skewness:
+
+        {com}: mm_hl(x), mm_qn(x), mm_mc(x)
+        {res}       {txt}          1             2             3
+            {c TLC}{hline 43}{c TRC}
+          1 {c |}  {res}.1127161045    1.15192769   .0534097435{txt}  {c |}
+            {c BLC}{hline 43}{c BRC}{txt}
+
+{pstd}
+Compute left and right medcouple tail weight measures as suggested by Brys et al. (2006):
+
+        {com}: med = mm_median(x)
+        {res}
+        {com}: lmc = -mm_mc(select(x, x:<med))
+        {res}
+        {com}: rmc =  mm_mc(select(x, x:>med))
+        {res}
+        {com}: lmc, rmc
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res} .143736566   .2359231771{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    All functions:
+             {it:X}:  {it:n x} 1
+             {it:w}:  {it:n x} 1 or 1 {it:x} 1
+            {it:fw}:  1 {it:x} 1
+         {it:naive}:  1 {it:x} 1
+        {it:result}:  1 {it:x} 1
+
+
+{title:Diagnostics}
+
+{pstd}
+The functions return {cmd:.} (missing) if {it:X} is void.
+
+{pstd}
+The functions return error if {it:X} or {it:w} contain missing.
+
+{pstd}
+The functions return error if {it:w} contains negative values.
+
+{pstd}
+The functions return error {it:fw}!=0 is specified and {it:w} is non-integer.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata11_source##mm_hl:mm_hl.mata}
+
+
+{title:References}
+
+{phang}
+    Brys, G., M. Hubert, A. Struyf (2004). A Robust Measure of Skewness.
+    Journal of Computational and Graphical Statistics 13(4): 996-1017.
+    {p_end}
+{phang}
+    Brys, G., M. Hubert, A. Struyf (2006). Robust measures of tail weight.
+    Computational Statistics & Data Analysis 50: 733-759.
+    {p_end}
+{phang}
+    Croux, C., P. J. Rousseeuw (1992). Time-efficient algorithms
+    for two highly robust estimators of scale. P. 411-428 in: Y. Dodge and J.
+    Whittaker (eds.). Computational Statistics. Heidelberg: Physica-Verlag.
+    {p_end}
+{phang}
+    Johnson, D. B., T. Mizoguchi (1978). Selecting the {it:K}th element
+    in {it:X} + {it:Y} and {it:X}_1 + {it:X}_2 + ... + {it:X}_{it:m}. SIAM
+    Journal on Scientific Computing 7(2): 147–153.
+    {p_end}
+{phang}
+    Hodges, Jr., J. L., E. L. Lehmann (1963). Estimates of location based on
+    rank tests. Annals of Mathematical Statistics 34(2): 598-611.
+    {p_end}
+{phang}
+    Rousseeuw, P. J., C. Croux (1993). Alternatives to the Median
+    Absolute Deviation. Journal of the American Statistical Association
+    88(424): 1273-1283.
+    {p_end}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{helpb moremata}

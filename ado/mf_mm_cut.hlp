@@ -1,0 +1,115 @@
+{smcl}
+{* 22may2006}{...}
+{cmd:help mata mm_cut()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_cut() -- Categorize a data vector}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:mm_cut(}{it:x}{cmd:,} {it:at} [{cmd:,} {it:sorted}]{cmd:)}
+
+{pstd}
+where
+
+{p 12 16 2}
+{it:x}:  {it:real colvector} containing data points
+
+{p 11 16 2}
+{it:at}:  {it:real vector} containing cutting points, in ascending
+order
+
+{p 7 16 2}
+{it:sorted}:  {it:real scalar} indicating that the data are sorted
+
+
+{title:Description}
+
+{pstd}{cmd:mm_cut()} may be used to categorize the values of {it:x}
+according to the cutting points supplied by {it:at} ({it:at} must
+be sorted in ascending order). That is, {cmd:mm_cut()} returns a
+{it:colvector} containing {it:at}[{it:1}] if
+{it:at}[{it:1}]<={it:x}[{it:i}]<{it:at}[{it:2}],
+{it:at}[{it:2}] if
+{it:at}[{it:2}]<={it:x}[{it:i}]<{it:at}[{it:3}], ...,
+{it:at}[length({it:at})] if
+{it:at}[length({it:at})]<={it:x}[{it:i}] for each
+{it:i}=1,...,rows({it:x}).
+
+{pstd}{it:sorted}!=0 indicates that {it:x} is sorted in ascending
+order. If {it:sorted}!=0 is specified, {cmd:mm_cut()} skips the internal
+sorting and saves some time.
+
+
+{title:Remarks}
+
+{pstd}
+Example:
+
+        {com}: x = uniform(9,1) \ 0.5
+        {res}
+        {com}: x, mm_cut(x, (0,0.25,0.5,0.75))
+        {res}        {txt}          1             2
+             {c TLC}{hline 29}{c TRC}
+           1 {c |}  {res}.6262498463            .5{txt}  {c |}
+           2 {c |}  {res}.4967679521           .25{txt}  {c |}
+           3 {c |}  {res}.9357729778           .75{txt}  {c |}
+           4 {c |}  {res}.1331598342             0{txt}  {c |}
+           5 {c |}  {res} .532077587            .5{txt}  {c |}
+           6 {c |}  {res}.1199395712             0{txt}  {c |}
+           7 {c |}  {res}.8957326778           .75{txt}  {c |}
+           8 {c |}  {res}.7477880118            .5{txt}  {c |}
+           9 {c |}  {res}.9198338806           .75{txt}  {c |}
+          10 {c |}  {res}         .5            .5{txt}  {c |}
+             {c BLC}{hline 29}{c BRC}{txt}
+
+{pstd}Note that
+
+        {com}: mm_cut(x, rangen(min(x),max(x),n+1)[|1 \ n|]){txt}
+
+{pstd}categorizes {cmd:x} into {cmd:n} equally spaced intervals.
+
+
+{title:Conformability}
+
+    {cmd:mm_cut(}{it:x}{cmd:,} {it:at}{cmd:,} {it:sorted}{cmd:)}
+         {it:x}:  {it:n x} 1
+        {it:at}:  {it:r x} 1 or 1 {it:x c}
+    {it:sorted}:  1 {it:x} 1
+    {it:result}:  {it:n x} 1.
+
+{title:Diagnostics}
+
+{pstd}
+{cmd:mm_cut()} returns missing if {it:x} is missing or if
+{it:x} is smaller than the first cutting point.
+
+{pstd}{cmd:mm_cut()} produces erroneous results if
+{it:at} is not sorted.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_cut:mm_cut.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_range:[M-5] range()}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help moremata}}
+{p_end}

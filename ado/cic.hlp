@@ -1,0 +1,247 @@
+{smcl}
+{* *! version 1.0.0  6march2015}{...}
+{cmd:help cic} 
+{hline}
+
+{title:Title}
+
+{p2colset 5 25 22 2}{...}
+{p2col :{hi: cic} } Changes-in-changes{p_end}
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 7 16 2}
+{opt cic} {depvar} [{indepvars}] {ifin} {weight}
+   	{cmd:,} {opt group(varname)} {opt time(varname)}
+	[{it:options}]
+
+{synoptset 25 tabbed}{...}
+{synopthdr}
+{synoptline}
+
+{syntab:Samples}
+{synopt :{opth g:roup(varname)}}specifies the groups; this option is required.{p_end}
+{synopt :{opth t:ime(varname)}}specifies the time periods; this option is required.{p_end}
+
+{syntab:Quantiles}
+{synopt:{opth q:uantiles(numlist)}}sets the quantile(s) at which the changes-in-changes will be estimated; default is {opth quantiles(0.1(0.1)0.9)}.{p_end}
+
+{syntab:Conditional model}
+{synopt:{opt nr:eg(#)}}sets the number of regressions estimated to approximate the conditional distribution; default is 100.{p_end}
+
+{syntab:Inference}
+{synopt :{opt noboot}}suppress the bootstrap.{p_end}
+{synopt :{opt reps(#)}}perform # bootstrap replications; default is 100.{p_end}
+{synopt :{opt l:evel(#)}}set confidence level; default is {cmd:level(95)}{p_end}
+{synopt :{opt f:irst(#)}}set the lowest quantile that is used for functional inference; default is 0.1.{p_end}
+{synopt :{opt l:ast(#)}}set the highes quantile that is used for functional inference; default is 0.9.{p_end}
+{synopt :{help prefix_saving_option:{bf:{ul:sav}ing(}{it:filename}{bf:, ...)}}}save bootstrap results to {it:filename}; 
+save statistics in double precision; save results to {it:filename} every {it:#} replications{p_end}
+{synopt:{cmdab: cons:_test(}{it:#}[{it:#}[{it:# ...}]]{cmd:)}}add tests of the null hypothesis that the QEs = {it:#} 
+at all estimated quantiles.{p_end}
+
+{syntab:Reporting}
+{synopt :{opt noprint}}suppresses all tables of results.{p_end}
+{synopt :{opt noprinttest}}suppresses the tables containing the tests.{p_end}
+
+{synoptline}
+{p 4 6 2}
+{cmd:aweight}s, {cmd:iweight}s, and {cmd:pweight}s are
+allowed; see {help weight}.{p_end}
+
+
+{title:Description}
+
+{pstd}
+{cmd:cic} estimates the quantile treatment effects using the changes-in-changes framework of Athey and Imbens(2006). 
+In the absence of covariates, the estimator suggested by Athey and Imbens (2006) is used. With covariates,
+the estimator suggested by Melly and Santangelo (2015) is used. Only the case with two groups and two time periods 
+has been implemented for the moment. The requested options {it: time} and {it:group} must provide 0/1 variables It is assumed
+that only observations with {it: time}=1 and {it: group}=1 are treated.
+
+{pstd}
+Pointwise and simultaneous confidence sets for the effects are also constructed. 
+The pointwise standard errors are obtained by the empirical bootstrap. The uniform confidence intervals are obtained
+by inverting the Kolmogorov-Smirnov test statistic, whereas the bootstrap is used to estimate the distribution of
+the test statistic. These are functional confidence intervals in the sense
+that null-hypothesis that are outside of the uniform confidence interval at at least one of the estimated
+quantiles are rejected at the pre-specified level.
+The options {opt first(#)} and {opt last(#)} can be used to exclude the tails of the distribution from the 
+functional inference procedure.
+
+{pstd}
+In addition to the uniform confidence bands reported in the main table, the p-values for some null-hypothesis
+and two test-statistics are reported in a second table. Both the Kolmogorov-Smirnov and the Cramer-von-Misses-Smirnov
+statistic are reported. The first set of null hypotheses is that there are no change at all. This is
+stronger than the absence of any mean effect. Other null hypotheses of constant changes (but at a different level than 0)
+can be added with the option {opt cons_test(#)}. The null hypthesis that all effects are equal to the median policy 
+effect is also tested. Finally, both null-hypotheses of first-order stochastic dominance are tested.
+
+
+{title:Options}
+
+{dlgtab:Groups}
+
+{phang}
+{opth g:roup(varname)} is a 0/1 variable that selects the groups. 
+
+{phang}
+{opth t:ime(varname)} is a 0/1 variable that selects the time periods. 
+
+
+{dlgtab:Quantiles}
+
+{phang}
+{opt q:uantiles(#)} specifies the quantiles at which the effects are estimated. By default, the 9 deciles treatment effects are estimated
+
+{dlgtab:Conditional model}
+
+{phang}
+{opt nr:eg(#)} set the number of quantile regressions used to approximate the conditional distribution. 
+The default is 100.{p_end}
+
+
+{dlgtab:Inference}
+
+{phang}
+{opt noboot}suppress the bootstrap. The bootstrap can be very demanding in term of computation time. Therefore,
+it is recommended to switch it off for the exploratory analysis of the data.
+
+{phang}
+{opt reps(#)}select the number of bootstrap replications. This number will matter only if the bootstrap has not
+be suppressed. The default is 100.
+
+{phang}{opt level(#)}; see 
+{helpb estimation options##level():[R] estimation options}.
+
+{phang}
+{opt f:irst(#)} and {opt l:ast(#)} set the part of the distribution used for the inference procedures.
+The tails of the distribution should not be used because standard asymptotic does not apply on these parts.
+The parts that should be excluded depend on the sample size and on the distribution of the dependent variable.
+{opt f:irst(#)} sets the lowest quantile used and {opt l:ast(#)} sets the highest quantile used.
+The default values are 0.1 and 0.9.
+
+{phang}
+{help prefix_saving_option:{bf:saving}({it:filename}[, {it:suboptions}])}
+creates a Stata data file ({opt .dta} file) containing bootstrap replicates.
+
+{phang2}
+{opt double} specifies that the results for each replication be stored as 
+{opt double}s, meaning 8-byte reals.  By default, they are stored as
+{opt float}s, meaning 4-byte reals. 
+
+{phang2}
+{opt every(#)} specifies that results be written to disk every {it:#}th
+replication.  {opt every()} should be specified only in conjunction with 
+{opt saving()} when it takes a long time for each replication.  This
+option will allow recovery of partial results should some other software crash
+your computer.  See {helpb post:[P] postfile}.
+
+{phang2}
+{opt replace} specifies that {it:filename} be overwritten, if it exists.
+
+{phang}
+{cmdab: cons:_test(}{it:#}[{it:#}[{it:# ...}]]{cmd:)}}add 
+tests of the null hypothesis that effect(tau) = {it:#} for all taus between {it: first} and {it: last}.
+The null hypothesis that effect(tau) = 0 for all taus between {it: first} and {it: last} is tested by default.
+The other null hypothesis that the effects are constant is also tested by default.
+
+{dlgtab:Reporting}
+
+{phang}
+{opt noprint} suppresses all tables of results. You may want to use it if you estimate a large number of QEs.
+The results can always be found in the saved matrices.
+
+{phang}
+{opt noprinttest} suppresses the tables containing the tests but not the tables containing the estimates. 
+
+
+{title:Example with simulated data - no effect in the population - only 20 bootstrap draws for illustration}
+
+{phang}{cmd:. clear}{p_end}
+{phang}{cmd:. set obs 1000}{p_end}
+{phang}{cmd:. gen group=(_n<(_N/2))}{p_end}
+{phang}{cmd:. gen time=(mod(_n,2)==0)}{p_end}
+{phang}{cmd:. gen x=rnormal(0.5,1)*group+rnormal(-0.5,1)*(1-group)}{p_end}
+{phang}{cmd:. gen y=rnormal(0, 1)+x+x*time}{p_end}
+{phang}{cmd:. cic y x, group(group) time(time) reps(20)}
+
+
+{title:Saved results}
+
+{pstd}
+{cmd:cic} saves the following in {cmd:e()}:
+
+{synoptset 15 tabbed}{...}
+{p2col 5 15 19 2: Macros}{p_end}
+{synopt:{cmd:e(depvar)}}{cmd:depvar}{p_end}
+{synopt:{cmd:e(properties)}}{cmd:b V}{p_end}
+
+{synoptset 15 tabbed}{...}
+{p2col 5 15 19 2: Matrices}{p_end}
+{synopt:{cmd:e(quantiles)}}vector of the quantiles at which the effects have been estimated.{p_end}
+{synopt:{cmd:e(b)}}vector containing the estimated quantile treatment effects.{p_end}
+{synopt:{cmd:e(V)}}variance-covariance matrix of the vector {cmd:e(b)}.{p_end}
+{synopt:{cmd:e(qte)}}matrix with five columns; the first one contains the quantiles, 
+the second one the quantile treatment effects, the third one the pointwise standard errors, 
+the fourth and fifthe ones contain the lower and upper bounds of the uniform confidence bands.{p_end}
+{synopt:{cmd:e(tests)}}matrix containing the p-values of the different functional tests.{p_end}
+{synopt:{cmd:e(qfunctions)}}matrix containing three quantile functions evaluated at the 
+quantiles given in {cmd: e(quantiles)}; the first column contains the counterfactual quantile 
+function that we would observe in time period 1 if group 1 was not treated, the second column 
+contains the quantile functions in time period 1 and group 1 estimated using quantile regression, 
+and the third column contains the empirical quantile functions in time period 1 and group 1. {p_end}
+
+{synoptset 15 tabbed}{...}
+{p2col 5 15 19 2: Functions}{p_end}
+{synopt:{cmd:e(sample)}}marks estimation sample{p_end}
+{p2colreset}{...}
+
+
+{title:Version requirements}
+
+{p 4 4 2}This command requires Stata 9.2. In addition the package {cmd:moremata} must be installed. 
+Type {net "describe moremata, from(http://fmwww.bc.edu/repec/bocode/m/)":ssc describe moremata}{txt}
+
+
+{title:Methods and Formulas}
+
+{p 4 6} See Athey and Imbens (2006) and Melly and Santangelo (2015).
+
+
+{title:Reference}
+
+{phang}
+Susan Athey and Guido Imbens (2006): Regression quantiles. Econometrica, 74, 431-497.
+
+{phang}
+Blaise Melly and Giulia Santangelo (2015): The changes-in-changes model with covariates.
+Mimeo.
+
+
+{title:Remarks}
+
+{p 4 4}This is a first and preliminary version. Please feel free to share your comments, reports of bugs and
+propositions for extensions.
+
+{p 4 4}If you use this command in your work, please cite Blaise Melly and Giulia Santangelo (2015).
+
+
+{title:Disclaimer}
+
+{p 4 4 2}THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED 
+OR IMPLIED. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. 
+SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+{p 4 4 2}IN NO EVENT WILL THE COPYRIGHT HOLDERS OR THEIR EMPLOYERS, OR ANY OTHER PARTY WHO
+MAY MODIFY AND/OR REDISTRIBUTE THIS SOFTWARE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY 
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM.
+
+
+{title:Authors}
+
+{p 4 6}Blaise Melly and Giulia Santangelo{p_end}
+{p 4 6}Bern University and Joint research center of the European Commission{p_end}
+{p 4 6}mellyblaise@gmail.com{p_end}

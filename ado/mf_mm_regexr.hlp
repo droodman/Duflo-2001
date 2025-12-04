@@ -1,0 +1,99 @@
+{smcl}
+{* 01feb2017}{...}
+{cmd:help mata mm_regexr()}
+{hline}
+
+{title:Title}
+
+{pstd}
+    {bf:mm_regexr() -- Regular expression replace}
+
+
+{title:Syntax}
+
+{p 8 27 2}
+    {it:string matrix}
+    {cmd:mm_regexr(}{it:string matrix s}{cmd:,} {it:string matrix from}{cmd:,} 
+    {it:string matrix to}{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_regexr()} returns the result of replacing the 
+    first substring within {it:s} that matches {it:from} with {it:to}, where 
+    {it:from} is a 
+    {browse "https://en.wikipedia.org/wiki/Regular_expression":regular expression}. If 
+    {it:s} contains no string that matches the regular expression {it:from},
+    the unaltered {it:s} is returned. In contrast to Stata's official 
+    {helpb mf_regexr:regexr()}, {it:to} may contain {cmd:\0}, {cmd:\1}, ..., {cmd:\9} 
+    to reference back to the matched subexpressions (where {cmd:\0} refers to
+    the entire string that satisfied the regular expression).
+
+{pstd}
+    When {it:s}, {it:from}, and {it:to} are not scalar, {cmd:mm_regexr()} returns
+    element-by-element results.
+
+
+{title:Remarks}
+
+{pstd}
+    Examples:
+
+    {com}: mm_regexr("AA123BB", "AA([0-9]+)BB", "XX_\1_YY")
+    {res}  XX_123_YY
+
+    {com}: mm_regexr("AA123BB", "A([0-9]+)B",   "X_\1_Y")
+    {res}  AX_123_YB
+
+    {com}: mm_regexr("AA123BB", "^A([0-9]+)B$", "X_\1_Y")
+    {res}  AA123BB
+
+    {com}: mm_regexr("AA123BB", "([0-9]+)BB$",  "_\1_YY")
+    {res}  AA_123_YY
+
+    {com}: mm_regexr("AA123BB", "^AA([0-9]+)",  "XX_\1_")
+    {res}  XX_123_BB{txt}
+
+{pstd}
+    Use a backslash to escape a reference within {it:to}. For example, type {cmd:\\1} to include
+    {cmd:\1}:
+    
+    {com}: mm_regexr("AA123BB", "AA([0-9]+)BB", "XX_\\1_YY")
+    {res}  XX_\1_YY{txt}
+
+
+{title:Conformability}
+
+{pstd}
+    The arguments have to be r-conformable (see help
+    {helpb m6_glossary:{bind:[M-6] glossary}}). Returned is a matrix of
+    max(argument rows) rows and max(argument columns)
+    columns containing element-by-element calculated results.
+
+
+{title:Diagnostics}
+
+{pstd}
+    References to non-existing subexpressions result in empty string.
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_regexr:mm_regexr.mata}
+
+
+{title:Author}
+
+{pstd}
+    Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+    Online:  help for
+    {helpb m4_string:{bind:[M-4] string}},
+    {helpb mf_regexm:{bind:[M-5] regexm()}},
+    {helpb moremata}

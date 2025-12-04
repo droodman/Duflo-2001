@@ -1,0 +1,129 @@
+{smcl}
+{* 09jul2020}{...}
+{cmd:help mata mm_sort()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_sort() -- Stable sorting}
+
+
+{title:Syntax}
+
+{p 8 29 2}
+{it:transmorphic matrix}{bind: }
+{cmd:mm_sort(}{it:transmorphic matrix X} [{cmd:,} {it:real rowvector idx}{cmd:,} {it:real scalar stable}]{cmd:)}
+
+{p 8 29 2}
+{it:real colvector}{bind:      }
+{cmd:mm_order(}{it:transmorphic matrix X} [{cmd:,} {it:real rowvector idx}{cmd:,} {it:real scalar stable}]{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_sort()} and {cmd:mm_order()} are equivalent to official Mata's
+{helpb mf_sort:sort()} and {helpb mf_order:order()}, but have an
+additional argument to enforce stable sort order.
+
+{pstd}
+Argument {it:idx} is as described in {helpb mf_sort:[M-5] sort()}, but is optional. Omitting
+{it:idx} or specifying it as {cmd:.} (missing) is equivalent to {it:idx} =
+{cmd:(1..}{it:c}{cmd:)}, where {it:c} is the number of columns of {it:X}.
+
+{pstd}
+Argument {it:stable} specifies whether to employ regular (non-stable) sorting
+or stable sorting. Omitting {it:stable} or specifying it as {cmd:0} uses non-stable
+sorting as implemented in {helpb mf_sort:sort()} and {helpb mf_order:order()}. Specifying
+{it:stable}!=0 uses stable sorting based on the original order of the data. That is,
+ties in {it:X} will keep the same relative order that they have in the non-sorted {it:X}. In
+non-stable sorting, ties are ordered randomly. Also see {helpb sort:[D] sort} for an
+explanation of the difference between non-stable and stable sorting.
+
+
+{title:Example}
+
+    {com}: X = ("a", "d") \
+    >     ("b", "c") \
+    >     ("a", "c") \
+    >     ("b", "d")
+    {res}
+    {com}: mm_sort(X, 1, 1), mm_sort(X, 1, 1)
+    {res}       {txt}1   2   3   4
+        {c TLC}{hline 17}{c TRC}
+      1 {c |}  {res}a   d   a   d{txt}  {c |}
+      2 {c |}  {res}a   c   a   c{txt}  {c |}
+      3 {c |}  {res}b   c   b   c{txt}  {c |}
+      4 {c |}  {res}b   d   b   d{txt}  {c |}
+        {c BLC}{hline 17}{c BRC}
+
+    {com}: mm_sort(X, 1), mm_sort(X, 1)
+    {res}       {txt}1   2   3   4
+        {c TLC}{hline 17}{c TRC}
+      1 {c |}  {res}a   c   a   d{txt}  {c |}
+      2 {c |}  {res}a   d   a   c{txt}  {c |}
+      3 {c |}  {res}b   d   b   c{txt}  {c |}
+      4 {c |}  {res}b   c   b   d{txt}  {c |}
+        {c BLC}{hline 17}{c BRC}
+
+    {com}: mm_order(X, 1, 1), mm_order(X, 1, 1)
+    {res}       {txt}1   2
+        {c TLC}{hline 9}{c TRC}
+      1 {c |}  {res}1   1{txt}  {c |}
+      2 {c |}  {res}3   3{txt}  {c |}
+      3 {c |}  {res}2   2{txt}  {c |}
+      4 {c |}  {res}4   4{txt}  {c |}
+        {c BLC}{hline 9}{c BRC}
+
+    {com}: mm_order(X, 1), mm_order(X, 1)
+    {res}       {txt}1   2
+        {c TLC}{hline 9}{c TRC}
+      1 {c |}  {res}1   3{txt}  {c |}
+      2 {c |}  {res}3   1{txt}  {c |}
+      3 {c |}  {res}2   2{txt}  {c |}
+      4 {c |}  {res}4   4{txt}  {c |}
+        {c BLC}{hline 9}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_sort(}{it:X}{cmd:,} {it:idx}{cmd:,} {it:stable}{cmd:)}
+                  {it:X}:  {it:r x c1}
+                {it:idx}:  1 {it:x c2}, {it:c2} <= {it:c1}
+             {it:stable}:  1 {it:x} 1
+             {it:result}:  {it:r x c1}
+
+    {cmd:mm_order(}{it:X}{cmd:,} {it:idx}{cmd:,} {it:stable}{cmd:)}
+                  {it:X}:  {it:r x c1}
+                {it:idx}:  1 {it:x c2}, {it:c2} <= {it:c1}
+             {it:stable}:  1 {it:x} 1
+             {it:result}:  {it:r x} 1
+
+
+{title:Diagnostics}
+
+{pstd}
+{cmd:mm_sort()} and {cmd:mm_order()} abort with error if any element of {cmd:abs(}{it:idx}{cmd:)}
+is 0 or greater than {cmd:cols(}{it:X}{cmd:)}.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_sort:mm_sort.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_sort:[M-5] sort()}},
+{bf:{help sort:[D] sort}},
+{bf:{help moremata}}
+{p_end}

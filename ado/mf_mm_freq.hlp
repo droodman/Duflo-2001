@@ -1,0 +1,193 @@
+{smcl}
+{* 09jul2020}{...}
+{cmd:help mata mm_freq()}
+{hline}
+
+{title:Title}
+
+{p 4 14 2}
+{bf:mm_freq() -- Compute frequency counts}
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:mm_freq(}{it:x} [{cmd:,} {it:w}{cmd:,} {it:levels}]{cmd:)}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:_mm_freq(}{it:x} [{cmd:,} {it:w}{cmd:,} {it:levels}]{cmd:)}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:mm_freq2(}{it:x} [{cmd:,} {it:w}]{cmd:)}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:_mm_freq2(}{it:x} [{cmd:,} {it:w}]{cmd:)}
+
+{pstd}
+where
+
+{p 12 16 2}
+{it:x}:  {it:transmorphic matrix} containing data, rows are observations 
+
+{p 12 16 2}
+{it:w}:  {it:real colvector} containing weights
+
+{p 7 16 2}
+{it:levels}:  {it:transmorphic matrix} containing levels of data, in ascending order
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_freq()} returns the frequency counts of the "levels" (unique
+rows) of {it:x}. That is, {cmd:mm_freq()} computes the
+frequency distribution of {it:x}. The frequency counts are returned
+in ascending sort order of the levels of {it:x}.
+
+{pstd}
+{it:w} specifies weights associated with
+the observations in {it:x}. Omit {it:w}, or specify {it:w} as 1 to obtain
+unweighted results.
+
+{pstd}{it:levels} specifies the levels
+to be counted. {it:levels} must be sorted in ascending order. If
+{it:levels} is omitted, {cmd:mm_freq()} determines the frequency counts
+of all levels of {it:x}. Furthermore, {it:levels}==. indicates to
+determine the counts of all levels and, additionally, return the
+levels of {it:x} in {it:levels}.
+
+{pstd}
+{cmd:mm_freq2()} returns for each row of {it:x} the 
+number of duplicates in {it:x} (or the sum of weights 
+associated with the duplicates, respectively). 
+
+{pstd}
+{cmd:_mm_freq()} and {cmd:_mm_freq2()} are like {cmd:mm_freq()} and {cmd:mm_freq2()},
+but assume that {it:x} is sorted.
+
+
+{title:Remarks}
+
+{pstd} Example:
+
+        {com}: x = (1\2\3\.\1\3\1\1\2\3\.)
+        {res}
+        {com}: mm_freq(x,1)
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}4{txt}  {c |}
+          2 {c |}  {res}2{txt}  {c |}
+          3 {c |}  {res}3{txt}  {c |}
+          4 {c |}  {res}2{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}{txt}
+
+        {com}: x, mm_freq2(x,1)
+        {res}        {txt}1   2
+             {c TLC}{hline 9}{c TRC}
+           1 {c |}  {res}1   4{txt}  {c |}
+           2 {c |}  {res}2   2{txt}  {c |}
+           3 {c |}  {res}3   3{txt}  {c |}
+           4 {c |}  {res}.   2{txt}  {c |}
+           5 {c |}  {res}1   4{txt}  {c |}
+           6 {c |}  {res}3   3{txt}  {c |}
+           7 {c |}  {res}1   4{txt}  {c |}
+           8 {c |}  {res}1   4{txt}  {c |}
+           9 {c |}  {res}2   2{txt}  {c |}
+          10 {c |}  {res}3   3{txt}  {c |}
+          11 {c |}  {res}.   2{txt}  {c |}
+             {c BLC}{hline 9}{c BRC}
+
+        {com}: l = (0\1\2)
+        {res}
+        {com}: f = mm_freq(x,1,l)
+        {res}
+        {com}: l, f
+        {res}       {txt}1   2
+            {c TLC}{hline 9}{c TRC}
+          1 {c |}  {res}0   0{txt}  {c |}
+          2 {c |}  {res}1   4{txt}  {c |}
+          3 {c |}  {res}2   2{txt}  {c |}
+            {c BLC}{hline 9}{c BRC}{txt}
+
+{pstd}Note that
+
+        {com}: f = mm_freq(x,1,l=.)
+        {res}
+        {com}: l, f
+        {res}       {txt}1   2
+            {c TLC}{hline 9}{c TRC}
+          1 {c |}  {res}1   4{txt}  {c |}
+          2 {c |}  {res}2   2{txt}  {c |}
+          3 {c |}  {res}3   3{txt}  {c |}
+          4 {c |}  {res}.   2{txt}  {c |}
+            {c BLC}{hline 9}{c BRC}{txt}
+
+{pstd}is equivalent to
+
+        {com}: l = uniqrows(x)
+        {res}
+        {com}: f = mm_freq(x,1,l)
+        {res}
+        {com}: l,f
+        {res}       {txt}1   2
+            {c TLC}{hline 9}{c TRC}
+          1 {c |}  {res}1   4{txt}  {c |}
+          2 {c |}  {res}2   2{txt}  {c |}
+          3 {c |}  {res}3   3{txt}  {c |}
+          4 {c |}  {res}.   2{txt}  {c |}
+            {c BLC}{hline 9}{c BRC}{txt}
+
+{pstd}Furthermore, {cmd:mm_freq()} may also be used with strings:
+
+        {com}: s = ("a"\"b"\"c"\"b")
+        {res}
+        {com}: mm_freq(s,1)
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}1{txt}  {c |}
+          2 {c |}  {res}2{txt}  {c |}
+          3 {c |}  {res}1{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_freq(}{it:x}{cmd:,} {it:w}{cmd:,} {it:levels}{cmd:)}, {cmd:_mm_freq(}{it:x}{cmd:,} {it:w}{cmd:,} {it:levels}{cmd:)}:
+         {it:x}:  {it:n x c} 
+         {it:w}:  {it:n x} 1 or 1 {it:x} 1
+    {it:levels}:  {it:l x c} or {it:levels}==.
+    {it:result}:  {it:l x} 1.
+
+    {cmd:mm_freq2(}{it:x}{cmd:,} {it:w}{cmd:)}, {cmd:_mm_freq2(}{it:x}{cmd:,} {it:w}{cmd:)}:
+         {it:x}:  {it:n x c}
+         {it:w}:  {it:n x} 1 or 1 {it:x} 1
+    {it:result}:  {it:n x} 1.
+    
+
+{title:Diagnostics}
+
+{p 4 4 2}None.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_freq:mm_freq.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help mf_uniqrows:[M-5] uniqrows()}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help moremata}}
+{p_end}

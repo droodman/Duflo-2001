@@ -1,0 +1,63 @@
+{smcl}
+{* 07jun2006}{...}
+{cmd:help mata mm_nobs()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_nobs() -- number of observations}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real scalar}
+{cmd:mm_nobs(}{it:transmorphic matrix X}{cmd:,} {it:real colvector w}{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_nobs()} determines the number of observations
+from given data and weights. Essentially, {cmd:mm_nobs()} is a
+shortcut to
+
+      {com}rows(w)==1 ? rows(X)*w : colsum(w){txt}
+
+
+{title:Remarks}
+
+{pstd}None.
+
+
+{title:Conformability}
+
+    {cmd:mm_nobs(}{it:X}{cmd:)}
+            {it:X}:  {it:r x c}
+            {it:w}:  {it:r x 1} or 1 {it:x} 1
+       {it:result}:  1 {it:x} 1
+
+
+{title:Diagnostics}
+
+{pstd}{it:w} should be non-missing and non-negative.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_nobs:mm_nobs.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help moremata}}
+{p_end}

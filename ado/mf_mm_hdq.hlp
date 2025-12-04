@@ -1,0 +1,136 @@
+{smcl}
+{* 14jan2022}{...}
+{cmd:help mata mm_hdq()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_hdq() -- Harrell-Davis quantiles}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real matrix}{bind:    }
+{cmd:mm_hdq(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:P}{cmd:,} {it:fw}{cmd:,} {it:wd}]{cmd:)}
+
+{p 8 23 2}
+{it:real rowvector}{bind: }
+{cmd:mm_hdmed(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:fw}{cmd:,} {it:wd}]{cmd:)}
+
+{p 8 23 2}
+{it:real rowvector}{bind: }
+{cmd:mm_hdiqr(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:fw}{cmd:,} {it:wd}]{cmd:)}
+
+{p 8 23 2}
+{it:real colvector}{bind: }
+{cmd:_mm_hdq(}{it:x} [{cmd:,} {it:w}{cmd:,} {it:P}{cmd:,} {it:fw}{cmd:,} {it:wd}]{cmd:)}
+
+{p 8 23 2}
+{it:real scalar}{bind:    }
+{cmd:_mm_hdmed(}{it:x} [{cmd:,} {it:w}{cmd:,} {it:fw}{cmd:,} {it:wd}]{cmd:)}
+
+{p 8 23 2}
+{it:real scalar}{bind:    }
+{cmd:_mm_hdiqr(}{it:x} [{cmd:,} {it:w}{cmd:,} {it:fw}{cmd:,} {it:wd}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 14 18 2}{it:X}:  {it:real matrix} containing data (rows are observations, columns variables)
+
+{p 14 18 2}{it:x}:  {it:real colvector} containing data (single variable)
+
+{p 14 18 2}{it:w}:  {it:real colvector} containing weights
+
+{p 14 18 2}{it:P}:  {it:real matrix} containing evaluation probabilities; default is {it:P} = (0, .25, .5, .75, 1)'
+
+{p 13 18 2}{it:fw}:  {it:real scalar} causing weights to be interpreted as frequency weights
+
+{p 13 18 2}{it:wd}:  {it:real scalar} setting width of evaluation interval for trimmed Harrell-Davis
+estimator (Akinshin 2021); {it:wd}<=0 sets the width to 1/sqrt(n), where n is the effective sample size; 
+0<{it:wd}<1 sets the width to {it:wd}; {it:wd}>=1 uses the untrimmed estimator;
+the untrimmed estimator is also used if {it:wd} is omitted or set to missing
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_hdq()} computes quantiles of {it:X} as proposed by Harrell and Davis
+(1982; also see Akinshin 2020). {cmd:mm_hdq()} is a wrapper for
+{helpb mf_mm_quantile:mm_quantile()} with {it:def} set to 10. That is 
+{cmd:mm_hdq(}{it:X}{cmd:,} {it:w}{cmd:,} {it:P}{cmd:,} {it:fw}{cmd:,} {it:wd}{cmd:)} is 
+equivalent to {cmd:mm_quantile(}{it:X}{cmd:,} {it:w}{cmd:,} {it:P}{cmd:, 10,} {it:fw}{cmd:,} {it:wd}{cmd:)}.
+
+{pstd}
+Harrell-Davis quantiles tend to have better small-sample properties
+(smaller sampling variance) than the other quantile definitions supported by
+{helpb mf_mm_quantile:mm_quantile()}, but their computation is less 
+efficient if multiple quantiles are to be estimated (computer time grows linearly
+with the number of quantiles because a separate run
+across the data is required for each quantile; for the other
+definitions, all quantiles can be computed in a single run across the data).
+
+{pstd}
+{cmd:mm_hdmed()} and {cmd:mm_hdiqr()} are wrappers computing the median and the
+inter-quartile range, respectively.
+
+{pstd}
+{cmd:_mm_hdq()}, {cmd:_mm_hdmed()}, and {cmd:_mm_hdiqr()} are
+like {cmd:mm_hdq()}, {cmd:mm_hdmed()}, and {cmd:mm_hdiqr()}, but assume
+that the data is sorted (in ascending order) and non-missing and that the
+weights are non-negative and non-missing. Only a
+single column of data is allowed as input to these functions.
+
+
+{title:Example}
+
+    . {stata "mata:"}
+    : {stata x = rnormal(10000, 1, 0, 1)}
+    : {stata mm_hdq(x, 1, (0.25 \ 0.5 \ 0.75))}
+    : {stata mm_hdmed(x), mm_hdiqr(x)}
+    : {stata end}
+
+
+{title:Conformability and diagnostics}
+
+{pstd}
+See help {helpb mf_mm_quantile:mm_quantile()}.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_hdq:mm_hdq.mata}
+
+
+{title:References}
+
+{phang}
+    Akinshin, A. (2020). Weighted quantile 
+    estimators. {browse "http://aakinshin.net/posts/weighted-quantiles/"}.
+    {p_end}
+{phang}
+    Akinshin, A. (2021). Trimmed Harrell-Davis quantile estimator based on the
+    highest density interval of the given 
+    width. {browse "http://arxiv.org/abs/2111.11776":arXiv:2111.11776} [stat.ME].
+    {p_end}
+{phang}
+    Harrell, F.E., C.E. Davis (1982). A New Distribution-Free Quantile
+    Estimator. Biometrika 69: 635-640.
+    {p_end}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help mf_mm_quantile:mm_quantile()}},
+{bf:{help moremata}}

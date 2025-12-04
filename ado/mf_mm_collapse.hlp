@@ -1,0 +1,243 @@
+{smcl}
+{* 23apr2021}{...}
+{cmd:help mata mm_collapse()}
+{hline}
+
+{title:Title}
+
+{pstd}
+{bf:mm_collapse() -- Make matrix of summary statistics by subgroups}
+
+
+{title:Syntax}
+
+{p 11 18 2}
+{it:real matrix} {cmd:mm_collapse(}{it:X}{cmd:,}
+{it:w}{cmd:,}
+{it:id} [{cmd:,}
+{it:f}{cmd:,}
+{it:...}]{cmd:)}
+
+{p 11 18 2}
+{it:real matrix} {cmd:_mm_collapse(}{it:X}{cmd:,}
+{it:w}{cmd:,}
+{it:id} [{cmd:,}
+{it:f}{cmd:,}
+{it:...}]{cmd:)}
+
+{p 11 18 2}
+{it:real matrix} {cmd:mm_collapse2(}{it:X}{cmd:,}
+{it:w}{cmd:,}
+{it:id} [{cmd:,}
+{it:f}{cmd:,}
+{it:...}]{cmd:)}
+
+{p 11 18 2}
+{it:real matrix} {cmd:_mm_collapse2(}{it:X}{cmd:,}
+{it:w}{cmd:,}
+{it:id} [{cmd:,}
+{it:f}{cmd:,}
+{it:...}]{cmd:)}
+
+{p 4 4 2}
+where
+
+{p 12 18 2}
+  {it:X}:  {it:real matrix} containing data (rows are observations,
+  columns are variables)
+  {p_end}
+{p 12 18 2}
+  {it:w}:  {it:real colvector} containing weights or 1
+  {p_end}
+{p 11 18 2}
+  {it:id}:  {it:real colvector} containing subgroup ID variable
+  {p_end}
+{p 12 18 2}
+  {it:f}:  {it:pointer scalar} containing address of the function to be
+  used,  i.e. {it:f} = {cmd:&}{it:functionname}{cmd:()}; the default function is
+  {helpb mf_mean:mean()}
+  {p_end}
+{p 10 18 2}
+  {it:...}:  up to 10 optional arguments to pass through to {it:f}
+  {p_end}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_collapse()} returns a matrix of summary statistics
+by subgroups. It is similar to Stata's {helpb collapse}.
+
+{pstd}{it:X} provides the data. Rows are
+observations and columns are variables. Summary statistics are
+computed for each variable.
+
+{pstd}
+{it:w} specifies weights associated with the observations (rows) in {it:X}. Specify
+{it:w} as 1 to obtain unweighted results.
+
+{pstd}
+{it:id} specifies the subgroup identification numbers associated with the observations
+(rows) in {it:X}. Each distinct value in {it:id} defines a subgroup or panel for which
+to compute the summary statistics.
+
+{pstd}
+The default is to compute arithmetic means using the {helpb mf_mean:mean()}
+function. Alternatively, specify {it:f}, where {it:f} is a pointer to a function,
+i.e. {bind:{it:f} = {cmd:&}{it:functionname}{cmd:()}}
+(see {helpb m2_ftof:[M-2] ftof}). For example, specify {cmd:&variance()} to compute
+variances. {it:f} is assumed to return a real scalar and take a data column vector
+as first argument and weights as second argument.
+
+{pstd}{cmd:_mm_collapse()} is analogous to {cmd:mm_collapse()} but but assumes
+{it:X}, {it:w}, and {it:id} to be sorted by {it:id}. {cmd:_mm_collapse()} is
+faster and uses less memory than {cmd:mm_collapse()}.
+
+{pstd}The matrix returned by {cmd:mm_collapse()} or {cmd:_mm_collapse()}
+contains the subgroup codes in the first column; the
+second and following columns, one for each variable in {it:X}, contain
+the computed statistics.
+
+{pstd}{cmd:mm_collapse2()} and {cmd:_mm_collapse2()} are like 
+{cmd:mm_collapse()} or {cmd:_mm_collapse()} but they return a matrix that has the
+same dimension as {it:X} and in which each observation is replaced by the
+summary statistic of its group. This is similar to Stata's {helpb egen} command.
+
+
+{title:Remarks}
+
+{pstd}Examples:
+
+        {com}. sysuse auto
+        {txt}(1978 Automobile Data)
+
+        {com}. preserve
+        {txt}
+        {com}. collapse (mean) price turn, by(rep78)
+        {txt}
+        {com}. list
+        {txt}
+             {c TLC}{hline 7}{c -}{hline 9}{c -}{hline 9}{c TRC}
+             {c |} {res}rep78     price      turn {txt}{c |}
+             {c LT}{hline 7}{c -}{hline 9}{c -}{hline 9}{c RT}
+          1. {c |} {res}    1   4,564.5        41 {txt}{c |}
+          2. {c |} {res}    2   5,967.6    43.375 {txt}{c |}
+          3. {c |} {res}    3   6,429.2   41.0667 {txt}{c |}
+          4. {c |} {res}    4   6,071.5      38.5 {txt}{c |}
+          5. {c |} {res}    5     5,913   35.6364 {txt}{c |}
+             {c LT}{hline 7}{c -}{hline 9}{c -}{hline 9}{c RT}
+          6. {c |} {res}    .   6,430.4      37.6 {txt}{c |}
+             {c BLC}{hline 7}{c -}{hline 9}{c -}{hline 9}{c BRC}
+
+        {com}. restore
+        {txt}
+        {com}. mata: X  = st_data(., ("price", "turn"))
+        {res}{txt}
+        {com}. mata: ID = st_data(., "rep78")
+        {res}{txt}
+        {com}. mata: mm_collapse(X, 1, ID)
+        {res}       {txt}          1             2             3
+            {c TLC}{hline 43}{c TRC}
+          1 {c |}  {res}          1        4564.5            41{txt}  {c |}
+          2 {c |}  {res}          2      5967.625        43.375{txt}  {c |}
+          3 {c |}  {res}          3   6429.233333   41.06666667{txt}  {c |}
+          4 {c |}  {res}          4        6071.5          38.5{txt}  {c |}
+          5 {c |}  {res}          5          5913   35.63636364{txt}  {c |}
+          6 {c |}  {res}          .        6430.4          37.6{txt}  {c |}
+            {c BLC}{hline 43}{c BRC}
+
+        {com}. mata: w = st_data(., "weight")
+        {res}{txt}
+        {com}. mata: mm_collapse(X, w, ID)
+        {res}       {txt}          1             2             3
+            {c TLC}{hline 43}{c TRC}
+          1 {c |}  {res}          1   4608.601613   41.11935484{txt}  {c |}
+          2 {c |}  {res}          2   6230.200895   43.59932911{txt}  {c |}
+          3 {c |}  {res}          3    7003.15439   41.80276852{txt}  {c |}
+          4 {c |}  {res}          4    6240.01355   39.81842818{txt}  {c |}
+          5 {c |}  {res}          5   6287.482192   35.74011742{txt}  {c |}
+          6 {c |}  {res}          .   6736.482783   38.01827126{txt}  {c |}
+            {c BLC}{hline 43}{c BRC}
+
+        {com}. mata: mm_collapse(X, w, ID, &mm_median())
+        {res}       {txt}   1      2      3
+            {c TLC}{hline 22}{c TRC}
+          1 {c |}  {res}   1   4934     42{txt}  {c |}
+          2 {c |}  {res}   2   5104     44{txt}  {c |}
+          3 {c |}  {res}   3   4816     42{txt}  {c |}
+          4 {c |}  {res}   4   5798     42{txt}  {c |}
+          5 {c |}  {res}   5   5719     36{txt}  {c |}
+          6 {c |}  {res}   .   4453     38{txt}  {c |}
+            {c BLC}{hline 22}{c BRC}
+
+        {com}. mata: mm_collapse(X, w, ID, &mm_quantile(), .25)
+        {res}       {txt}   1      2      3
+            {c TLC}{hline 22}{c TRC}
+          1 {c |}  {res}   1   4195     40{txt}  {c |}
+          2 {c |}  {res}   2   4060     41{txt}  {c |}
+          3 {c |}  {res}   3   4482     40{txt}  {c |}
+          4 {c |}  {res}   4   4890     35{txt}  {c |}
+          5 {c |}  {res}   5   4425     35{txt}  {c |}
+          6 {c |}  {res}   .   4424     35{txt}  {c |}
+            {c BLC}{hline 22}{c BRC}
+        {txt}
+
+{title:Conformability}
+
+{pstd}
+{space 1}{cmd:mm_collapse(}{it:X}{cmd:,} {it:w}{cmd:,}
+{it:id}{cmd:,} {it:f}{cmd:,} {it:...}{cmd:)},
+{p_end}
+{pstd}
+{cmd:_mm_collapse(}{it:X}{cmd:,} {it:w}{cmd:,}
+{it:id}{cmd:,} {it:f}{cmd:,} {it:...}{cmd:)},
+{p_end}
+           {it:X}:  {it:n x k}
+           {it:w}:  {it:n x} 1 or 1 {it:x} 1
+          {it:id}:  {it:n x} 1
+           {it:f}:  1 {it:x} 1
+         {it:...}:  (depending on {it:f})
+      {it:result}:  {it:g x }(1 + {it:k}), where {it:g} is the number of subgroups
+
+{pstd}
+{space 1}{cmd:mm_collapse2(}{it:X}{cmd:,} {it:w}{cmd:,}
+{it:id}{cmd:,} {it:f}{cmd:,} {it:...}{cmd:)},
+{p_end}
+{pstd}
+{cmd:_mm_collapse2(}{it:X}{cmd:,} {it:w}{cmd:,}
+{it:id}{cmd:,} {it:f}{cmd:,} {it:...}{cmd:)},
+{p_end}
+           {it:X}:  {it:n x k}
+           {it:w}:  {it:n x} 1 or 1 {it:x} 1
+          {it:id}:  {it:n x} 1
+           {it:f}:  1 {it:x} 1
+         {it:...}:  (depending on {it:f})
+      {it:result}:  {it:n} x {it:k}
+
+
+{title:Diagnostics}
+
+{pstd}{it:f} cannot point to built-in functions; use wrappers.
+
+{pstd}{cmd:mm_collapse()} and {cmd:_mm_collapse()} return
+{cmd:J(0, 1 + cols(}{it:X}{cmd:), .)} if {it:X} and {it:id} are void.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_collapse:mm_collapse.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help collapse}},
+{bf:{help mf_panelsetup:[M-5] panelsetup()}},
+{bf:{help moremata}}

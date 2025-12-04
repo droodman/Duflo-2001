@@ -1,0 +1,79 @@
+{smcl}
+{* 29feb2008}{...}
+{cmd:help mata mm_cond()}
+{hline}
+
+{title:Title}
+
+{pstd}
+    {bf:mm_cond() -- Matrix version of the conditional operator}
+
+
+{title:Syntax}
+
+{p 8 27 2}
+    {it:transmorphic matrix}{space 1}
+    {cmd:mm_cond(}{it:a}{cmd:,} {it:b}{cmd:,} {it:c}{cmd:)}
+
+
+{pstd}
+where {it:a} is a {it:real matrix} and {it:b} and {it:c} are matrices
+of any type (as long as their types are the same).
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_cond()} is a matrix version of the scalar conditional operator
+    (see {helpb m2_op_conditional:{bind:[M-2] op_conditional}}).
+
+{pstd}
+    When {it:a}, {it:b}, and {it:c} are not scalar, {cmd:mm_cond()} returns
+    element-by-element results. {it:a}, {it:b}, and {it:c} are required to
+    be r-conformable (see {helpb m6_glossary:{bind:[M-6] glossary}}).
+
+
+{title:Remarks}
+
+{pstd}
+    None.
+    
+
+{title:Conformability}
+
+{pstd}The arguments have to be r-conformable (see help
+{helpb m6_glossary:{bind:[M-6] glossary}}). Returned is a matrix of
+max(argument rows) rows and max(argument columns)
+columns containing element-by-element calculated results.
+
+
+{title:Diagnostics}
+
+{pstd}
+    None.
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_cond:mm_cond.mata}
+
+
+{title:Author}
+
+{pstd}
+    Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Acknowledgments}
+
+{pstd}
+    Thanks to Kit Baum for proposing such a function.
+
+
+{title:Also see}
+
+{psee}
+    Online:  help for
+    {helpb m2_op_conditional:{bind:[M-2] op_conditional}},
+    {helpb moremata}

@@ -1,0 +1,150 @@
+{smcl}
+{* 22may2006}{...}
+{cmd:help mata mm_strexpand()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_strexpand() -- Expand string argument}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:string scalar}
+{cmd:mm_strexpand(}{it:s}{cmd:,} {it:list}{cmd:)}
+
+{p 8 12 2}
+{it:string scalar}
+{cmd:mm_strexpand(}{it:s}{cmd:,} {it:list}{cmd:,} {it:default}{cmd:)}
+
+{p 8 12 2}
+{it:string scalar}
+{cmd:mm_strexpand(}{it:s}{cmd:,} {it:list}{cmd:,} {it:default}{cmd:,} {it:unique}{cmd:)}
+
+{p 8 12 2}
+{it:string scalar}
+{cmd:mm_strexpand(}{it:s}{cmd:,} {it:list}{cmd:,} {it:default}{cmd:,} {it:unique}{cmd:,} {it:errtxt}{cmd:)}
+
+{p 8 12 2}
+{it:real scalar}{space 2}
+{cmd:_mm_strexpand(}{it:res}{cmd:,} {it:s}{cmd:,} {it:list} [{cmd:,} {it:default}{cmd:,} {it:unique}]{cmd:)}
+
+{p 4 8 2}
+where
+
+                     {it:s}:  {it:string scalar s}
+                  {it:list}:  {it:string vector list}
+               {it:default}:  {it:string scalar default}
+                {it:unique}:  {it:real scalar unique}
+                {it:errtxt}:  {it:string scalar errtxt}
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_strexpand()} returns the first element in
+string vector {it:list} that matches string {it:s} if
+abbreviated to the number of characters contained in {it:s}.
+{cmd:mm_strexpand()} aborts with error, if no match is
+found.
+
+{p 4 4 2}{cmd:mm_strexpand()} returns string {it:default}, if {it:s}
+is empty (or empty string, if {it:default} is omitted).
+
+{p 4 4 2} If {it:list} contains several possible matches,
+the first match is returned by {cmd:mm_strexpand()}. However,
+{it:unique}!=0 causes {cmd:mm_strexpand()}
+to abort with error in the case of multiple matches.
+
+{p 4 4 2}{cmd:mm_strexpand()}'s standard error message
+is "{err:3499  "}{it:s}{err:" invalid}" if no match is found or  
+"{err:3498  "}{it:s}{err:" invalid}" if {it:unique}!=0 and multiple matches 
+are found. Use string {it:errtxt}
+to specify an alternative error text. The error code is
+always 3499 or 3498.
+
+{p 4 4 2}{cmd:_mm_strexpand()} is like {cmd:mm_strexpand()} except that 
+the expanded string, if a match is found, is stored in {it:res} and, 
+rather than aborting with error, the error code is returned. The error code is 
+0 if no error occurred. The type of {it:res} does not matter. It is replaced.
+
+
+{title:Remarks}
+
+{p 4 4 2} {cmd:mm_strexpand()} is useful to parse string scalar
+arguments in Mata functions that are intended to be used
+interactively. Suppose that you want to program a function
+{cmd:kerneldensity(}{it:x}{cmd:,} {it:kernel}{cmd:)} where
+{it:kernel} is one of "epanechnikov", "biweight",
+"gaussian", or "epan2". Coding
+
+        {com}: function kerneldensity(x, | string scalar kernel)
+        > {
+        >         k = mm_strexpand(kernel,("epanechnikov", "biweight",
+        >          "gaussian", "epan2"), "gaussian")
+        >         ...
+        > }{txt}
+
+{p 4 4 2}
+enables the user to type abbreviated kernel names.
+For example,
+
+        {com}: kerneldensity(x, "e") {txt}
+
+{p 4 4 2} uses the epanechnikov kernel. Furthermore, note
+that "gaussian" is the default in this example. Thus
+
+        {com}: kerneldensity(x) {txt}
+
+{p 4 4 2} uses the gaussian kernel.
+
+{p 4 4 2} {cmd:_mm_strexpand()} can be used, for example, as follows:
+
+        {com}: function kerneldensity(x, | string scalar kernel)
+        > {
+        >         err = _mm_strexpand(k="", kernel,("epanechnikov",
+        >          "biweight", "gaussian", "epan2"), "gaussian")
+        >         if (err) {
+        >                 ... err ...
+        >         }
+        >         else {
+        >                 ... k ...
+        >         }                
+        > }{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_strexpand(}{it:s}{cmd:,} {it:list}{cmd:,} {it:default}{cmd:,} {it:unique}{cmd:,} {it:errtxt}{cmd:)}
+            {it:s}: 1 {it:x} 1
+         {it:list}: {it:r x} 1 or 1 {it:x c}
+      {it:default}: 1 {it:x} 1
+       {it:unique}: 1 {it:x} 1
+       {it:errtxt}: 1 {it:x} 1
+       {it:result}: 1 {it:x} 1.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}{cmd:mm_strexpand()} aborts with error if
+{it:list} is void (meaning that no match is
+found).
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_strexpand:mm_strexpand.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {bf:{help m4_string:[M-4] string}},
+{bf:{help moremata}}

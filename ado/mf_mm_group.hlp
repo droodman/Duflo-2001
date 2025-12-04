@@ -1,0 +1,165 @@
+{smcl}
+{* 09jul2020}{...}
+{cmd:help mata mm_group()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_group() -- Create group index}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:mm_group(}{it:transmorphic matrix X} [{cmd:,} {it:real rowvector idx}]{cmd:)}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:_mm_group(}{it:transmorphic matrix X}{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_group()} returns a row vector taking on values 1, 2, ... for the groups
+formed by the unique rows of {it:X}. By default, the values will be assigned based on
+an ascending sort order of {it:X}. However, the returned values will be in the original order
+of {it:X}.
+
+{pstd}
+Specify argument {it:idx} to select the relevant columns of {it:X} and determine their
+sort direction. For example, {it:idx} = {cmd:(4,1)} will assign groups based on
+columns 4 and 1, in ascending order. Use negative values to request descending sort
+order. For example, {it:idx} = {cmd:(2,-5)} would create groups based on
+columns 2 and 5, using a descending sort order for column 5 (within values of
+column 2). The default is to use all columns of {it:X} and use ascending sort order.
+
+{pstd}
+{cmd:_mm_group()} returns a row vector taking on values 1, 2, ... for the groups
+formed by consecutive rows of {it:X}, without sorting {it:X}.
+
+
+{title:Examples}
+
+    {com}: X = ("a", "a") \
+    >     ("a", "c") \
+    >     ("a", "b") \
+    >     ("b", "a") \
+    >     ("b", "a") \
+    >     ("a", "a") \
+    >     ("b", "c")
+    {res}
+    {com}: mm_group(X, 1)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}1{txt}  {c |}
+      3 {c |}  {res}1{txt}  {c |}
+      4 {c |}  {res}2{txt}  {c |}
+      5 {c |}  {res}2{txt}  {c |}
+      6 {c |}  {res}1{txt}  {c |}
+      7 {c |}  {res}2{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}
+
+    {com}: mm_group(X, 2)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}3{txt}  {c |}
+      3 {c |}  {res}2{txt}  {c |}
+      4 {c |}  {res}1{txt}  {c |}
+      5 {c |}  {res}1{txt}  {c |}
+      6 {c |}  {res}1{txt}  {c |}
+      7 {c |}  {res}3{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}
+
+    {com}: mm_group(X)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}3{txt}  {c |}
+      3 {c |}  {res}2{txt}  {c |}
+      4 {c |}  {res}4{txt}  {c |}
+      5 {c |}  {res}4{txt}  {c |}
+      6 {c |}  {res}1{txt}  {c |}
+      7 {c |}  {res}5{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}
+
+    {com}: mm_group(X, -1)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}2{txt}  {c |}
+      2 {c |}  {res}2{txt}  {c |}
+      3 {c |}  {res}2{txt}  {c |}
+      4 {c |}  {res}1{txt}  {c |}
+      5 {c |}  {res}1{txt}  {c |}
+      6 {c |}  {res}2{txt}  {c |}
+      7 {c |}  {res}1{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}
+
+    {com}: _mm_group(X)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}2{txt}  {c |}
+      3 {c |}  {res}3{txt}  {c |}
+      4 {c |}  {res}4{txt}  {c |}
+      5 {c |}  {res}4{txt}  {c |}
+      6 {c |}  {res}5{txt}  {c |}
+      7 {c |}  {res}6{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}
+
+    {com}: _mm_group(X[,1])
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}1{txt}  {c |}
+      3 {c |}  {res}1{txt}  {c |}
+      4 {c |}  {res}2{txt}  {c |}
+      5 {c |}  {res}2{txt}  {c |}
+      6 {c |}  {res}3{txt}  {c |}
+      7 {c |}  {res}4{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_group(}{it:X}{cmd:,} {it:idx}{cmd:)}
+                  {it:X}:  {it:r x c1}
+                {it:idx}:  1 {it:x c2}, {it:c2} <= {it:c1}
+             {it:result}:  {it:r x} 1
+
+    {cmd:_mm_group(}{it:X}{cmd:)}
+                  {it:X}:  {it:r x c}
+             {it:result}:  {it:r x} 1
+
+
+{title:Diagnostics}
+
+{pstd}
+{cmd:mm_group()} aborts with error if any element of {cmd:abs(}{it:idx}{cmd:)}
+is 0 or greater than {cmd:cols(}{it:X}{cmd:)}.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_group:mm_group.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_sort:[M-5] sort()}},
+{bf:{help mf_uniqrows:[M-5] uniqrows()}},
+{helpb mf_mm_nunique:mm_nunique()},
+{bf:{help moremata}}
+{p_end}

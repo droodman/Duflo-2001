@@ -1,0 +1,92 @@
+{smcl}
+{* 01may2025}{...}
+{cmd:help mata mm_read_csv()}
+{hline}
+
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_read_csv() -- Import CSV file into string matrix}
+
+
+{title:Syntax}
+
+{p 8 22 2}
+{it:string matrix}
+{cmd:mm_read_csv(}{it:{help filename}} [{cmd:,} {it:delimiter}{cmd:,} {it:notrim}{cmd:,}
+    {it:nostrip}{cmd:,} {it:line1}{cmd:,} {it:line2}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 11 27 2}{space 2}
+    {it:filename}:  {it:string scalar} specifying the CSV file to be imported
+    {p_end}
+{p 11 27 2}{space 1}
+    {it:delimiter}:  {it:string scalar} specifying the delimiter;
+    default is {cmd:","}
+    {p_end}
+{p 11 27 2}{space 4}
+    {it:notrim}:  {it:real scalar} specifying whether blanks are removed or
+    not; {it:notrim}={cmd:0} (the default) removes leading and trailing blanks
+    from each value; specify {it:notrim}!={cmd:0} to keep the blanks
+    {p_end}
+{p 11 27 2}{space 3}
+    {it:nostrip}:  {it:real scalar} specifying whether double quotes are removed
+    or not; {it:nostrip}={cmd:0} (the default) removes outer quotes
+    from values that are enclosed in double quotes; specify {it:nostrip}!={cmd:0}
+    to keep the quotes
+    {p_end}
+{p 11 27 2}{space 5}
+    {it:line1}:  {it:real scalar} specifying the first line to be read; default
+    is {cmd:1}
+    {p_end}
+{p 11 27 2}{space 5}
+    {it:line2}:  {it:real scalar} specifying the last line to be read; default is
+    {cmd:.} (end of file)
+    {p_end}
+
+{title:Description}
+
+{p 4 4 2}
+    {cmd:mm_read_csv()} imports a CSV (comma-separated values)
+    file into a string matrix. By default, the values in {it:filename} are assumed to be
+    comma-separated. For example, specify {cmd:char(9)} as {it:delimiter} if the
+    values are separated by tab characters.
+
+{p 4 4 2}
+    {cmd:mm_read_csv()} is sensitive to double-quote binding. That is, values
+    enclosed in double quotes (within the same line of data) will not be
+    separated. Use function {bf:{help mf_mm_insheet:mm_insheet()}} if you want to
+    import a file without double-quote binding.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}
+    {cmd:mm_read_csv()} aborts with error if {it:filename} does not exist.
+
+{p 4 4 2}
+    {cmd:mm_read_csv()} returns a 0 x 0 result if {it:filename} contains 0 bytes.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_read_csv:mm_read_csv.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help m4_io:[M-4] io -- I/O functions}},
+{bf:{help mf_cat:[M-5] cat()}},
+{bf:{help mf_mm_insheet:mm_insheet()}},
+{bf:{help moremata}}

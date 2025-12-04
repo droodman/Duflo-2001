@@ -1,0 +1,157 @@
+{smcl}
+{* 14sep2021}{...}
+{cmd:help mata mm_areg()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_areg() -- Linear (least-squares) regression with absorbing factor}
+
+
+{title:Syntax}
+
+{pstd}
+Simple syntax
+
+{p 8 24 2}
+{it:b} =
+{cmd:mm_aregfit(}{it:y}{cmd:,} {it:id} [{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,} {it:sort}{cmd:,} {it:quad}]{cmd:)}
+
+{p 7 20 2}{bind:       }{it:y}:  {it:real colvector} containing dependent variable{p_end}
+{p 7 20 2}{bind:      }{it:id}:  {it:real colvector} containing categorical factor to be absorbed{p_end}
+{p 7 20 2}{bind:       }{it:X}:  {it:real matrix} containing predictors; may specify {cmd:.} to omit predictors{p_end}
+{p 7 20 2}{bind:       }{it:w}:  {it:real colvector} containing weights; specify {cmd:1} for unweighted results{p_end}
+{p 7 20 2}{bind:    }{it:sort}:  whether to sort the data; specify {cmd:0} if the data is already sorted{p_end}
+{p 7 20 2}{bind:    }{it:quad}:  whether to use quad precision when computing cross products; specify {cmd:0} to use double precision{p_end}
+
+{pstd}
+Advanced syntax
+
+{pmore}
+Setup
+
+{p 12 24 2}
+{it:S} =
+{cmd:mm_areg(}{it:y}{cmd:,} {it:id} [{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,} {it:sort}{cmd:,} {it:quad}]{cmd:)}
+
+{pmore}
+Retrieve results
+
+{p2colset 9 41 43 2}{...}
+{p2col:{bind:       }{it:b} = {cmd:mm_areg_b(}{it:S}{cmd:)}}coefficient vector ({it:beta} \ {it:alpha}){p_end}
+{p2col:{bind:    }{it:beta} = {cmd:mm_areg_beta(}{it:S}{cmd:)}}slope coefficients (column vector){p_end}
+{p2col:{bind:   }{it:alpha} = {cmd:mm_areg_alpha(}{it:S}{cmd:)}}global intercept{p_end}
+{p2col:{bind:      }{it:xb} = {cmd:mm_areg_xb(}{it:S} [{cmd:,} {it:X}]{cmd:)}}fitted values ({it:alpha} + {it:X}*{it:beta}){p_end}
+{p2col:{bind:      }{it:ue} = {cmd:mm_areg_ue(}{it:S}{cmd:)}}combined residual ({it:u} + {it:e}){p_end}
+{p2col:{bind:     }{it:xbu} = {cmd:mm_areg_xbu(}{it:S}{cmd:)}}prediction including fixed effect ({it:alpha} + {it:X}*{it:beta} + {it:u}){p_end}
+{p2col:{bind:       }{it:u} = {cmd:mm_areg_u(}{it:S}{cmd:)}}fixed effect{p_end}
+{p2col:{bind:       }{it:e} = {cmd:mm_areg_e(}{it:S}{cmd:)}}idiosyncratic error{p_end}
+{p2col:{bind:       }{it:s} = {cmd:mm_areg_s(}{it:S}{cmd:)}}scale (root mean squared error){p_end}
+{p2col:{bind:      }{it:r2} = {cmd:mm_areg_r2(}{it:S}{cmd:)}}R-squared{p_end}
+{p2col:{bind:      }{it:se} = {cmd:mm_areg_se(}{it:S}{cmd:)}}(non-robust) standard errors{p_end}
+{p2col:{bind:       }{it:V} = {cmd:mm_areg_V(}{it:S}{cmd:)}}(non-robust) variance matrix{p_end}
+{p2col:{bind:   }{it:XXinv} = {cmd:mm_areg_XXinv(}{it:S}{cmd:)}}inverse of X'X{p_end}
+{p2col:{bind:     }{it:RSS} = {cmd:mm_areg_rss(}{it:S}{cmd:)}}residual sum of squares{p_end}
+{p2col:{bind:   }{it:ymean} = {cmd:mm_areg_ymean(}{it:S}{cmd:)}}global mean of y{p_end}
+{p2col:{bind:   }{it:means} = {cmd:mm_areg_means(}{it:S}{cmd:)}}global means of X (row vector){p_end}
+{p2col:{bind:      }{it:yd} = {cmd:mm_areg_yd(}{it:S}{cmd:)}}group-demeaned y{p_end}
+{p2col:{bind:      }{it:Xd} = {cmd:mm_areg_Xd(}{it:S}{cmd:)}}group-demeaned X (row vector){p_end}
+{p2col:{bind:    }{it:omit} = {cmd:mm_areg_omit(}{it:S}{cmd:)}}column vector flagging omitted terms{p_end}
+{p2col:{bind:  }{it:k_omit} = {cmd:mm_areg_k_omit(}{it:S}{cmd:)}}number of omitted terms{p_end}
+{p2col:{bind:       }{it:N} = {cmd:mm_areg_N(}{it:S}{cmd:)}}number of observations (sum of weights){p_end}
+{p2col:{bind:  }{it:levels} = {cmd:mm_areg_levels(}{it:S}{cmd:)}}levels (values of groups) in {it:id} {p_end}
+{p2col:{bind:}{it:k_levels} = {cmd:mm_areg_k_levels(}{it:S}{cmd:)}}number of levels (groups) in {it:id}{p_end}
+{p2col:{bind:       }{it:n} = {cmd:mm_areg_n(}{it:S}{cmd:)}}number of observations per group (unweighted){p_end}
+
+{pmore}
+{it:S} is a structure holding results and settings; declare {it:S} as {it:transmorphic}.
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_areg()} fits a linear regression model with an absorbing categorical
+factor using the least-squares technique. Results are equivalent to Stata's 
+{helpb areg} or {helpb xtreg:xtreg,fe}.
+
+{pstd}
+{cmd:mm_areg()} uses quad precision when computing X'X and X'y. Specifying {it:quad}=0
+will make {cmd:mm_areg()} faster, but less precise. Use {it:quad}=0 only if your data 
+is well-behaved (reasonable means, not much collinearity).
+
+
+{title:Examples}
+
+{pstd}
+If you are only interested in the coefficients, you can use
+{cmd:mm_aregfit()} (simple syntax) to obtain a fit without much typing:
+
+        . {stata sysuse auto, clear}
+        . {stata areg price weight length, absorb(headroom)}
+        . {stata "mata:"}
+        : {stata y = st_data(., "price")}
+        : {stata X = st_data(., "weight length")}
+        : {stata id = st_data(., "headroom")}
+        : {stata mm_aregfit(y, id, X)}
+        : {stata end}
+
+{pstd}
+For more sophisticated applications, use the advanced syntax. Function
+{cmd:mm_areg()} defines the problem and performs the main calculations. You can then
+use functions such as {cmd:mm_areg_b()} or {cmd:mm_areg_r2()} to obtain results. The following
+example illustrates how to obtain coefficients, standard errors, t values,
+and the R-squared:
+
+        . {stata "mata:"}
+        : {stata S = mm_areg(y, id, X)}
+        : {stata "mm_areg_b(S), mm_areg_se(S), mm_areg_b(S):/mm_areg_se(S)"}
+        : {stata mm_areg_r2(S)}
+        : {stata end}
+
+
+{title:Two-step syntax}
+
+{pstd}
+    If several absorbing regressions are to be estimated using the same
+    sample, computer time can be saved by analyzing {it:id} upfront
+    and then pass the collected information through to the different regressions. The
+    syntax for such a two-step procedure is
+
+        {it:G} = {cmd:_mm_areg_g(}{it:id}{cmd:,} {it:sort}{cmd:)}
+        {it:S} = {cmd:_mm_areg(}{it:G}{cmd:,} {it:y} [{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,} {it:quad}]{cmd:)}
+
+{pstd}
+    where {it:G} is a structure holding the information collected from {it:id}
+    (declare {it:G} as {it:transmorphic}). Multiple calls to {cmd:_mm_areg()}
+    can follow, with different {it:y}, {it:X}, or {it:w} (the number of observations
+    must stay the same).
+
+
+{title:Diagnostics}
+
+{pstd}
+The functions return invalid results if {it:y}, {it:X}, or {it:w} contain
+missing values.
+
+{pstd}
+Coefficients corresponding to omitted (collinear) terms will be set to zero.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_areg:mm_areg.mata}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{helpb moremata}, {helpb mf_mm_ls:mm_ls()}, {helpb areg}, {helpb xtreg}, {helpb regress}

@@ -1,0 +1,188 @@
+{smcl}
+{* 06jul2020}{...}
+{cmd:help mata mm_kern()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_kern() -- Kernel functions}
+
+
+{title:Syntax}
+
+{p 8 20 2}
+{it:real matrix}
+{cmd:mm_kern(}{it:k}{cmd:,} {it:real matrix z}{cmd:)}
+
+{p 8 20 2}
+{it:real matrix}
+{cmd:mm_kint(}{it:k}{cmd:,} {it:real scalar l} [{cmd:,} {it:real matrix z}]{cmd:)}
+
+{p 8 20 2}
+{it:real matrix}
+{cmd:mm_kderiv(}{it:k}{cmd:,} {it:real matrix z}{cmd:)}
+
+{p 8 20 2}
+{it:real scalar}
+{cmd:mm_kdel0(}{it:k}{cmd:)}
+
+{p 4 20 2}
+where{bind:       }{it:k}:  {it:string scalar} containing {cmd:"{ul:e}panechnikov"},
+  {cmd:"epan2"} (default), {cmd:"{ul:b}iweight"}, {cmd:"{ul:t}riweight"},
+  {cmd:"{ul:c}osine"}, {cmd:"{ul:g}aussian"}, {cmd:"{ul:p}arzen"},
+  {cmd:"{ul:r}ectangle"} or {cmd:"{ul:tria}ngle"}
+  {p_end}
+
+
+{p 8 20 2}
+{it:real matrix}
+{cmd:mm_kern_}{it:name}{cmd:(}{it:real matrix z}{cmd:)}
+
+{p 8 20 2}
+{it:real matrix}
+{cmd:mm_kint_}{it:name}{cmd:(}{it:real scalar l} [{cmd:,} {it:real matrix z}]{cmd:)}
+
+{p 8 20 2}
+{it:real matrix}
+{cmd:mm_kderiv_}{it:name}{cmd:(}{it:real matrix z}{cmd:)}
+
+{p 8 20 2}
+{it:real scalar}
+{cmd:mm_kdel0_}{it:name}{cmd:()}
+
+{p 4 20 2}
+where {it:name} is {bind:  }{cmd:epanechnikov}, {cmd:epan2},
+{cmd:biweight}, {cmd:triweight}, {cmd:cosine},
+{cmd:gaussian}, {cmd:parzen}, {cmd:rectangle}, or {cmd:triangle}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_kern(}{it:k}{cmd:,} {it:z}{cmd:)}
+returns the value of  kernel
+function {it:k} for the input value {it:z}. {it:k} is the kernel's name
+and may be abbreviated as indicated above.
+
+{pstd}
+{cmd:mm_kint(}{it:k}{cmd:,} {it:l}{cmd:,} {it:z}{cmd:)} returns
+kernel integrals from minus infinity to {it:z} or, if {it:z} is
+omitted, from minus infinity to plus infinity. {it:l} determines the
+type of integral. Let K(x) denote the kernel function. Then the
+integrals returned for different choices of {it:l} are:
+
+        {it:l}   integrated function
+       {hline 25}
+        {cmd:1}           K(x)
+        {cmd:2}          K(x)^2
+        {cmd:3}         x * K(x)
+        {cmd:4}        x^2 * K(x)
+
+{pstd}
+Note that {cmd:mm_kint(}{it:k}{cmd:, 2)} returns the so-called
+"roughness" of kernel function. {cmd:mm_kint(}{it:k}{cmd:, 4)}
+returns the variance of the kernel function.
+
+{pstd}
+{cmd:mm_kderiv(}{it:k}{cmd:,} {it:z}{cmd:)} returns the value of the first derivative of kernel
+function {it:k} at input value {it:z}.
+
+{pstd}
+{cmd:mm_kdel0(}{it:k}{cmd:)} returns the
+canonical bandwidth of kernel function {it:k}.
+
+{pstd}Instead of using the wrappers {cmd:mm_kern()},
+{cmd:mm_kint()}, and {cmd:mm_kdel0()} you may prefer to apply
+{cmd:mm_kern_}{it:name}{cmd:()}, {cmd:mm_kint_}{it:name}{cmd:()},
+{cmd:mm_kderiv_}{it:name}{cmd:()},
+and {cmd:mm_kdel0_}{it:name}{cmd:()} directly, where {it:name} stands
+for {cmd:epanechnikov}, {cmd:epan2},
+{cmd:biweight}, {cmd:triweight}, {cmd:cosine},
+{cmd:gaussian}, {cmd:parzen}, {cmd:rectangle}, or
+{cmd:triangle}.
+
+
+{title:Remarks}
+
+{pstd}
+The formulas for the kernels and their properties can be found in
+{browse "http://fmwww.bc.edu/RePEc/bocode/k/kdens.pdf"}.
+
+
+{title:Conformability}
+
+    {cmd:mm_kern(}{it:k}{cmd:,} {it:z}{cmd:)}:
+             {it:k}:  1 {it:x} 1
+             {it:z}:  {it:r x c}
+        {it:result}:  {it:r x c}.
+
+    {cmd:mm_kint(}{it:k}{cmd:,} {it:l}{cmd:,} {it:z}{cmd:)}:
+             {it:k}:  1 {it:x} 1
+             {it:l}:  1 {it:x} 1
+             {it:z}:  {it:r x c}
+        {it:result}:  {it:r x c} (or 1 {it:x} 1 if {it:z} is omitted).
+
+    {cmd:mm_kderiv(}{it:k}{cmd:,} {it:z}{cmd:)}:
+             {it:k}:  1 {it:x} 1
+             {it:z}:  {it:r x c}
+        {it:result}:  {it:r x c}.
+
+    {cmd:mm_kdel0(}{it:k}{com:)}:
+             {it:k}:  1 {it:x} 1
+        {it:result}:  1 {it:x} 1.
+
+    {cmd:mm_kern_}{it:name}{cmd:(}{it:z}{cmd:)}:
+             {it:z}:  {it:r x c}
+        {it:result}:  {it:r x c}.
+
+    {cmd:mm_kint_}{it:name}{cmd:(}{it:l}{cmd:,} {it:z}{cmd:)}:
+             {it:l}:  1 {it:x} 1
+             {it:z}:  {it:r x c}
+        {it:result}:  {it:r x c} (or 1 {it:x} 1 if {it:z} is omitted).
+
+    {cmd:mm_kderiv_}{it:name}{cmd:(}{it:z}{cmd:)}:
+             {it:z}:  {it:r x c}
+        {it:result}:  {it:r x c}.
+
+    {cmd:mm_kdel0_}{it:name}{cmd:()}:
+        {it:result}:  1 {it:x} 1.
+
+
+{title:Diagnostics}
+
+{pstd}
+If argument {it:k} in {cmd:mm_kern()}, {cmd:mm_kint()}, {cmd:mm_kderiv()}, and
+{cmd:mm_kdel0()} is empty (i.e. {it:k}==""), the {cmd:epan2} kernel
+is used.
+
+{pstd}
+{cmd:mm_kderiv_rectangle()} will return 0 everywhere, even though the true derivative
+is infinity at the lower boundary and minus infinity at the upper boundary.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_kern:mm_kern.mata}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Aknowledgements}
+
+{pstd}
+Shouts to Matthias Naef for helping me with the integrals.
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help kdens}} (if installed),
+{bf:{help moremata}}
+{p_end}

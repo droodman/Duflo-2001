@@ -1,0 +1,144 @@
+{smcl}
+{* 01may2025}{...}
+{cmd:help mata mm_insheet()}
+{hline}
+
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_insheet() -- Read spreadsheet file into string matrix (and vice versa)}
+
+
+{title:Syntax}
+
+{p 8 22 2}
+{it:string matrix}
+{cmd:mm_insheet(}{it:filename} [{cmd:,} {it:delimiter}{cmd:,} {it:line1}{cmd:,} {it:line2}]{cmd:)}
+
+
+{p 8 22 2}
+{it:string matrix}
+{cmd:mm_infile(}{it:filename} [{cmd:,} {it:line1}{cmd:,} {it:line2}]{cmd:)}
+
+
+{p 8 22 2}
+{it:void}{space 9}
+{cmd:mm_outsheet(}{it:filename} {cmd:,} {it:s}[{cmd:,} {it:mode}{cmd:,} {it:delimiter}]{cmd:)}
+
+
+{p 4 8 2}
+where
+
+              {it:filename}:  {it:string scalar filename}
+             {it:delimiter}:  {it:string scalar delimiter}
+                 {it:line1}:  {it:real scalar line1}
+                 {it:line2}:  {it:real scalar line2}
+                     {it:s}:  {it:string matrix s}
+{p 18 26 2}{it:mode}:  {it:string scalar} containing "", "{opt r:eplace}" or "{opt a:ppend}"
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_insheet()} returns as a string matrix the
+contents of a spreadsheet file (ASCII) in which columns
+are separated by, e.g., tabs or commas and rows are
+separated by the newline character. {it:filename} specifies the
+filename. {it:delimiter} specifies the character used to
+separate the values. The default value for {it:delimiter}
+is {cmd:char(9)} (the tab-character). Note that {cmd:mm_insheet()} does not take
+account of double-quote binding; use function {bf:{help mf_mm_read_csv:mm_read_csv()}}
+to import a file in which double quotes are used for binding.
+
+{p 4 4 2} {cmd:mm_infile()} returns as a string matrix the
+contents of a free-format file (ASCII) in which columns are
+separated by one or more blanks and rows are
+separated by the newline character.
+
+{p 4 4 2}Specifying {it:line1} (and {it:line2}) with {cmd:mm_insheet()} or
+{cmd:mm_infile()} indicates that the file be read
+starting with line number {it:line1} (and ending with line number {it:line2}).
+
+{p 4 4 2} {cmd:mm_outsheet()} writes string matrix {it:s} into
+an ASCII file. Rows are separated by the newline character.
+Columns are separated by {it:delimiter}. The default value
+for {it:delimiter} is {cmd:char(9)} (the tab-character).
+{cmd:mm_outsheet()} aborts with error if the file
+indicated by fn already exists and {it:mode} is omitted or {it:mode}="". Specify
+{it:mode}="{opt r:eplace}" to replace an existing file or
+{it:mode}="{opt a:ppend}" to append to an existing file.
+
+
+{title:Remarks}
+
+{p 4 4 2} {cmd:mm_outsheet()} can only be used with string
+matrices. To export a real matrix, type
+{bind:{cmd:mm_outsheet(}{it:filename}{cmd:, strofreal(}{it:R}{cmd:))}}
+where {it:R} is the real matrix (see
+{bf:{help mf_strofreal:[M-5] strofreal()}}).
+
+
+{title:Conformability}
+
+    {cmd:mm_insheet(}{it:filename}{cmd:,} {it:delimiter}{cmd:,} {it:line1}{cmd:,} {it:line2}{cmd:)}:
+      {it:filename}:  1 {it:x} 1
+     {it:delimiter}:  1 {it:x} 1
+         {it:line1}:  1 {it:x} 1
+         {it:line2}:  1 {it:x} 1
+        {it:result}:  r {it:x} c
+
+    {cmd:mm_infile(}{it:filename}{cmd:,} {it:line1}{cmd:,} {it:line2}{cmd:)}:
+      {it:filename}:  1 {it:x} 1
+         {it:line1}:  1 {it:x} 1
+         {it:line2}:  1 {it:x} 1
+        {it:result}:  r {it:x} c
+
+    {cmd:mm_outsheet(}{it:filename}{cmd:,} {it:s}{cmd:,} {it:mode}{cmd:,} {it:delimiter}{cmd:)}:
+      {it:filename}:  1 {it:x} 1
+             {it:s}:  r {it:x} c
+          {it:mode}:  1 {it:x} 1
+     {it:delimiter}:  1 {it:x} 1
+        {it:result}:  {it:void}
+
+
+{title:Diagnostics}
+
+{p 4 4 2} {cmd:mm_insheet()} and
+{cmd:mm_infile()} abort with error if the file
+indicated by {it:filename} does not exist.
+
+{p 4 4 2} {cmd:mm_insheet()} and {cmd:mm_infile()} return a 0 x 0
+result if the file indicated by {it:filename} contains 0 bytes.
+
+{p 4 4 2} The number of columns in the matrix returned by
+{cmd:mm_insheet()} or {cmd:mm_infile()} is determined by the maximum number of
+elements per line found the input file. If an individual input line
+contains less than the maximum number of elements, an appropriate number
+of empty elements is appended to the right of the row.
+
+{p 4 4 2} {cmd:mm_outsheet()} creates a file containing 0
+bytes if {it:s} is a void string matrix (see
+{bf:{help m2_void:[M-2] void}}).
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_insheet:mm_insheet.mata},
+{help moremata_source##mm_infile:mm_infile.mata},
+{help moremata_source##mm_outsheet:mm_outsheet.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help m4_io:[M-4] io -- I/O functions}},
+{bf:{help mf_cat:[M-5] cat()}},
+{bf:{help mf_mm_read_csv:mm_read_csv()}},
+{bf:{help moremata}}

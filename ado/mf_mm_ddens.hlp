@@ -1,0 +1,196 @@
+{smcl}
+{* 11aug2020}{...}
+{cmd:help mata mm_ddens()}
+{hline}
+
+{title:Title}
+
+{pstd}
+    {bf:mm_ddens() -- Density estimation by diffusion}
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real matrix}{bind: }
+{cmd:mm_ddens(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:minmax}{cmd:,} {it:n}{cmd:,} {it:h}{cmd:,} {it:qui}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 14 18 2}{it:X}:  {it:real colvector} containing data (missing values not allowed)
+
+{p 14 18 2}{it:w}:  {it:real colvector} containing weights  (missing or negative
+    values not allowed); default is {it:w} = 1 (no weights)
+
+{p 9 18 2}{it:minmax}:  {it:real vector} specifying the lower and upper bounds
+of the support of {it:X}; specify one value (lower boundary only) or
+two values (lower and upper boundary); default is {cmd:(.,.)} (unbounded support;
+in this case, grid points will be chosen such that they extend the observed data
+range by 10 percent on each side)
+
+{p 14 18 2}{it:n}:  {it:real scalar} specifying the grid size (number of
+evaluation points); will be rounded up to the next power of 2; default is
+{it:n} = 2^14 = 16384; specify {cmd:.} (missing) to select the default; reducing the
+grid size will reduce the accuracy of the results
+
+{p 14 18 2}{it:h}:  {it:real scalar} specifying the bandwidth (kernel halfwidth); the
+default is to determine the bandwidth automatically; set {it:h} to {cmd:.} (missing)
+to select the default; the obtained bandwidth will be returned in {it:h} (that is,
+{it:h} will be replaced)
+
+{p 12 18 2}{it:qui}:  {it:qui}!=0 suppresses the warning message that is displayed
+if the bandwidth estimation failed and the oversmoothed rule is used to determine
+the bandwidth
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_ddens()} implements (non-adaptive) kernel density estimation by
+    diffusion as suggested by Botev et al. (2010). The estimator is equivalent
+    to gaussian kernel density estimation with reflection at the boundaries of
+    the support. The optimal bandwidth is determined automatically without relying
+    on preliminary assumptions about distributional shape.
+
+{pstd}
+    {cmd:mm_ddens()} returns a real matrix containing the estimated density in
+    the first column and the evaluation points in the second column. The bandwidth
+    is returned in argument {it:h}.
+
+{pstd}
+    {cmd:mm_ddens()} is based on {browse "https://www.r-project.org/":R}
+    code provided by Z.I. Botev in file {browse "http://web1.maths.unsw.edu.au/~zdravkobotev/kde.R":kde.R}
+    at {browse "https://web.maths.unsw.edu.au/~zdravkobotev/"}.
+
+
+{title:Examples}
+
+{pstd}
+    Density estimation with default settings:
+
+        . {stata "mata:"}
+        : {stata x = rnormal(50000,1, 0, 1)  \ rnormal(50000,1, 4, 1.5)}
+        : {stata D = mm_ddens(x)}
+        : {stata mm_plot(D, "line")}
+        : {stata end}
+
+{pstd}
+    {cmd:mm_ddens()} evaluates the density function across a regular grid of
+    evaluation points. The grid must be of sufficient size for the results to be
+    accurate. Use linear interpolation if you want to
+    obtain a density estimate at less points or at irregularly-spaced points. In
+    the following example, we obtain the density
+    at different quantiles of X:
+
+        . {stata "mata:"}
+        : {stata x = rnormal(1000,1, 0, 1)  \ rnormal(1000,1, 4, 1.5)}
+        : {stata at = mm_quantile(x,1,(.25, .5, .75)')}
+        : {stata D = mm_ddens(x)}
+        : {stata mm_ipolate(D[,2], D[,1], at), at}
+        : {stata end}
+
+{pstd}
+    The estimator implemented by {cmd:mm_ddens()} performs well on variables that
+    have bounded support (equivalent to the so-called reflection estimator). Simply specify
+    the values of the bounds of the support. Example:
+
+        . {stata "mata:"}
+        : {stata x = rchi2(1000,1,2)}
+        : {stata D = mm_ddens(x,1, (0,.))}
+        : {stata mm_plot(D, "line")}
+        : {stata end}
+
+{pstd}
+    The bandwidth used by the estimator is returned in argument {it:h}:
+
+        . {stata "mata:"}
+        : {stata x = rnormal(1000,1, 0, 1)  \ rnormal(1000,1, 4, 1.5)}
+        : {stata (void) mm_ddens(x, 1, ., ., h=.)}
+        : {stata h}
+        : {stata end}
+
+{pstd}
+    The returned bandwidth is appropriate for use with a gaussian kernel. To use
+    the bandwidth with a different kernel, for example, in Stata command
+    {helpb kdensity}, you need to rescale the bandwidth by the ratio of canonical
+    bandwidths of the kernels:
+
+        . {stata webuse trocolen}
+        . {stata "mata:"}
+        : {stata x = st_data(., "length")}
+        : {stata (void) mm_ddens(x, 1, ., ., h=.)}
+        : {stata h}
+        : {stata h = h / mm_kdel0_gaussian() * mm_kdel0_parzen()}
+        : {stata h}
+        : {stata stata(sprintf("kdensity length, kernel(parzen) n(100) bwidth(%g)", h))}
+        : {stata end}
+
+{pstd}
+    Weights, if specified, are interpreted as (possibly non-integer) frequency
+    weights. That is, the sample size is equal to the sum of weights. If the weights are
+    not frequency weights, normalize them such that their sum is equal to the number of observations:
+
+        . {stata webuse highschool}
+        . {stata "mata:"}
+        : {stata x = st_data(., "weight")}
+        : {stata w = st_data(., "sampwgt")}
+        : {stata w = w / sum(w) * rows(x)}  // normalize weights
+        : {stata D = mm_ddens(x, w)}
+        : {stata mm_plot(D, "line")}
+        : {stata end}
+
+{pstd}
+    Furthermore, if the weights are sampling weights, it may make sense
+    to adjust the bandwidth depending on the the variability of the weights (see
+    section 8.4 in {browse "http://boris.unibe.ch/69421/2/kdens.pdf":Jann (2007)}:
+
+        . {stata webuse highschool}
+        . {stata "mata:"}
+        : {stata x = st_data(., "weight")}
+        : {stata w = st_data(., "sampwgt")}
+        : {stata w = w / sum(w) * rows(x)}  // normalize weights
+        : {stata (void) mm_ddens(x, w, ., ., h = .)}
+        : {stata h}
+        : {stata "h = h * (sum(w:^2)/rows(x))^.2"}  // adjust bandwidth
+        : {stata h}
+        : {stata D = mm_ddens(x, w, ., ., h)}
+        : {stata mm_plot(D, "line")}
+        : {stata end}
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_ddens:mm_ddens.mata}
+
+
+{title:References}
+
+{phang}
+    Botev, Z.I., J.F. Grotowski, and D.P. Kroese (2010). Kernel density
+    estimation via diffusion. Annals of Statistics
+    38(5): 2916-2957. DOI: {browse "http://doi.org/10.1214/10-AOS799":10.1214/10-AOS799}.
+    {p_end}
+{phang}
+    Jann, B. (2007). Univariate kernel density
+    estimation. DOI: {browse "http://boris.unibe.ch/69421/2/kdens.pdf":10.7892/boris.69421}.
+    {p_end}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{helpb mf_mm_density:mm_density()},
+{helpb mf_mm_ecdf:mm_ecdf()},
+{helpb mf_mm_histogram:mm_histogram()},
+{helpb moremata},
+{helpb kdensity},
+{helpb histogram}
+{p_end}
+

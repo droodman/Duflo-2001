@@ -1,0 +1,212 @@
+{smcl}
+{* 29jan2014}{...}
+{cmd:help mata mm_integrate()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_integrate() -- Numerical evaluation of a definite integral of a one dimensional function}
+
+
+{title:Syntax}
+
+{p 4 8 2}
+Integration using Simpson's rule (quadratic interpolation):
+
+{p 8 12 2}
+{it:real scalar}
+{cmd:mm_integrate_sr(}{it:f}{cmd:,} {it:a}{cmd:,} {it:b}{cmd:,} {it:n} [{cmd:,} {it:sc}, {it:...}]{cmd:)}
+
+{p 4 8 2}
+Integration using Simpson's 3/8 rule  (cubic interpolation):
+
+{p 8 12 2}
+{it:real scalar}
+{cmd:mm_integrate_38(}{it:f}{cmd:,} {it:a}{cmd:,} {it:b}{cmd:,} {it:n} [{cmd:,} {it:sc}, {it:...}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 12 16 2}
+{it:f}:  {it:pointer scalar} containing address of function to be integrated; type {cmd:&}{it:funcname}{cmd:()}
+
+{p 12 16 2}
+{it:a}:  {it:real scalar} containing lower limit of integral
+
+{p 12 16 2}
+{it:b}:  {it:real scalar} containing upper limit of integral
+
+{p 12 16 2}
+{it:n}:  {it:real scalar} containing number of intervals
+{p_end}
+{p 16 16 2}
+{it:n} must be a multiple of two for {cmd:mm_integrate_sr()}
+{p_end}
+{p 16 16 2}
+{it:n} must and a multiple of three for {cmd:mm_integrate_38()}
+
+{p 11 16 2}
+{it:sc}: {it:real scalar} indicating that function {it:f} is scalar
+
+{p 10 16 2}
+{it:...}:  up to 10 additional arguments to pass on to function {it:f}
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_integrate_sr()} evaluates the integral of function {it:f}
+over a regular grid from {it:a} to {it:b} using Simpson's rule (quadratic
+approximation). The evaluation grid contains {it:n} equally-spaced intervals of
+width {it:d} = ({it:b}-{it:a})/{it:n}. Let {it:x}_{it:i} = {it:a} + 
+{it:i}*{it:d}, then the integral is computed as
+
+{p 8 8 2}
+    {it:d}/3 * [{it:f}({it:x}_0) + 4*{it:f}({it:x}_1) + 2*{it:f}({it:x}_2) 
+    + 4*{it:f}({it:x}_3) + 2*{it:f}({it:x}_4) + ... + 
+    4*{it:f}({it:x}_({it:n}-1)) + {it:f}({it:x}_{it:n})]
+
+{p 4 4 2} Likewise, {cmd:mm_integrate_38()} evaluates the integral of 
+function {it:f} using Simpson's 3/8 rule (cubic approximation), computed as
+
+{p 8 8 2}
+    3*{it:d}/8 * [{it:f}({it:x}_0) + 3*{it:f}({it:x}_1) + 3*{it:f}({it:x}_2) 
+    + 2*{it:f}({it:x}_3) + 3*{it:f}({it:x}_4) + 3*{it:f}({it:x}_5) + 2*{it:f}({it:x}_6) +... + 
+    3*{it:f}({it:x}_({it:n}-2)) + 3*{it:f}({it:x}_({it:n}-1)) + {it:f}({it:x}_{it:n})]
+
+{p 4 4 2}
+{cmd:mm_integrate_sr()} and {cmd:mm_integrate_38()} assume {it:f} to accept a
+column vector of {it:x} values as first argument so that all {it:f}({it:x})'s
+can be computed in one call. Alternatively, if {it:f} is scalar, specify
+{it:sc}!=0 to call {it:f} for each {it:x} individually. Note that computing
+the {it:f}({it:x})'s in one call is usually much faster than using individual
+calls for each {it:f}({it:x}).
+
+{p 4 4 2}
+{it:f} cannot be a built-in function. To integrate a built-in function you need
+to create your own version of it. An example can be found below. Also 
+see "Passing built-in functions" in {bf:{help m2_ftof:[M-2] ftof}}.
+
+{title:Remarks}
+
+{p 4 4 2} Example: Integrating the standard normal density from -1 to 1
+
+        {com}: function myf(x) return(normalden(x))
+
+        : I = mm_integrate_sr(&myf(), -1, 1, 1000)
+
+        : I
+          .6826894921
+
+        : reldif(I, normal(1)-normal(-1))
+          5.11338e-14
+
+        : I = mm_integrate_38(&myf(), -1, 1, 999)
+
+        : I
+          .6826894921
+
+        : reldif(I, normal(1)-normal(-1))
+          1.15463e-13{txt}
+
+{p 4 4 2}Of course there is no point in integrating {cmd:normalden()} as
+{cmd:normal()} already provides appropriate integrals. Nonetheless, let us
+further use {cmd:normalden()} to illustrate passing on arguments to {it:f}:
+
+        {com}: function myf2(x, mean, sd) return(normalden(x, mean, sd))
+
+        : mean = 4; sd = 2.5
+
+        : mm_integrate_sr(&myf2(), 0, 3, 1000, 0, mean, sd)
+          .2897789667
+
+        : mm_integrate_38(&myf2(), 0, 3, 999, 0, mean, sd)
+          .2897789667{txt}
+
+{p 4 4 2}The fourth argument, {it:sc}=0, in the example above tells
+{cmd:mm_integrate_sr()} and {cmd:mm_integrate_38()} that it is ok to pass a
+vector of {it:x} values to {it:f} (the default). If the function you want to
+integrate does not allow element-by-element computations specify {it:sc}!=0
+to call {it:f} individually for each x value. Example:
+
+        {com}: real scalar myf3(real scalar x, real scalar k)
+        > {
+        >     return(normalden(x) * ((1 - (x/k)^2) * (1 - 5*(x/k)^2)))
+        > }
+
+        : k = 1.5
+
+        : mm_integrate_sr(&myf3(), -k, k, 1000, 1, k)
+        .1445150517
+
+        : mm_integrate_38(&myf3(), -k, k, 999, 1, k)
+        .1445150517{txt}
+
+{p 4 4 2}Note that the above function could easily be revised to perform 
+element-by-element computations, as is possible in many cases. Example:
+
+        {com}: real matrix myf4(real matrix x, real scalar k)
+        > {
+        >     return(normalden(x) :* ((1 :- (x/k):^2) :* (1 :- 5*(x/k):^2)))
+        > }
+
+        : k = 1.5
+
+        : mm_integrate_sr(&myf4(), -k, k, 1000, 0, k)
+          .1445150517
+
+        : mm_integrate_38(&myf4(), -k, k, 999, 0, k)
+          .1445150517{txt}
+
+{p 4 4 2}{cmd:mm_integrate_sr()} versus {cmd:mm_integrate_38()}: The
+literature claims that {cmd:mm_integrate_38()} has a smaller bias. However,
+as soon as {it:n} is moderately large both algorithms perform equally well.
+
+{p 4 4 2}Size of {it:n}: The larger {it:n}, the better the approximation but
+the slower the evaluation. In most situations, about 1000 should be
+sufficient. However, how accurate your results need to be depends on your
+application.
+
+
+{title:Conformability}
+
+    {cmd:mm_integrate_sr(}{it:f}{cmd:,} {it:a}{cmd:,} {it:b}{cmd:,} {it:n}{cmd:,} {it:sc}{cmd:,} {it:...}{cmd:)}
+           {it:f}: 1 {it:x} 1
+           {it:a}: 1 {it:x} 1
+           {it:b}: 1 {it:x} 1
+           {it:n}: 1 {it:x} 1
+          {it:sc}: 1 {it:x} 1
+         {it:...}:  (depending on function {it:f})
+      {it:result}: 1 {it:x} 1.
+
+    {cmd:mm_integrate_38(}{it:f}{cmd:,} {it:a}{cmd:,} {it:b}{cmd:,} {it:n}{cmd:,} {it:sc}{cmd:,} {it:...}{cmd:)}
+           {it:f}: 1 {it:x} 1
+           {it:a}: 1 {it:x} 1
+           {it:b}: 1 {it:x} 1
+           {it:n}: 1 {it:x} 1
+          {it:sc}: 1 {it:x} 1
+         {it:...}:  (depending on function {it:f})
+      {it:result}: 1 {it:x} 1.
+
+{title:Diagnostics}
+
+{p 4 4 2}
+None.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_integrate:mm_integrate.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online: {bf:{help m2_ftof:[M-2] ftof}},
+{bf:{help moremata}}

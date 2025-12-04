@@ -1,0 +1,99 @@
+{smcl}
+{* 21aug2021}{...}
+{cmd:help mata mm_ipolate()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_ipolate() -- Linear interpolation}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real colvector}
+{cmd:mm_ipolate(}{it:x}{cmd:,} {it:y}{cmd:,} {it:xnew} [{cmd:,} {it:outer}]{cmd:)}
+
+{p 8 12 2}
+{it:real colvector}
+{cmd:_mm_ipolate(}{it:x}{cmd:,} {it:y}{cmd:,} {it:xnew} [{cmd:,} {it:outer}]{cmd:)}
+
+{p 8 12 2}
+{it:real colvector}
+{cmd:mm_fastipolate(}{it:x}{cmd:,} {it:y}{cmd:,} {it:xnew} [{cmd:,} {it:outer}]{cmd:)}
+
+{p 4 8 2}
+where
+
+                     {it:x}:  {it:real colvector x}
+                     {it:y}:  {it:real colvector y}
+                  {it:xnew}:  {it:real colvector xnew}
+                 {it:outer}:  {it:real scalar outer}
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_ipolate()} assumes {it:y} to be piecewise
+linear in {it:x} and returns the linear interpolation of {it:y} at
+the values in {it:xnew}. Averages of {it:y} are used where {it:x}
+values are tied.
+
+{p 4 4 2} {it:outer}!=0 specifies that the (average) {it:y}
+value corresponding to min({it:x}) or max({it:x}) be returned
+for {it:xnew} values below or above the support of {it:x}, respectively. The
+default is to return missing for {it:xnew} values that are outside
+the support of {it:x}.
+
+{p 4 4 2} {cmd:_mm_ipolate()} is like {cmd:mm_ipolate()} but assumes that {it:x} and 
+{it:xnew} are in ascending sort order.
+
+{p 4 4 2} {cmd:mm_fastipolate()} is like {cmd:mm_ipolate()} but assumes that {it:x} and 
+{it:xnew} are in ascending sort order and that the values in {it:x} are unique.
+
+
+{title:Remarks}
+
+{p 4 4 2} Simple example:
+
+        {com}: x = (1 \ 2)
+
+        : y = (10 \ 20)
+
+        : mm_ipolate(x, y, 1.2)
+        {res}  12{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_ipolate(}{it:x}{cmd:,} {it:y}{cmd:,} {it:xnew}{cmd:,} {it:outer}{cmd:)}
+           {it:x}: {it:n x} 1
+           {it:y}: {it:n x} 1
+        {it:xnew}: {it:r x} 1
+       {it:outer}: 1 {it:x} 1
+      {it:result}: {it:r x} 1.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}
+The functions do not take any special action to treat missing values.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_ipolate:mm_ipolate.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {bf:{help ipolate}}, {bf:{help mf_mm_polint:mm_polint()}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help moremata}}

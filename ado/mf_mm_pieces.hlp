@@ -1,0 +1,134 @@
+{smcl}
+{* 01jun2015}{...}
+{cmd:help mata mm_pieces()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_pieces() -- Break a string into pieces}
+
+
+{title:Syntax}
+
+{p 8 25 2}
+{it:string rowvector}
+{cmd:mm_pieces(}{it:str}{cmd:,} {it:length} [{cmd:,} {it:nobreak}{cmd:,} {it:ascii}]{cmd:)}
+
+{p 8 25 2}
+{it:real matrix}{space 5}
+{cmd:mm_npieces(}{it:S}{cmd:,} {it:length} [{cmd:,} {it:nobreak}{cmd:,} {it:ascii}]{cmd:)}
+
+{p 8 25 2}
+{it:real scalar}{space 5}
+{cmd:_mm_npieces(}{it:str}{cmd:,} {it:length} [{cmd:,} {it:nobreak}{cmd:,} {it:ascii}]{cmd:)}
+
+
+{pstd}
+where
+
+{p 10 16 2}
+{it:str}:  {it:string scalar} containing string to be broken 
+
+{p 7 16 2}
+{it:length}:  {it:real scalar} specifying maximum length of pieces
+
+{p 6 16 2}
+{it:nobreak}:  {it:real scalar} indicating that long words are not to be broken 
+
+{p 8 16 2}
+{it:ascii}:  {it:real scalar} indicating that {it:str} is ASCII (Stata 14 or newer)
+
+{p 12 16 2}
+{it:S}:  {it:string matrix S}
+
+
+{title:Description}
+
+{pstd}{cmd:mm_pieces()} breaks a string into pieces of roughly 
+the specified length. Words are not broken unless they are longer than 
+the specified length. {it:nobreak}!=0 indicates that words are not to be
+broken even if they are longer than the specified length.
+
+{pstd}{cmd:mm_npieces()} and {cmd:_mm_npieces()} return the number of pieces a
+string would be broken into by {cmd:mm_pieces()}. {cmd:mm_npieces()} may be
+applied to a {it:sting matrix} in which case it returns element-by-element
+results. {cmd:_mm_npieces()} is equivalent to {cmd:cols(mm_pieces())} but is
+faster and consumes less memory.
+
+{pstd}In Stata 14 or newer (Unicode strings), {cmd:mm_pieces()} returns results
+based on display columns. Alternatively, specify {it:ascii}!=0 to
+return results based on bytes. This is considerably faster than returning
+results based on display columns, but its breaks Unicode stings. Use this
+option only if you are certain that the strings to be processed only contain
+plain ASCII characters. In Stata versions prior to version 14, the {it:ascii}
+argument has no effect.
+
+
+{title:Remarks}
+
+{pstd}
+Example:
+
+        {com}: s = "A string to be cut into pieces"
+        {res}
+        {com}: mm_pieces(s, 10)
+        {res}       {txt}        1           2           3           4
+            {c TLC}{hline 49}{c TRC}
+          1 {c |}  {res} A string   to be cut        into      pieces{txt}  {c |}
+            {c BLC}{hline 49}{c BRC}
+        
+        {com}: _mm_npieces(s,10)
+        {res}  4
+        {txt}
+
+{title:Conformability}
+
+    {cmd:mm_pieces(}{it:str}{cmd:,} {it:length}{cmd:,} {it:nobreak}{cmd:,} {it:ascii}{cmd:)}:
+           {it:str}:  1 {it:x} 1
+        {it:length}:  1 {it:x} 1
+       {it:nobreak}:  1 {it:x} 1
+         {it:ascii}:  1 {it:x} 1
+        {it:result}:  1 {it:x} 1
+        
+    {cmd:mm_npieces(}{it:S}{cmd:,} {it:length}{cmd:,} {it:nobreak}{cmd:,} {it:ascii}{cmd:)}:
+             {it:S}:  {it:r x c}
+        {it:length}:  1 {it:x} 1
+       {it:nobreak}:  1 {it:x} 1
+         {it:ascii}:  1 {it:x} 1
+        {it:result}:  {it:r x c}
+        
+    {cmd:_mm_npieces(}{it:str}{cmd:,} {it:length}{cmd:,} {it:nobreak}{cmd:,} {it:ascii}{cmd:)}:
+           {it:str}:  1 {it:x} 1
+        {it:length}:  1 {it:x} 1
+       {it:nobreak}:  1 {it:x} 1
+         {it:ascii}:  1 {it:x} 1
+        {it:result}:  1 {it:x} 1
+
+
+{title:Diagnostics}
+
+{pstd}Leading and trailing blanks (Unicode whitespace characters in case of
+Stata 14 or newer) are removed from the returned pieces. One piece is returned
+if {it:length} is missing. At least one character is returned per piece
+irrespective of {it:length}.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_pieces:mm_pieces.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help m4_string:[M-4] string}},
+{bf:{help moremata}}
+{p_end}

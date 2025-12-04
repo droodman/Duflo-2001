@@ -1,0 +1,106 @@
+{smcl}
+{* 04aug2020}{...}
+{cmd:help mata mm_prod()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_prod() -- compute product of elements in a matrix}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real scalar}{bind:    }
+{cmd:mm_prod(}{it:real matrix Z}{cmd:)}
+
+{p 8 23 2}
+{it:real colvector}{bind: }
+{cmd:mm_rowprod(}{it:real matrix Z}{cmd:)}
+
+{p 8 23 2}
+{it:real rowvector}{bind: }
+{cmd:mm_colprod(}{it:real matrix Z}{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_prod()} returns the product of the elements in matrix {it:Z}. Stata 10 or newer is required.
+
+{pstd}
+{cmd:mm_rowprod()} returns a column vector containing the product of elements within each row of {it:Z}.
+
+{pstd}
+{cmd:mm_colprod()} returns a row vector containing the product of elements within each column of {it:Z}.
+
+
+{title:Examples}
+
+    {com}: Z = (1, 2, -5, -8) \ (3, 3, 1, -4)
+    {res}
+    {com}: Z
+    {res}       {txt} 1    2    3    4
+        {c TLC}{hline 21}{c TRC}
+      1 {c |}  {res} 1    2   -5   -8{txt}  {c |}
+      2 {c |}  {res} 3    3    1   -4{txt}  {c |}
+        {c BLC}{hline 21}{c BRC}
+
+    {com}: mm_prod(Z)
+    {res}  -2880
+
+    {com}: mm_rowprod(Z)
+    {res}       {txt}  1
+        {c TLC}{hline 7}{c TRC}
+      1 {c |}  {res} 80{txt}  {c |}
+      2 {c |}  {res}-36{txt}  {c |}
+        {c BLC}{hline 7}{c BRC}
+
+    {com}: mm_colprod(Z)
+    {res}       {txt} 1    2    3    4
+        {c TLC}{hline 21}{c TRC}
+      1 {c |}  {res} 3    6   -5   32{txt}  {c |}
+        {c BLC}{hline 21}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_prod(}{it:X}{cmd:)}
+            {it:X}:  {it:r x c}
+       {it:result}:  1 {it:x} 1
+
+    {cmd:mm_rowprod(}{it:X}{cmd:)}
+            {it:X}:  {it:r x c}
+       {it:result}:  {it:r x} 1
+
+    {cmd:mm_colprod(}{it:X}{cmd:)}
+            {it:X}:  {it:r x c}
+       {it:result}:  1 {it:x c}
+
+
+{title:Diagnostics}
+
+{pstd}The functions return missing if {it:Z} is void.
+
+{pstd}Missing values in {it:Z} turn the product to missing.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata10_source##mm_prod:mm_prod.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{helpb mf_sum:sum()},
+{helpb moremata}
+{p_end}

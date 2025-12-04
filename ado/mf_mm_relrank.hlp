@@ -1,0 +1,216 @@
+{smcl}
+{* 23oct2020}{...}
+{cmd:help mata mm_relrank()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_relrank() -- Relative ranks (grade transformation)}
+
+
+{title:Syntax}
+
+{p 8 24 2}
+{it:real matrix}{bind:    }
+{cmd:mm_relrank(}{it:X}{cmd:,} {it:w}{cmd:,} {it:Y} [{cmd:,} {it:mid}{cmd:,} {it:nonorm}{cmd:,} {it:break}{cmd:,} {it:w2}]{cmd:)}
+
+{p 8 24 2}
+{it:real colvector}{bind: }
+{cmd:_mm_relrank(}{it:x}{cmd:,} {it:w}{cmd:,} {it:y} [{cmd:,} {it:mid}{cmd:,} {it:nonorm}{cmd:,} {it:break}{cmd:,} {it:w2}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 14 18 2}{it:X}:  {it:real matrix} containing reference data (rows are observations, columns variables)
+{p_end}
+{p 14 18 2}{it:x}:  {it:real colvector} containing reference data (single variable)
+{p_end}
+{p 14 18 2}{it:w}:  {it:real colvector} containing weights associated with {it:X}
+{p_end}
+{p 14 18 2}{it:Y}:  {it:real matrix} containing comparison data (rows are observations, columns variables)
+{p_end}
+{p 14 18 2}{it:y}:  {it:real colvector} containing comparison data (single variable)
+{p_end}
+{p 12 18 2}{it:mid}:  {it:real scalar} requesting midpoint adjustment
+{p_end}
+{p 9 18 2}{it:nonorm}:  {it:real scalar} requesting the absolute ranks
+{p_end}
+{p 10 18 2}{it:break}:  {it:real scalar} requesting that ties be broken
+{p_end}
+{p 13 18 2}{it:w2}:  {it:real colvector} containing weights associated with {it:Y}
+{p_end}
+
+{title:Description}
+
+{pstd}
+{cmd:mm_relrank()} evaluates the relative ranks of {it:Y} in the distribution 
+{it:X} (so called grade transformation). 
+
+{pstd}
+Results will be obtained column by column. If {it:Y} has one column and {it:X}
+has several columns, then the relative ranks of {it:Y} are computed in each
+column of {it:X}. If {it:X} has one column and {it:Y} has several columns, then
+the relative ranks in {it:X} are computed for each column of {it:Y}. If {it:X}
+and {it:Y} both have several columns, then the number of columns is required to
+be the same and relative ranks are computed column by column.
+
+{pstd}
+Argument {it:w} specifies weights associated
+with the observations (rows) in {it:X}. Omit {it:w} or specify {it:w} as 1 to
+obtain unweighted results.
+
+{pstd}
+Argument {it:mid}!=0 applies midpoint adjustment. In this case, if a comparison 
+value from {it:Y} has ties in the distribution of {it:X}, the midpoint of the 
+corresponding step in the cumulative distribution of {it:X} is used as the 
+relative rank. {it:mid}!=0 has no effect on relative ranks for values from 
+{it:Y} that do not have ties in {it:X}.
+
+{pstd}
+Argument {it:nonorm}!=0 returns absolute ranks, that is, ranks
+expressed in frequency units. The default is return normalized ranks 
+(i.e., ranks divided by the number of observations or sum of weights of 
+{it:X}).
+
+{pstd}
+Argument {it:break}!=0 causes ties to be broken. Let {it:p} be the step size in
+the cumulative distribution at a particular value of {it:X} and let {it:y_i}, 
+{it:i} = 1, ..., {it:k}, be the (randomly ordered) set of observations 
+from {it:Y} that are equal to this particular value of {it:X}. The relative 
+rank of {it:y_i} will then be obtained as the value of the cumulative
+distribution at the relevant point minus ({it:k}-{it:i})*({it:p}/{it:k}). If 
+weights {it:w2} are specified, the set of tied values will be ordered by the size 
+of {it:w2} (using random order within ties of {it:w2}) and the formula will be 
+adjusted such that the increments in the relative ranks within ties are 
+proportional to the size of {it:w2}.
+
+{pstd}
+Argument {it:w2} specifies weights associated with {it:Y}. These weights are 
+only relevant if argument {it:break}!=0 is specified.
+
+{pstd}
+{cmd:_mm_relrank()} is like {cmd:mm_relrank()}, but assumes that both the
+reference data and the comparison data have already been sorted (and,
+consequently, only accepts single data columns as input). If {it:break}!=0 is
+specified, ties will be split in order of their appearance. That is,
+{cmd:_mm_relrank()} takes the order of {it:y} as given and does not rerandomize
+the order of ties or reorder the ties by {it:w2}.
+
+
+{title:Examples}
+
+    {com}: x = jumble(1::10)
+    {res}
+    {com}: mm_ecdf2(x)
+    {res}        {txt} 1    2
+         {c TLC}{hline 11}{c TRC}
+       1 {c |}  {res} 1   .1{txt}  {c |}
+       2 {c |}  {res} 2   .2{txt}  {c |}
+       3 {c |}  {res} 3   .3{txt}  {c |}
+       4 {c |}  {res} 4   .4{txt}  {c |}
+       5 {c |}  {res} 5   .5{txt}  {c |}
+       6 {c |}  {res} 6   .6{txt}  {c |}
+       7 {c |}  {res} 7   .7{txt}  {c |}
+       8 {c |}  {res} 8   .8{txt}  {c |}
+       9 {c |}  {res} 9   .9{txt}  {c |}
+      10 {c |}  {res}10    1{txt}  {c |}
+         {c BLC}{hline 11}{c BRC}
+
+    {com}: y = (3,5.2,7,7,2.1)'
+    {res}
+    {com}: // default vs. mid!=0
+    : y, mm_relrank(x, 1, y), mm_relrank(x, 1, y, 1)
+    {res}       {txt}  1     2     3
+        {c TLC}{hline 19}{c TRC}
+      1 {c |}  {res}  3    .3   .25{txt}  {c |}
+      2 {c |}  {res}5.2    .5    .5{txt}  {c |}
+      3 {c |}  {res}  7    .7   .65{txt}  {c |}
+      4 {c |}  {res}  7    .7   .65{txt}  {c |}
+      5 {c |}  {res}2.1    .2    .2{txt}  {c |}
+        {c BLC}{hline 19}{c BRC}
+
+    {com}: // default vs. break!=0
+    : y, mm_relrank(x, 1, y), mm_relrank(x, 1, y, 0, 0, 1)
+    {res}       {txt}  1     2     3
+        {c TLC}{hline 19}{c TRC}
+      1 {c |}  {res}  3    .3    .3{txt}  {c |}
+      2 {c |}  {res}5.2    .5    .5{txt}  {c |}
+      3 {c |}  {res}  7    .7    .7{txt}  {c |}
+      4 {c |}  {res}  7    .7   .65{txt}  {c |}
+      5 {c |}  {res}2.1    .2    .2{txt}  {c |}
+        {c BLC}{hline 19}{c BRC}
+
+    {com}: // default vs. mid!=0 & break!=0
+    : y, mm_relrank(x, 1, y), mm_relrank(x, 1, y, 1, 0, 1)
+    {res}       {txt}   1      2      3
+        {c TLC}{hline 22}{c TRC}
+      1 {c |}  {res}   3     .3    .25{txt}  {c |}
+      2 {c |}  {res} 5.2     .5     .5{txt}  {c |}
+      3 {c |}  {res}   7     .7   .625{txt}  {c |}
+      4 {c |}  {res}   7     .7   .675{txt}  {c |}
+      5 {c |}  {res} 2.1     .2     .2{txt}  {c |}
+        {c BLC}{hline 22}{c BRC}
+
+    {com}: // default vs. nonorm!=0
+    : y, mm_relrank(x, 1, y), mm_relrank(x, 1, y, 0, 1)
+    {res}       {txt}  1     2     3
+        {c TLC}{hline 19}{c TRC}
+      1 {c |}  {res}  3    .3     3{txt}  {c |}
+      2 {c |}  {res}5.2    .5     5{txt}  {c |}
+      3 {c |}  {res}  7    .7     7{txt}  {c |}
+      4 {c |}  {res}  7    .7     7{txt}  {c |}
+      5 {c |}  {res}2.1    .2     2{txt}  {c |}
+        {c BLC}{hline 19}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_relrank(}{it:X}{cmd:,} {it:w}{cmd:,} {it:Y}{cmd:,} {it:mid}{cmd:,} {it:nonorm}{cmd:,} {it:break}{cmd:,} {it:w2}]{cmd:)}
+             {it:X}:  {it:r1 x c1}
+             {it:w}:  {it:r1 x} 1 or 1 {it:x} 1
+             {it:Y}:  {it:r2 x c2}
+           {it:mid}:  1 {it:x} 1
+        {it:nonorm}:  1 {it:x} 1
+         {it:break}:  1 {it:x} 1
+            {it:w2}:  {it:r2 x} 1 or 1 {it:x} 1
+        {it:result}:  {it:r2 x c2} or {it:r2 x c1}
+
+    {cmd:_mm_relrank(}{it:x}{cmd:,} {it:w}{cmd:,} {it:x}{cmd:,} {it:mid}{cmd:,} {it:nonorm}{cmd:,} {it:break}{cmd:,} {it:w2}]{cmd:)}
+             {it:x}:  {it:r1 x} 1
+             {it:w}:  {it:r1 x} 1 or 1 {it:x} 1
+             {it:y}:  {it:r2 x} 1
+           {it:mid}:  1 {it:x} 1
+        {it:nonorm}:  1 {it:x} 1
+         {it:break}:  1 {it:x} 1
+            {it:w2}:  {it:r2 x} 1 or 1 {it:x} 1
+        {it:result}:  {it:r2 x 1}
+
+
+{title:Diagnostics}
+
+{pstd}
+The functions return missing values for the relative ranks if {it:w} contains missing
+values. Missing values in {it:X} and {it:Y} are ordered last.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_relrank:mm_relrank.mata}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {helpb cumul},
+{helpb mf_mm_ecdf:mm_ecdf()},
+{helpb mf_mm_ranks:mm_ranks()},
+{helpb moremata}
+

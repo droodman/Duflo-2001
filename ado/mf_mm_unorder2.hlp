@@ -1,0 +1,133 @@
+{smcl}
+{* 22may2006}{...}
+{cmd:help mata mm_unorder2()}
+{hline}
+
+{title:Title}
+
+{p 4 8 2}
+{bf:mm_unorder2() -- Stable unorder}
+
+
+{title:Syntax}
+
+{p 8 16 2}
+{it:real colvector}{bind:      }
+{cmd:mm_unorder2(}{it:real scalar n}{cmd:)}
+
+{p 8 16 2}
+{it:transmorphic matrix}{bind: }
+{cmd:mm_jumble2(}{it:transmorphic matrix X}{cmd:)}
+
+{p 8 16 2}
+{it:void}{bind:                }
+{cmd:mm__jumble2(}{it:transmorphic matrix X}{cmd:)}
+
+
+{p 4 8 2}
+where {it:X} may not be a pointer matrix.
+
+
+{title:Description}
+
+{pstd}
+The results from official Stata's {cmd:unorder()} are not
+reproducible if {it:n} is large. That is, differing
+results may be obtained from {cmd:unorder()}, although the
+random-number seed has been set beforehand (see help for
+{helpb mf_uniform:[M-5]{space 1}uniform()}). {cmd:mm_unorder2()} is an
+improved version of official {cmd:unorder()} that produces stable
+results.
+
+{pstd}{cmd:mm_jumble2()} and {cmd:mm__jumble2()} are stable versions
+of official {cmd:jumble()} and
+{cmd:_jumble()}.
+
+{pstd}For descriptions of {cmd:unorder()}, {cmd:jumble()}, and
+{cmd:_jumble()} see help for {helpb mf_sort:[M-5]{space 1}sort()}.
+
+
+{title:Remarks}
+
+{pstd}The following example illustrates the problem:
+
+        {com}: for (i=1;i<=10;i++) {
+        >         uniformseed(3)
+        >         p1 = unorder(100000)
+        >         uniformseed(3)
+        >         p2 = unorder(100000)
+        >         if (p1!=p2) {
+        >                 printf("round %g: unequal results\n", i)
+        >                 break
+        >         }
+        > }
+        {res}round 2: unequal results{txt}
+
+{pstd}Explanation: {helpb mf_uniform:uniform()} may return
+duplicate pseudo random numbers due to computer precision constraints. Example:
+
+        {com}: uniformseed(3)
+        {res}
+        {com}: rows(uniqrows(uniform(100000,1)))
+        {res}  99999{txt}
+
+{pstd}Since the results from {cmd:unorder()} rely on the sort order of
+uniform pseudo random numbers and since the sort order of duplicate values
+is randomized independently from the usual random-number seed,
+results from {cmd:unorder()} may differ.
+
+{pstd}{cmd:mm_unorder2()} solves the problem by using two pseudo
+random-number sequences instead of one.
+
+
+{title:Conformability}
+
+{p 4 4 2}
+{cmd:mm_unorder2(}{it:n}{cmd:)}:
+{p_end}
+		{it:n}:  1 {it:x} 1
+	   {it:result}:  {it:n x}  1
+
+{p 4 4 2}
+{cmd:mm_jumble2(}{it:X}{cmd:)}:
+{p_end}
+		{it:X}:  {it:r1 x c1}
+	   {it:result}:  {it:r1 x c1}
+
+{p 4 4 2}
+{cmd:mm__jumble2(}{it:X}{cmd:)}:
+{p_end}
+		{it:X}:  {it:r1 x c1}
+	   {it:result}:  {it:void}; {it:X} row order modified
+
+
+{title:Diagnostics}
+
+{pstd}
+See help for {helpb mf_sort:[M-5] sort()}.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_unorder2:mm_unorder2.mata},
+{help moremata_source##mm_jumble2:mm_jumble2.mata},
+{help moremata_source##mm__jumble2:mm__jumble2.mata}.
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Manual:  {hi:[M-5] sort()}
+
+{psee}
+Online:  help for
+{helpb mf_sort:[M-5] sort()};
+{helpb moremata}
+{p_end}

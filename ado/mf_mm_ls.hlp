@@ -1,0 +1,157 @@
+{smcl}
+{* 23apr2021}{...}
+{cmd:help mata mm_ls()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_ls() -- Linear (least-squares) regression}
+
+
+{title:Syntax}
+
+{pstd}
+Simple syntax
+
+{p 8 24 2}
+{it:b} =
+{cmd:mm_lsfit(}{it:y} [{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,} {it:cons}{cmd:,} {it:quad}{cmd:,}
+    {it:demean}]{cmd:)}
+
+{p 7 20 2}{bind:       }{it:y}:  {it:real colvector} containing dependent variable{p_end}
+{p 7 20 2}{bind:       }{it:X}:  {it:real matrix} containing predictors{p_end}
+{p 7 20 2}{bind:       }{it:w}:  {it:real colvector} containing weights; specify {cmd:1} for unweighted results{p_end}
+{p 7 20 2}{bind:    }{it:cons}:  whether to include a constant; specify {cmd:0} to omit the constant{p_end}
+{p 7 20 2}{bind:    }{it:quad}:  whether to use quad precision when computing cross products; specify {cmd:0} to use double precision{p_end}
+{p 7 20 2}{bind:  }{it:demean}:  whether to compute cross products based on mean-deviated data; specify {cmd:0} to omit demeaning{p_end}
+
+{pstd}
+Advanced syntax
+
+{pmore}
+Setup
+
+{p 12 24 2}
+{it:S} =
+{cmd:mm_ls(}{it:y} [{cmd:,} {it:X}{cmd:,} {it:w}{cmd:,} {it:cons}{cmd:,} {it:quad}{cmd:,}
+    {it:demean}]{cmd:)}
+
+{pmore}
+Retrieve results
+
+{p2colset 9 37 39 2}{...}
+{p2col:{bind:     }{it:b} = {cmd:mm_ls_b(}{it:S}{cmd:)}}coefficient vector (column vector){p_end}
+{p2col:{bind:    }{it:xb} = {cmd:mm_ls_xb(}{it:S} [{cmd:,} {it:X}]{cmd:)}}linear predictions{p_end}
+{p2col:{bind:     }{it:s} = {cmd:mm_ls_s(}{it:S}{cmd:)}}scale (root mean squared error){p_end}
+{p2col:{bind:    }{it:r2} = {cmd:mm_ls_r2(}{it:S}{cmd:)}}R-squared{p_end}
+{p2col:{bind:    }{it:se} = {cmd:mm_ls_se(}{it:S}{cmd:)}}(non-robust) standard errors{p_end}
+{p2col:{bind:     }{it:V} = {cmd:mm_ls_V(}{it:S}{cmd:)}}(non-robust) variance matrix{p_end}
+{p2col:{bind: }{it:XXinv} = {cmd:mm_ls_XXinv(}{it:S}{cmd:)}}inverse of X'X{p_end}
+{p2col:{bind:   }{it:RSS} = {cmd:mm_ls_rss(}{it:S}{cmd:)}}residual sum of squares{p_end}
+{p2col:{bind: }{it:ymean} = {cmd:mm_ls_ymean(}{it:S}{cmd:)}}mean of y{p_end}
+{p2col:{bind: }{it:means} = {cmd:mm_ls_means(}{it:S}{cmd:)}}means of X (row vector){p_end}
+{p2col:{bind:  }{it:omit} = {cmd:mm_ls_omit(}{it:S}{cmd:)}}column vector flagging omitted terms{p_end}
+{p2col:{bind:}{it:k_omit} = {cmd:mm_ls_k_omit(}{it:S}{cmd:)}}number of omitted terms{p_end}
+{p2col:{bind:     }{it:N} = {cmd:mm_ls_N(}{it:S}{cmd:)}}number of observations (sum of weights){p_end}
+
+{pmore}
+{it:S} is a structure holding results and settings; declare {it:S} as {it:transmorphic}.
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_ls()} fits a linear regression model using the least-squares
+technique. Results are equivalent to Stata's {helpb regress}. Speed of
+{cmd:mm_ls()} is comparable to {helpb regress} under default settings.
+
+{pstd}
+{cmd:mm_ls()} uses quad precision and demeaning (unless the
+constant is excluded) when computing X'X and X'y. Specifying {it:quad}=0 and/or
+{it:demean}=0 will make {cmd:mm_ls()} faster, but less precise. {it:demean}=0 is
+potentially more harmful than {it:quad}=0 (and typically less effective in terms of
+speed gains). Use {it:quad}=0 and {it:demean}=0 only if your data is well-behaved (reasonable
+means, not much collinearity).
+
+{pstd}
+For models without constant ({it:cons}=0), argument {it:demean} has no
+effect. This is because mean-deviation formulas are not applicable in this case
+(meaning that models without constant will generally be affected by precision
+issues if the data is not well-behaved).
+
+
+{title:Examples}
+
+{pstd}
+If you are only interested in the coefficients, you can use
+{cmd:mm_lsfit()} (simple syntax) to obtain a quick least-squares fit without much typing:
+
+        . {stata sysuse auto}
+        . {stata regress weight length foreign}
+        . {stata "mata:"}
+        : {stata y = st_data(., "weight")}
+        : {stata X = st_data(., "length foreign")}
+        : {stata mm_lsfit(y, X)}
+        : {stata end}
+
+{pstd}
+For more sophisticated applications, use the advanced syntax. Function
+{cmd:mm_ls()} defines the problem and performs the main calculations. You can then
+use functions such as {cmd:mm_ls_b()} or {cmd:mm_ls_r2()} to obtain results. The following
+example illustrates how to obtain coefficients, standard errors, t values,
+and the R-squared:
+
+        . {stata "mata:"}
+        : {stata S = mm_ls(y, X)}
+        : {stata "mm_ls_b(S), mm_ls_se(S), mm_ls_b(S):/mm_ls_se(S)"}
+        : {stata mm_ls_r2(S)}
+        : {stata end}
+
+{pstd}
+The R-squared returned by {cmd:mm_ls_r2()} will always be computed with respect
+to a constant-only model, even if {it:cons}=0 has been specified. This is
+equivalent to specifying option {cmd:hascons} in {helpb regress} (or option {cmd:noconstant}
+together with {cmd:tsscons}):
+
+        . {stata sysuse auto}
+        . {stata regress weight length ibn.foreign, hascons}
+        . {stata "mata:"}
+        : {stata y = st_data(., "weight")}
+        : {stata X = st_data(., "length ibn.foreign")}
+        : {stata S = mm_ls(y, X, 1, 0)}
+        : {stata "mm_ls_b(S), mm_ls_se(S), mm_ls_b(S):/mm_ls_se(S)"}
+        : {stata mm_ls_r2(S)}
+        : {stata end}
+
+
+{title:Diagnostics}
+
+{pstd}
+The functions return invalid results if {it:y}, {it:X}, or {it:w} contain
+missing values.
+
+{pstd}
+Coefficients corresponding to omitted (collinear) terms will be set to zero.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_ls:mm_ls.mata}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+{pstd}
+Thanks to Bill Gould for helpful advice.
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{helpb moremata}, {helpb regress}

@@ -1,0 +1,152 @@
+{smcl}
+{* 07jul2020}{...}
+{cmd:help mata mm_diff()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_diff() -- Lagged differences}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:numeric vector}
+{cmd:mm_diff(}{it:x} [{cmd:,} {it:lag}]{cmd:)}
+
+{p 8 12 2}
+{it:numeric matrix}
+{cmd:mm_rowdiff(}{it:X} [{cmd:,} {it:lag}]{cmd:)}
+
+{p 8 12 2}
+{it:numeric matrix}
+{cmd:mm_coldiff(}{it:X} [{cmd:,} {it:lag}]{cmd:)}
+
+{p 4 8 2}
+where
+
+                     {it:x}:  {it:numeric vector x}
+                     {it:X}:  {it:numeric matrix X}
+                   {it:lag}:  {it:real scalar lag}
+
+
+{title:Description}
+
+{p 4 4 2}
+    {cmd:mm_diff()} computes successive lagged differences of the values in vector {it:x}.
+
+{p 4 4 2}
+    {cmd:mm_rowdiff()} computes successive lagged differences within rows of matrix {it:X}.
+
+{p 4 4 2}
+    {cmd:mm_coldiff()} computes successive lagged differences within columns of matrix of {it:X}.
+
+{p 4 4 2}
+    Optional argument {it:lag} specifies the lag to be used. The default is {it:lag} = 1.
+
+
+{title:Examples}
+
+    {com}: x = (1,2,9,4,-10)
+    {res}
+    {com}: x
+    {res}       {txt}  1     2     3     4     5
+        {c TLC}{hline 31}{c TRC}
+      1 {c |}  {res}  1     2     9     4   -10{txt}  {c |}
+        {c BLC}{hline 31}{c BRC}
+
+    {com}: mm_diff(x)
+    {res}       {txt}  1     2     3     4
+        {c TLC}{hline 25}{c TRC}
+      1 {c |}  {res}  1     7    -5   -14{txt}  {c |}
+        {c BLC}{hline 25}{c BRC}
+
+    {com}: mm_diff(x,2)
+    {res}       {txt}  1     2     3
+        {c TLC}{hline 19}{c TRC}
+      1 {c |}  {res}  8     2   -19{txt}  {c |}
+        {c BLC}{hline 19}{c BRC}
+
+    {com}: mm_diff(x,3)
+    {res}       {txt}  1     2
+        {c TLC}{hline 13}{c TRC}
+      1 {c |}  {res}  3   -12{txt}  {c |}
+        {c BLC}{hline 13}{c BRC}
+
+    {com}: mm_diff(x,4)
+    {res}  -11
+
+    {com}: X = (1,2) \ (5,10) \ (11,15)
+    {res}
+    {com}: X
+    {res}       {txt} 1    2
+        {c TLC}{hline 11}{c TRC}
+      1 {c |}  {res} 1    2{txt}  {c |}
+      2 {c |}  {res} 5   10{txt}  {c |}
+      3 {c |}  {res}11   15{txt}  {c |}
+        {c BLC}{hline 11}{c BRC}
+
+    {com}: mm_coldiff(X)
+    {res}       {txt}1   2
+        {c TLC}{hline 9}{c TRC}
+      1 {c |}  {res}4   8{txt}  {c |}
+      2 {c |}  {res}6   5{txt}  {c |}
+        {c BLC}{hline 9}{c BRC}
+
+    {com}: mm_rowdiff(X)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}5{txt}  {c |}
+      3 {c |}  {res}4{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_diff(}{it:x}{cmd:,} {it:lag}{cmd:)}
+           {it:x}: {it:n x} 1 or 1 {it:x n}
+         {it:lag}: 1 {it:x} 1
+      {it:result}: max({it:n}-{it:lag},0) {it:x} 1 or 1 {it:x} max({it:n}-{it:lag},0)
+
+    {cmd:mm_rowdiff(}{it:X}{cmd:,} {it:lag}{cmd:)}
+           {it:X}: {it:r x c}
+         {it:lag}: 1 {it:x} 1
+      {it:result}: {it:r x} max({it:c}-{it:lag},0)
+
+    {cmd:mm_coldiff(}{it:X}{cmd:,} {it:lag}{cmd:)}
+           {it:X}: {it:r x c}
+         {it:lag}: 1 {it:x} 1
+      {it:result}: max({it:r}-{it:lag},0) {it:x c}
+
+
+{title:Diagnostics}
+
+{p 4 4 2}
+Non-integer {it:lag} will be treated as {cmd:trunc(}{it:lag}{cmd:)}.
+
+{p 4 4 2}
+Negative {it:lag} will be treated as {cmd:abs(}{it:lag}{cmd:)}. 
+
+{p 4 4 2}
+Missing {it:lag} will be treated as {it:lag} = 1.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_diff:mm_diff.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for 
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help moremata}}

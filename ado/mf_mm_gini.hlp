@@ -1,0 +1,111 @@
+{smcl}
+{* 26mar2008}{...}
+{cmd:help mata mm_gini()}
+{hline}
+
+{title:Title}
+
+{pstd}
+{bf:mm_gini() -- Gini coefficient}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real rowvector} {cmd:mm_gini(}{it:X} [{cmd:,}
+{it:w}]{cmd:)}
+
+{p 4 4 2}
+where
+
+{p 12 16 2}
+{it:X}:  {it:real matrix} containing data (rows are observations, columns variables)
+
+{p 12 16 2}
+{it:w}:  {it:real colvector} containing weights
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_gini(}{it:X}{cmd:,} {it:w}{cmd:)}
+returns the Gini coefficient of each column of {it:X}.
+
+{pstd}
+{it:w} specifies the weights. Omit {it:w}, or specify {it:w} as 1 to obtain unweighted
+results. Missing values in {it:X} or {it:w} are omitted
+from the calculation.
+
+
+{title:Remarks}
+
+{pstd}The formula used in {cmd:mm_gini()} is
+
+        G(x) = 2 * Cov0(x, F) / mu
+
+{pstd}where mu is the mean of x. Let N denote the
+number of observations (or sum of weights). Then,
+
+        Cov0(x, F) = DCP(x, F) / N
+
+{pstd}where DCP(x, F)
+denotes the deviation cross product between x and its (adjusted)
+empirical cumulative, F. To be precise, F is defined as
+
+               1                     w_i
+        F_i =  - * (    SUM  w_j  -  --- ),  i = 1,...,n
+               W     x_j<=x_i         2
+
+{pstd}where w_i are weights and W is the total sum of weights.
+
+{pstd} Example:
+
+        {com}: x = exp(invnormal(uniform(100,1)))
+        {res}
+        {com}: mm_gini(x, 1)
+        {res}  .5158638536{txt}
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_gini(}{it:x}{cmd:,} {it:w}{cmd:)}:
+{p_end}
+           {it:X}:  {it:n x k}
+           {it:w}:  {it:n x 1} or {it:1 x 1}
+      {it:result}:  {it:1 x k}
+
+
+{title:Diagnostics}
+
+{pstd}None.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_gini:mm_gini.mata}
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_mean:[M-5] mean()}},
+{bf:{help moremata}}
+{p_end}
+
+{psee}
+Links to user-written programs:
+{net "describe anogi, from(http://fmwww.bc.edu/RePEc/bocode/a)":anogi},
+{net "describe egen_inequal, from(http://fmwww.bc.edu/RePEc/bocode/e)":egen_inequal},
+{net "describe inequal7, from(http://fmwww.bc.edu/RePEc/bocode/i)":inequal7},
+{net "describe sg115, from(http://www.stata.com/stb/stb51)":ineqerr},
+{net "describe ginidesc, from(http://fmwww.bc.edu/RePEc/bocode/g)":ginidesc},
+{net "describe descogin, from(http://fmwww.bc.edu/RePEc/bocode/d)":descogin},
+{net "describe ineqdeco, from(http://fmwww.bc.edu/RePEc/bocode/i)":ineqdeco},
+{net "describe ineqdec0, from(http://fmwww.bc.edu/RePEc/bocode/i)":ineqdec0}

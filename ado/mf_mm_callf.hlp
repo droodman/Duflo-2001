@@ -1,0 +1,187 @@
+{smcl}
+{* 04jul2006}{...}
+{cmd:help mata mm_callf()}
+{hline}
+
+{title:Title}
+
+{p 4 18 2}
+{bf:mm_callf() -- Pass varying number of optional arguments to function}
+
+
+{title:Syntax}
+
+{p 8 21 2}
+{bind:     }{it:setup} = {cmd:mm_callf_setup(}{it:f}{cmd:,} {it:n} [{cmd:,}
+{it:p1}{cmd:,} {it:p2}{cmd:,} {it:...}{cmd:,} {it:p10}]{cmd:)}
+
+{p 8 21 2}
+{it:transmorphic} {cmd:mm_callf(}{it:setup} [{cmd:,} {it:o1}{cmd:,}
+{it:o2}{cmd:,}
+{it:o3}{cmd:,}
+{it:o4}{cmd:,}
+{it:o5}]{cmd:)}
+
+
+{pstd}
+where
+
+{p 12 16 2}
+{it:f}:  {it:pointer scalar} containing address of function; usually
+this is coded {cmd:&}{it:funcname}{cmd:()}
+
+{p 12 16 2}
+{it:n}:  {it:real scalar} containing number of "active" optional arguments
+
+{p 4 16 2}
+{it:p1} to {it:p10}:  potential optional arguments to pass to function {it:f}
+
+{p 5 16 2}
+{it:o1} to {it:o5}:  non-optional arguments to pass to function {it:f}
+
+{p 8 16 2}
+{it:setup}:  a variable used for communication between
+{cmd:mm_callf_setup()} and {cmd:mm_callf()};  if you declare {it:setup},
+declare it to be {it:transmorphic}
+
+
+{title:Description}
+
+{pstd}{cmd:mm_callf_setup()} and {cmd:mm_callf()} are helper tools to
+implement passing through optional arguments to functions.
+Up to 10 optional arguments and up to 5 non-optional arguments
+are supported. The tools are based on a suggestion made by Bill Gould
+on Statalist. See
+{browse "http://www.stata.com/statalist/archive/2006-06/msg00303.html"}.
+
+
+{title:Remarks}
+
+{pstd}{cmd:mm_callf_setup()} and {cmd:mm_callf()} are useful if you
+are programming functions that pass on optional arguments to
+functions. The difficulty with passing optional arguments is
+that the number of arguments may not be known in advance. Usage of
+{cmd:mm_callf_setup()} and {cmd:mm_callf()} is illustrated by the
+following two examples.
+
+
+{pstd}{ul:Example 1: static wrapper}
+
+{pstd}
+Say, you intend to program a function called
+{cmd:func1()} that is a wrapper for a function called
+{cmd:func2()}. Assume, that {cmd:func2()} has one non-optional
+argument, {cmd:x}, and two optional arguments, {cmd:mean} and
+{cmd:variance}. You may code:
+
+	{com}function func1(x, | mean, variance)
+	{
+		transmorphic p
+
+		p = mm_callf_setup(&func2(), args()-1, mean, var)
+
+		return(mm_callf(p, x))
+	}{txt}
+
+{pstd}If a user specifies
+{bind:{cmd:func1(x)}}, then {cmd:mm_callf()} will simply execute
+{cmd:func2(x)}. If, however, the user specifies
+{bind:{cmd:func1(x, mean)}}, then {cmd:mm_callf()} will execute
+{bind:{cmd:func2(x, mean)}}. Finally, if {bind:{cmd:func1(x, mean, var)}} is
+specified, then {cmd:mm_callf()} will execute
+{bind:{cmd:func2(x, mean, var)}}.
+
+{pstd}The only tricky part here is the {it:n} argument in
+{cmd:mm_callf_setup()}. It should reflect the number of
+pass-through arguments that have been specified by the user. This number can be
+computed as {cmd:args()-}{it:#}, where {it:#} is the number of other
+arguments (1 in the example above, {cmd:x}).
+
+{pstd}Note that {cmd:func1()} may itself have its own optional
+arguments. The only important thing is that the pass-through
+arguments come last and that {cmd:args()-}{it:#} properly computes
+the number of specified pass-through arguments. Example:
+
+	{com}function func1(x, | log, mean, variance)
+	{
+		transmorphic p
+
+		if (args()==1) log = 0
+
+		p = mm_callf_setup(&func2(), args()-2, mean, var)
+
+		if (log) return(mm_callf(p, log(x)))
+		return(mm_callf(p, x))
+	}{txt}
+
+{pstd}See the source code of {helpb mf_mm_kern:mm_kint()} for a real
+example.
+
+
+{pstd}{ul:Example 2: dynamic wrapper}
+
+{pstd}
+A more complicated case is when you are programming a
+function that receives a function as an argument and optional
+arguments are to be passed on to this received function. (If you
+have not read {bf:{help m2_ftof:[M-2] ftof}} yet, please read it
+now.) Let the wrapper function again be called {cmd:func1()}. Assume
+that there are two non-optional arguments, {cmd:x} and {cmd:w}, and
+that the maximum number of optional arguments to be passed through is
+three. The code of {cmd:func1()} may then be:
+
+	{com}function func1(pointer(function) scalar f, x, w,
+			| a1, a2, a3)
+	{
+		transmorphic p
+
+		p = mm_callf_setup(f, args()-3, a1, a2, a3)
+
+		return(mm_callf(p, x, w))
+	}{txt}
+
+{pstd}See the source code of {helpb mf_mm_bs:mm_bs()} or
+{helpb mf_mm_jk:mm_jk()} for real examples.
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_callf_setup(}{it:f}{cmd:,} {it:n}{cmd:,}
+{it:p1}{cmd:,} {it:...}{cmd:,} {it:p10}{cmd:)}{p_end}
+           {it:f}:  1 {it:x} 1
+           {it:n}:  1 {it:x} 1
+     {it:p1} etc.:  (depending on function {it:f})
+      {it:result}:  {it:struct mm_callf_o10}
+
+{pstd}
+{cmd:mm_callf(}{it:setup}{cmd:,} {it:o1}{cmd:,}
+{it:...}{cmd:,} {it:o5}{cmd:)}{p_end}
+       {it:setup}:  {it:struct mm_callf_o10}
+     {it:o1} etc.:  (depending on function {it:f})
+      {it:result}:  (depending on function {it:f})
+
+
+{title:Diagnostics}
+
+{pstd}None.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_callf:mm_callf.mata}
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help m2_ftof:[M-2] ftof}},
+{bf:{help m2_optargs:[M-2] optargs}},
+{bf:{help mf_args:[M-5] args()}},
+{bf:{help moremata}}

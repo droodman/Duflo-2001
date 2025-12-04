@@ -1,0 +1,42 @@
+{smcl}
+{* 27jan2022}{...}
+{cmd:help mata mm_version()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_version() -- moremata version}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real scalar} {cmd:mm_version()}
+
+
+{title:Description}
+
+{p 4 4 2}
+    {cmd:mm_version()} returns a real scalar equal to the version of
+    {cmd:moremata} installed on the system. The version number is
+    returned without dots. For example, version {cmd:2.0.1} is returned as
+    {cmd:201}.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_version:mm_version.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help moremata}}

@@ -1,0 +1,223 @@
+{smcl}
+{* 05dec2024}{...}
+{cmd:help mata mm_matlist()}
+{hline}
+
+{title:Title}
+
+{pstd}
+    {bf:mm_matlist() -- Display a matrix and control the format}
+
+
+{title:Syntax}
+
+{p 4 27 2}
+    {space 12}{it:void}{space 1}
+    {cmd:mm_matlist(}{it:X} [{cmd:,} {it:fmt}{cmd:,} {it:border}{cmd:,}
+    {it:rstripe}{cmd:,} {it:cstripe}{cmd:,} {it:rtitle}{cmd:,} {it:save}]{cmd:)}
+
+{p 4 27 2}
+    {it:string colvector}{space 1}
+    {cmd:mm_smatlist(}{it:X} [{cmd:,} {it:fmt}{cmd:,} {it:border}{cmd:,}
+    {it:rstripe}{cmd:,} {it:cstripe}{cmd:,} {it:rtitle}]{cmd:)}
+
+
+{pstd}
+where
+
+{p 12 16 2}
+{it:X}:  {it:transmorphic matrix X}
+
+{p 10 16 2}
+{it:fmt}:  {it:string matrix fmt}
+
+{p 7 16 2}
+{it:border}:  {it:real scalar border}
+
+{p 6 16 2}
+{it:rstripe}:  {it:string vector rstripe}
+
+{p 6 16 2}
+{it:cstripe}:  {it:string vector cstripe}
+
+{p 7 16 2}
+{it:rtitle}:  {it:string scalar rtitle}
+
+{p 9 16 2}
+{it:save}:  object of any type; will be replaced
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_matlist()} displays matrix {it:X} and lets you control the
+    format. Wide matrices are broken into pieces to fit the window width.
+
+{pstd}
+    {it:fmt} set the display format(s). Available formats are as described
+    in {helpb mf_printf:[M-5] printf()}). The default format is {cmd:"%9.0g"}
+    if {it:X} is numeric and {cmd:"%s"} if {it:X} is string.
+
+{pstd}
+    {it:border} sets border style. {it:border}==0 omits the border lines.
+    {it:border}==1 prints lines around all four sides (Mata default).
+    {it:border}==2 uses a style similar to a one-way frequency table
+    (lines between the row labels and table body and between the column
+    labels and the table body; see help {helpb tabulate}). {it:border}==3 uses a
+    style similar to a coefficients table (like {it:border}==2 but with
+    top and bottom lines; see help {helpb ereturn display}). The default is
+    {it:border}==1.
+
+{pstd}
+    {it:rstripe} and {it:cstripe} may be used to provide row and column
+    labels. The default is to print the row and column numbers. Specifying
+    {it:rstripe} or {it:cstripe} as {cmd:""} omits the labels. Specifying
+    {it:rstripe} or {it:cstripe} as {cmd:J(1,0,"")} or {cmd:J(0,1,"")} is
+    equivalent to not specifying the argument (i.e. row or column numbers
+    will be printed).
+
+{pstd}
+    {it:rtitle} specifies a title to be printed above the row labels.
+
+{pstd}
+    If {it:save} is provided, no output is displayed, but is returned in {it:save} as 
+    {it:string colvector}. Breaking wide matrices into pieces is disabled in this case.
+
+{pstd}
+    {cmd:mm_smatlist()} is like {cmd:mm_matlist()} but returns a {it:string colvector}
+    containing the output. In fact, {cmd:display(mm_smatlist(X))} is
+    equivalent to {cmd:mm_matlist(X)}, but uses more memory (and does not
+    break wide matrices into pieces). {cmd:mm_smatlist()} is a shortcut to
+    {cmd:mm_matlist(}{it:...}{cmd:,} {it:save}{cmd:)}.
+
+
+{title:Remarks}
+
+{pstd}
+    Examples:
+
+        {com}: X = uniform(2,2):*(100,1)
+        {res}
+        {com}: X
+        {res}       {txt}          1             2
+            {c TLC}{hline 29}{c TRC}
+          1 {c |}  {res}61.00572762   .0884897853{txt}  {c |}
+          2 {c |}  {res}4.244257417   .2894746962{txt}  {c |}
+            {c BLC}{hline 29}{c BRC}
+
+        {com}: mm_matlist(X)
+        {res}{txt}               1           2
+        {txt}    {c TLC}{hline 25}{c TRC}
+        {txt}  1 {c |}{res}   61.00573    .0884898  {txt}{c |}
+        {txt}  2 {c |}{res}   4.244257    .2894747  {txt}{c |}
+        {txt}    {c BLC}{hline 25}{c BRC}
+
+        {com}: mm_matlist(X,("%9.0g","%8.4f"), 3,
+        >     ("weight", "mpg"), ("Coef.","p-value"), "price")
+        {res}{txt}{hline 9}{c TT}{hline 22}
+        {txt}   price {c |}      Coef.    p-value
+        {txt}{hline 9}{c +}{hline 22}
+        {txt}  weight {c |}{res}   61.00573     0.0885
+        {txt}     mpg {c |}{res}   4.244257     0.2895
+        {txt}{hline 9}{c BT}{hline 22}
+
+        {com}: mm_matlist(X*100,"%d")
+        {res}{txt}               1           2
+        {txt}    {c TLC}{hline 25}{c TRC}
+        {txt}  1 {c |}{res}  13sep1976   09jan1960  {txt}{c |}
+        {txt}  2 {c |}{res}  28feb1961   29jan1960  {txt}{c |}
+        {txt}    {c BLC}{hline 25}{c BRC}
+
+        {com}: mm_matlist(J(2,2,1))
+        {res}{txt}               1           2
+        {txt}    {c TLC}{hline 25}{c TRC}
+        {txt}  1 {c |}{res}          1           1  {txt}{c |}
+        {txt}  2 {c |}{res}          1           1  {txt}{c |}
+        {txt}    {c BLC}{hline 25}{c BRC}
+
+        {com}: mm_matlist(J(2,2,1),"%g")
+        {res}{txt}       1   2
+        {txt}    {c TLC}{hline 9}{c TRC}
+        {txt}  1 {c |}{res}  1   1  {txt}{c |}
+        {txt}  2 {c |}{res}  1   1  {txt}{c |}
+        {txt}    {c BLC}{hline 9}{c BRC}
+
+        {com}: S = mm_smatlist(X,"%g",2)
+        {res}
+        {com}: display(8*" ":+S)
+        {res}        {txt}    {c |}           1            2
+                {txt}{hline 4}{c +}{hline 25}
+                {txt}  1 {c |}{res}  61.0057276   .088489785
+                {txt}  2 {c |}{res}  4.24425742   .289474696
+        {txt}
+
+{pstd}
+    {cmd:mm_matlist()} uses the {helpb mf_printf:sprintf()} function
+    to display the numbers, so {it:fmt} may also contain text,
+    although this only seems of limited use. Example:
+
+        {com}: mm_matlist(uniform(2,2),("x = %g","y = %g"))
+        {res}{txt}                   1                2
+            {c TLC}{hline 34}{c TRC}
+        {txt}  1 {c |}{res}  x = .29975603   y = .566944822  {txt}{c |}
+        {txt}  2 {c |}{res}  x = .32776424   y = .068731192  {txt}{c |}
+            {c BLC}{hline 34}{c BRC}
+        {txt}
+
+{title:Conformability}
+
+    {cmd:mm_matlist(}{it:X}{cmd:,} {it:fmt}{cmd:,} {it:border}{cmd:,} {it:rstripe}{cmd:,} {it:cstripe}{cmd:,} {it:rtitle}{cmd:,} {it:save}{cmd:)}:
+         {it:X}:  {it:r x c}
+       {it:fmt}:  1 {it:x} 1 or {it:r x} 1 or 1 {it:x c} or {it:r x c}
+    {it:border}:  1 {it:x} 1
+   {it:rstripe}:  {it:r x} 1 or 1 {it:x r} or {cmd:""} or {cmd:J(0,1,"")} or {cmd:J(1,0,"")}
+   {it:cstripe}:  1 {it:x c} or {it:c x} 1 or {cmd:""} or {cmd:J(1,0,"")} or {cmd:J(0,1,"")}
+    {it:rtitle}:  1 {it:x} 1
+      {it:save}:  will be replaced by {it:ro x} 1
+    {it:result}:  {it:void}
+
+    {cmd:mm_smatlist(}{it:X}{cmd:,} {it:fmt}{cmd:,} {it:border}{cmd:,} {it:rstripe}{cmd:,} {it:cstripe}{cmd:,} {it:rtitle}{cmd:)}:
+         {it:X}:  {it:r x c}
+       {it:fmt}:  1 {it:x} 1 or {it:r x} 1 or 1 {it:x c} or {it:r x c}
+    {it:border}:  1 {it:x} 1
+   {it:rstripe}:  {it:r x} 1 or 1 {it:x r} or {cmd:""} or {cmd:J(0,1,"")} or {cmd:J(1,0,"")}
+   {it:cstripe}:  1 {it:x c} or {it:c x} 1 or {cmd:""} or {cmd:J(1,0,"")} or {cmd:J(0,1,"")}
+    {it:rtitle}:  1 {it:x} 1
+    {it:result}:  {it:ro x} 1
+    
+{pstd}{it:ro}, the number of output rows, is equal to {it:r} plus some 
+rows containing borders and column labels.
+
+
+{title:Diagnostics}
+
+{pstd}
+    {cmd:mm_matlist()} and {cmd:mm_smatlist()} abort with error if the type
+    of {it:X} and the formats specified in {it:fmt} are not
+    compatible (e.g., if {it:X} is numeric and {it:fmt} contains string
+    formats).
+
+{pstd}
+    Using SMCL tags within {it:fmt}, {it:rstripe}, or {it:cstripe}
+    (see help {help smcl}) or specifying special
+    characters in {it:fmt} such as, e.g., {cmd:\n} (see help
+    {helpb mf_printf:[M-5] printf()}) may mess up the output.
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_matlist:mm_matlist.mata}
+
+
+{title:Author}
+
+{pstd}
+    Ben Jann, University of Bern, ben.jann@unibe.ch
+
+
+{title:Also see}
+
+{psee}
+    Online:  help for
+    {helpb moremata}, {helpb mf_printf:[M-5] printf()}, {helpb format}

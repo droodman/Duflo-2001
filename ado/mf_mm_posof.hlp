@@ -1,0 +1,90 @@
+{smcl}
+{* 15jun2006}{...}
+{cmd:help mata mm_posof()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_posof() -- Find element in vector}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real scalar}
+{cmd:mm_posof(}{it:haystack}{cmd:,} {it:needle}{cmd:)}
+
+{p 4 8 2}
+where
+
+              {it:haystack}:  {it:transmorphic vector haystack}
+                {it:needle}:  {it:transmorphic scalar needle}
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_posof()} returns the position of the first
+occurrence of element {it:needle} in
+vector {it:haystack}, or 0 if {it:needle} does not occur.
+
+{p 4 4 2}Note that {cmd:mm_posof()} is now outdated by the more
+flexible and faster {bf:{help mf_mm_which:mm_which()}} function.
+({cmd:mm_posof()} has been written before the appearance of the
+{cmd:select()} function Mata.)
+
+
+{title:Remarks}
+
+{p 4 4 2}{cmd:mm_posof()} may be used with numeric elements or
+with string elements. For example:
+
+        {com}: mm_posof(("one","two","three"),("two"))
+        {res}2
+        {txt}
+        {com}: mm_posof((1,2,3),(3))
+        {res}3{txt}
+
+{p 4 4 2}However:
+
+        {com}: mm_posof((1,2,3),("2"))
+        {res}0{txt}
+
+{p 4 4 2}Furthermore:
+
+        {com}: mm_posof(("one","two","three"),("four"))
+        {res}0{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_posof(}{it:haystack}{cmd:,} {it:needle}{cmd:)}
+    {it:haystack}: 1 {it:x c} or {it:r x} 1
+      {it:needle}: 1 {it:x} 1
+      {it:result}: 1 {it:x} 1.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}{cmd:mm_posof()} returns 0 if the element types of
+{it:needle} and {it:haystack} are different.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_posof:mm_posof.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {bf:{help mf_mm_which:mm_which()}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help mf_strpos:[M-5] strpos()}},
+{bf:{help moremata}}

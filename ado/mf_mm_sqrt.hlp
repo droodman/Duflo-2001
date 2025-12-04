@@ -1,0 +1,99 @@
+{smcl}
+{* 29may2017}{...}
+{cmd:help mata mm_sqrt()}
+{hline}
+
+{title:Title}
+
+{pstd}
+    {bf:mm_sqrt() -- Square root of a symmetric positive definite matrix}
+
+
+{title:Syntax}
+
+{p 8 27 2}
+    {it:real matrix}
+    {cmd:mm_sqrt(}{it:real matrix A}{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+    {cmd:mm_sqrt()} returns the square root {it:B} of {it:A} such that, apart 
+    from roundoff error,
+
+{pmore}
+    {it:B} * {it:B} = {it:A}
+
+{pstd}
+    {it:A} is assumed to be a symmetric positive definite matrix (typically a 
+    variance matrix). Eigenvalue decomposition is used to compute {it:B}; see
+    {helpb mf_eigensystem:eigensystem()}. Let {it:X} be the matrix of eigenvectors
+    and {it:L} be the vector of eigenvalues, then 
+
+{pmore}
+    {it:B} = {it:X} * diag(sqrt({it:L})) * {it:X}'
+
+{pstd}
+    Similar functionality is provided for Stata matrices by Jeff Pitblado's
+    {helpb matsqrt} available from 
+    {stata "net describe matsqrt, from(http://www.stata.com/users/jpitblado)":http://www.stata.com/users/jpitblado}.
+
+{title:Remarks}
+
+{pstd}
+    Examples:
+
+    {com}: X = rnormal(100, 5, 0, 1)
+    {res}
+    {com}: A = variance(X)
+    {res}
+    {com}: B = mm_sqrt(A)
+    {res}
+    {com}: A - B*B'
+    {res}{txt}[symmetric]
+                      1              2              3              4              5
+        {c TLC}{hline 76}{c TRC}
+      1 {c |}  {res} 2.22045e-16                                                            {txt}  {c |}
+      2 {c |}  {res} 4.71845e-16    8.88178e-16                                             {txt}  {c |}
+      3 {c |}  {res}-3.29597e-16    3.33067e-16   -1.11022e-15                              {txt}  {c |}
+      4 {c |}  {res} 2.11636e-16   -1.66533e-16    5.41234e-16    1.11022e-15               {txt}  {c |}
+      5 {c |}  {res} 4.99600e-16    1.31145e-15   -1.11022e-16    5.55112e-17    1.55431e-15{txt}  {c |}
+        {c BLC}{hline 76}{c BRC}
+    {txt}
+
+{title:Conformability}
+
+    {cmd:mm_sqrt(}{it:A}{cmd:)}
+             {it:A}:  {it:n x n}
+        {it:result}:  {it:n x n}
+
+
+{title:Diagnostics}
+
+{pstd}
+    {cmd:mm_sqrt()} returns missing-value results if {it:A} has missing values.
+
+
+{title:Source code}
+
+{pstd}
+    {help moremata_source##mm_sqrt:mm_sqrt.mata}
+
+
+{title:Authors}
+
+{pstd}
+    Christopher Baum, Boston College Department of Economics, baum@bc.edu
+    {p_end}
+{pstd}
+    Ben Jann, University of Bern, jann@soz.unibe.ch
+    {p_end}
+
+
+{title:Also see}
+
+{psee}
+    Online:  help for
+    {helpb m4_matrix:{bind:[M-4] matrix}},
+    {helpb moremata}; {helpb matsqrt} (if installed)

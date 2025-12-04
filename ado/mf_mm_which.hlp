@@ -1,0 +1,83 @@
+{smcl}
+{* 17apr2007}{...}
+{cmd:help mata mm_which()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_which() -- Positions of nonzero elements}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real vector}
+{cmd:mm_which(}{it:real vector v}{cmd:)}
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_which()} returns the position of the nonzero elements
+in {it:v}.
+
+
+{title:Remarks}
+
+{p 4 4 2}Example:
+
+        {com}: x = uniform(10,1)
+        {res}
+        {com}: x
+        {res}        {txt}          1
+             {c TLC}{hline 15}{c TRC}
+           1 {c |}  {res}.6942035381{txt}  {c |}
+           2 {c |}  {res}.9866539028{txt}  {c |}
+           3 {c |}  {res} .339872522{txt}  {c |}
+           4 {c |}  {res}.4785448909{txt}  {c |}
+           5 {c |}  {res}.1890356159{txt}  {c |}
+           6 {c |}  {res}.2186723398{txt}  {c |}
+           7 {c |}  {res} .495693512{txt}  {c |}
+           8 {c |}  {res}.7756144393{txt}  {c |}
+           9 {c |}  {res} .733696372{txt}  {c |}
+          10 {c |}  {res}.4224797708{txt}  {c |}
+             {c BLC}{hline 15}{c BRC}
+
+        {com}: mm_which(x:>.5)
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}1{txt}  {c |}
+          2 {c |}  {res}2{txt}  {c |}
+          3 {c |}  {res}8{txt}  {c |}
+          4 {c |}  {res}9{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_which(}{it:v}{cmd:)}
+           {it:v}: 1 {it:x c} or {it:r x} 1
+      {it:result}: 1 {it:x c1} or {it:r1 x} 1.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}{cmd:mm_which(0)} returns {cmd:J(0,0,.)}.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_which:mm_which.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {bf:{help mf_select:[M-5] select()}},
+{bf:{help moremata}}

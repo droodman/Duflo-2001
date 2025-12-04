@@ -1,0 +1,142 @@
+{smcl}
+{* 10feb2009}{...}
+{cmd:help mata mm_rbinomial()}
+{hline}
+
+{title:Title}
+
+{p 4 19 2}
+{bf:mm_rbinomial() -- Generate binomial distributed random numbers}
+
+{hline}
+{p 2 2 2}Note: An official {cmd:rbinomial()} function was introduced
+in Stata 10.1 (see help
+{bf:{help mf_runiform:[M-5] runiform()}}). Official {cmd:rbinomial()} is much faster
+than {cmd:mm_rbinomial()}.
+{p_end}
+{hline}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real matrix}
+{cmd:mm_rbinomial(}{it:n}{cmd:,} {it:p}{cmd:)}
+
+{p 8 23 2}
+{it:real matrix}
+{cmd:mm_cebinomial(}{it:n}{cmd:,} {it:k}{cmd:,} {it:p}{cmd:)}
+
+{pstd}
+where
+
+        {it:n}:  {it:real matrix n}
+        {it:k}:  {it:real matrix k}
+        {it:p}:  {it:real matrix p}
+
+
+{title:Description}
+
+{pstd}{cmd:mm_rbinomial()} returns a random draw from the binomial
+distribution where {it:n} is the number of trials and {it:p}
+is the success probability.
+
+{pstd}
+When {it:n} and {it:p} are not scalar, {cmd:mm_rbinomial()}
+returns element-by-element results. {it:n} and {it:p} are
+required to be r-conformable (see help
+{helpb m6_glossary:[M-6] glossary}).
+
+{pstd}If you are serious about generating random numbers,
+you should first set the random number seed; see help {helpb generate}
+or help for {helpb mf_uniform:[M-5] uniform()}.
+
+{pstd}{cmd:mm_cebinomial()} returns the expected value of a binomial
+distributed random variable
+conditional on the variable being equal to
+{it:k} or larger. That is, {cmd:mm_cebinomial()} returns
+
+{phang2}
+E({it:X}|{it:X}>={it:k})
+
+{pstd}
+where
+
+{phang2}
+{it:X} ~ B({it:n}, {it:p})
+
+{pstd}
+and {it:n} is the number of trials and {it:p} is the success
+probability.
+
+{pstd}
+When {it:n}, {it:k}, and {it:p} are not scalar, {cmd:mm_cebinomial()}
+returns element-by-element results. {it:n}, {it:k}, and {it:p} are
+required to be r-conformable (see help
+{helpb m6_glossary:[M-6] glossary}).
+
+
+{title:Remarks}
+
+{pstd}{cmd:mm_rbinomial()}: If {it:n}<50 or {it:p}>.03, the random numbers are generated using
+the rejection technique. If {it:n}>=50 and {it:p}>=.03, the geometric distribution
+technique is applied (see Evans et al. 2000).
+
+{pstd}{cmd:mm_cebinomial()}: The expectation of {it:X} ~ B({it:n}, {it:p}) conditional on
+{it:X}>={it:k} may be written as
+
+{phang2}
+E({it:X}|{it:X}>={it:k}) = {it:k} + [ P({it:X}>={it:k}+1) + ... + P({it:X}={it:n}) ] / P({it:X}>={it:k})
+
+{pstd}
+where P({it:X}>={it:k}) is the probability of {it:k} or more
+successes, which is computed as {opt Binomial(n, k, p)}
+(see {helpb mf_normal:[M-5] normal()}).
+
+
+{title:Conformability}
+
+{pstd} Both functions require arguments be r-conformable (see help
+{helpb m6_glossary:[M-6] glossary}). Returned is a matrix of
+max(argument rows) rows and max(argument columns)
+columns containing element-by-element calculated results.
+
+
+{title:Diagnostics}
+
+{pstd}
+Missing value is returned if arguments are out of range
+({it:p}>1, {it:p}<0, {it:n}<=0, {it:k}<0, or {it:k}>{it:n})
+or contain missing value or if {it:n} and {it:k} are non-integer.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_rbinomial:mm_rbinomial.mata},
+{help moremata_source##mm_cebinomial:mm_cebinomial.mata}
+
+
+{title:References}
+
+{phang}
+Evans, M., N. Hastings, B. Peacock (2000): Statistical Distributions.
+Third Edition. New York: Wiley.
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for {bf:{help mf_normal:[M-5] normal()}},
+{bf:{help moremata}}
+
+{psee}
+Links to user-written programs:
+{net "describe genbinomial, from(http://www.stata.com/users/rgutierrez)":genbinomial},
+{net stb 41 sg44.1:sg44.1}

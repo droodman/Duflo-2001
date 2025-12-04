@@ -1,0 +1,214 @@
+{smcl}
+{* 18feb2009}{...}
+{cmd:help mata mm_panels()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_panels() -- Identify panel sizes and sub-panels}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:void}{space 10}
+{cmd:mm_panels(}{it:X}{cmd:,} {it:Xinfo} [{cmd:,} {it:Y}{cmd:,} {it:Yinfo}]{cmd:)}
+
+{p 8 23 2}
+{it:real colvector}
+{cmd:_mm_panels(}{it:X}{cmd:)}
+
+{p 8 23 2}
+{it:real scalar}{space 3}
+{cmd:mm_npanels(}{it:X}{cmd:)}
+
+
+{pstd}
+where
+
+{p 12 16 2}
+{it:X}:  {it:transmorphic vector} containing (upper level) panel ID variable
+(e.g. strata)
+
+{p 8 16 2}
+{it:Xinfo}:  will be replaced by a {it:real colvector} containing panel
+sizes or, if {it:Y} is present, a {it:k} x 2 {it:real matrix} containing upper level
+panel sizes and numbers of lower level panels within upper level
+panels
+
+{p 12 16 2}
+{it:Y}:  {it:transmorphic vector} containing lower level panel ID variable
+(e.g. clusters within strata)
+
+{p 8 16 2}
+{it:Yinfo}:  will be replaced by a {it:real colvector} containing lower level panel
+sizes
+
+
+
+{title:Description}
+
+{pstd}{cmd:mm_panels(}{it:X}{cmd:,} {it:Xinfo}{cmd:)} stores in
+{it:colvector Xinfo} the sizes of the panels in {it:X}. A panel is defined
+as a consecutive series of identical values.  Note that
+{cmd:mm_panels()} does not sort the data. A new panel simply begins each
+time {it:X} changes from one row to the next. Identical values that
+are separated by rows containing other values do not belong to the same
+panel. The "size" of a panel is the number of rows it contains.
+
+{pstd}{cmd:mm_panels(}{it:X}{cmd:,} {it:Xinfo}{cmd:,} {it:Y}{cmd:,} {it:Yinfo}{cmd:)}
+stores in the first column of {it:matrix Xinfo} the sizes of the
+{it:X}-panels (e.g. strata). In the second column of {it:matrix Xinfo}, the number of
+{it:Y}-panels (e.g. clusters) within each {it:X}-panel is stored. Furthermore, the {it:Y}-panel
+sizes within {it:X}-panels are stored in {it:colvector Yinfo}.
+
+{pstd}{cmd:_mm_panels(}{it:X}{cmd:)} is a subroutine used by
+{cmd:mm_panels()}. It returns the panel sizes in {it:X}. Essentially,
+
+        {com}: Xinfo = _mm_panels(X){txt}
+
+{pstd} is equivalent to
+
+        {com}: mm_panels(X, Xinfo=.){txt}
+
+
+{title:Remarks}
+
+{pstd}
+For example, consider the following data
+
+        {com}: X,Y
+        {res}        {txt}1   2
+             {c TLC}{hline 9}{c TRC}
+           1 {c |}  {res}1   1{txt}  {c |}
+           2 {c |}  {res}1   2{txt}  {c |}
+           3 {c |}  {res}1   2{txt}  {c |}
+           4 {c |}  {res}2   1{txt}  {c |}
+           5 {c |}  {res}2   2{txt}  {c |}
+           6 {c |}  {res}2   2{txt}  {c |}
+           7 {c |}  {res}2   2{txt}  {c |}
+           8 {c |}  {res}3   1{txt}  {c |}
+           9 {c |}  {res}4   1{txt}  {c |}
+          10 {c |}  {res}4   1{txt}  {c |}
+             {c BLC}{hline 9}{c BRC}{txt}
+
+{pstd}Typing
+
+        {com}: mm_panels(X, Xinfo=.)
+        {res}
+        {com}: Xinfo
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}3{txt}  {c |}
+          2 {c |}  {res}4{txt}  {c |}
+          3 {c |}  {res}1{txt}  {c |}
+          4 {c |}  {res}2{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}{txt}
+
+{pstd}informs us that there are four panels in X. The first panel
+contains three observations, the second panel contains four
+observations, etc.
+
+{pstd}Furthermore,
+
+        {com}: mm_panels(X, Xinfo=., Y, Yinfo=.)
+        {res}
+        {com}: Xinfo
+        {res}       {txt}1   2
+            {c TLC}{hline 9}{c TRC}
+          1 {c |}  {res}3   2{txt}  {c |}
+          2 {c |}  {res}4   2{txt}  {c |}
+          3 {c |}  {res}1   1{txt}  {c |}
+          4 {c |}  {res}2   1{txt}  {c |}
+            {c BLC}{hline 9}{c BRC}{txt}
+
+{pstd}indicates that in the first and second
+panel there are two sub-panels each
+and in the third and fourth panel there is
+one sub-panel each.
+
+{pstd}Finally,
+
+        {com}: Yinfo
+        {res}       {txt}1
+            {c TLC}{hline 5}{c TRC}
+          1 {c |}  {res}1{txt}  {c |}
+          2 {c |}  {res}2{txt}  {c |}
+          3 {c |}  {res}1{txt}  {c |}
+          4 {c |}  {res}3{txt}  {c |}
+          5 {c |}  {res}1{txt}  {c |}
+          6 {c |}  {res}2{txt}  {c |}
+            {c BLC}{hline 5}{c BRC}{txt}
+
+{pstd}displays the sizes of the sub-panels.
+
+{pstd}See help for {helpb mf_mm_sample:mm_sample()} for an application
+of {cmd:mm_panels()} in the context of stratified and clustered sampling.
+
+
+{title:Conformability}
+
+    {cmd:mm_panels(}{it:X}{cmd:,} {it:Xinfo}{cmd:)}
+      {it:input:}
+                  {it:X}:  {it:n x} 1 or 1 {it:x n}
+      {it:output:}
+{p 14 24 2}{it:Xinfo}:  {it:k x} 1, where {it:k} is the number of panels
+in {it:X}, {it:k}<={it:n}
+
+    {cmd:mm_panels(}{it:X}{cmd:,} {it:Xinfo}{cmd:,} {it:Y}{cmd:,} {it:Yinfo}{cmd:)}
+      {it:input:}
+                  {it:X}:  {it:n x} 1 or 1 {it:x n}
+                  {it:Y}:  {it:n x} 1 or 1 {it:x n}
+      {it:output:}
+{p 14 24 2}{it:Xinfo}:  {it:k x} 2, where {it:k} is the number of panels
+in {it:X}, {it:k}<={it:n}{p_end}
+{p 14 24 2}{it:Yinfo}:  {it:l x} 1, where {it:l} is the number of sub-panels
+in {it:Y}, {it:l}<={it:n}
+
+    {cmd:_mm_panels(}{it:X}{cmd:)}
+                  {it:X}:  {it:n x} 1 or 1 {it:x n}
+{p 13 24 2}{it:result}:  {it:k x} 1, where {it:k} is the number of panels in {it:X}
+
+    {cmd:mm_panels(}{it:X}{cmd:)}
+                  {it:X}:  {it:n x} 1 or 1 {it:x n}
+             {it:result}:  {it:1 x} 1
+
+
+{title:Diagnostics}
+
+{pstd}
+If {it:Y} is missing (i.e. {it:Y}==.) or void (i.e. length(Y)==0),
+{cmd:mm_panels()} does not replace {it:Yinfo}. If both {it:X} and
+{it:Y} are missing or void, {cmd:mm_panels()}
+does not replace {it:Xinfo}.
+
+{pstd}
+If {it:X} is missing or void and {it:Y} is not missing and not void,
+all observations are interpreted as belonging to the same stratum.
+
+{pstd}
+If {it:X} is not missing and not void and {it:Y} is missing or void,
+each observation is interpreted as belonging to it's individual cluster.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_panels:mm_panels.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{helpb mf_mm_sample:mm_sample()},
+{bf:{help mf_panelsetup:[M-5] panelsetup()}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help moremata}}
+{p_end}

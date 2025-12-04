@@ -1,0 +1,115 @@
+{smcl}
+{* 22may2006}{...}
+{cmd:help mata mm_histogram()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_histogram() -- Produce histogram data}
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:real matrix}
+{cmd:mm_histogram(}{it:x} [{cmd:,} {it:w}{cmd:,}
+{it:g}{cmd:,} {it:dir} ]{cmd:)}
+
+
+{p 4 4 2}
+where
+
+{p 12 16 2}
+{it:x}:  {it:real colvector} containing data points
+
+{p 12 16 2}
+{it:w}:  {it:real colvector} containing weights
+
+{p 12 16 2}
+{it:g}:  {it:real colvector} containing the interval boundaries;
+default is {it:g} = {cmd:rangen(min(}{it:x}{cmd:), max(}{it:x}{cmd:), 11)}
+
+{p 10 16 2}
+{it:dir}:  {it:real scalar} specifying the direction of the
+intervals (default: right open)
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_histogram()} computes the density of {it:x}
+for the intervals defined by the grid points in {it:g}
+({it:g} must be sorted). The default is to use right open
+intervals (with the last interval closed). However,
+{it:dir}!=0 specifies that left open intervals be used (with the first
+interval closed).
+
+{p 4 4 2}{it:w} specifies weights associated with
+the observations in {it:x}. Omit {it:w}, or specify {it:w} as 1 to obtain
+unweighted results. Note that {it:x}, {it:w}, and {it:g}
+should not contain missing values.
+
+{p 4 4 2}
+{cmd:mm_histogram()} returns a matrix containing
+for each interval the center (first column), width
+(second column) and the density (third column).
+
+
+{title:Remarks}
+
+{p 4 4 2} Example:
+
+        {com}: x = invnormal(uniform(100,1))
+        {res}
+        {com}: g = mm_makegrid(x, 6)
+        {res}
+        {com}: mm_histogram(x, 1, g)
+        {res}       {txt}           1              2              3
+            {c TLC}{hline 46}{c TRC}
+          1 {c |}  {res}-2.257750662    1.036214862    .0579030491{txt}  {c |}
+          2 {c |}  {res}  -1.2215358    1.036214862    .1737091472{txt}  {c |}
+          3 {c |}  {res}-.1853209385    1.036214862    .3088162617{txt}  {c |}
+          4 {c |}  {res} .8508939234    1.036214862    .3377677863{txt}  {c |}
+          5 {c |}  {res} 1.887108785    1.036214862    .0868545736{txt}  {c |}
+            {c BLC}{hline 46}{c BRC}{txt}
+
+{title:Conformability}
+
+    {cmd:mm_histogram(}{it:x}{cmd:,} {it:w}{cmd:,} {it:g}{cmd:,} {it:dir}{cmd:)}
+             {it:x}:  {it:n x} 1
+             {it:w}:  {it:n x} 1 or 1 {it:x} 1
+             {it:g}:  {it:m x} 1, {it:m}>=2
+           {it:dir}:  1 {it:x} 1
+        {it:result}:  {it:m}-1 {it:x} 3.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}{cmd:mm_histogram()} abort with error if
+{cmd:min(}{it:x}{cmd:)} < {it:g}{cmd:[1]} or
+{cmd:max(}{it:x}{cmd:)} > {it:g}{cmd:[rows(}{it:g}{cmd:)]}.
+
+{p 4 4 2}{cmd:mm_histogram()} produces erroneous results if
+{it:g} is not sorted.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_histogram:mm_histogram.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help mf_mm_linbin:mm_makegrid()}},
+{bf:{help mf_range:[M-5] range()}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help twoway__histogram_gen}},
+{bf:{help moremata}}
+{p_end}

@@ -1,0 +1,278 @@
+{smcl}
+{* 09jul2020}{...}
+{cmd:help mata mm_nunique()}
+{hline}
+
+{title:Title}
+
+{p 4 10 2}
+{bf:mm_nunique() -- Count, obtain, or tag unique values or unique rows}
+
+
+{title:Syntax}
+
+{p 8 29 2}
+{it:real scalar}{bind:         }
+{cmd:mm_nunique(}{it:transmorphic vector X}{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:transmorphic vector}{bind: }
+{cmd:mm_unique(}{it:transmorphic vector X} [{cmd:,} {it:order}]{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:real vector}{bind:         }
+{cmd:mm_unique_tag(}{it:transmorphic vector X} [{cmd:,} {it:which}]{cmd:)}
+
+{p 8 29 2}
+{it:real scalar}{bind:         }
+{cmd:mm_nuniqrows(}{it:transmorphic matrix X}{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:transmorphic matrix}{bind: }
+{cmd:mm_uniqrows(}{it:transmorphic matrix X} [{cmd:,} {it:order}]{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:real colvector}{bind:      }
+{cmd:mm_uniqrows_tag(}{it:transmorphic matrix X} [{cmd:,} {it:which}]{cmd:)}
+
+{p 8 29 2}
+{it:real scalar}{bind:         }
+{cmd:_mm_nunique(}{it:transmorphic vector X}{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:transmorphic vector}{bind: }
+{cmd:_mm_unique(}{it:transmorphic vector X}{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:real vector}{bind:         }
+{cmd:_mm_unique_tag(}{it:transmorphic vector X} [{cmd:,} {it:last}]{cmd:)}
+
+{p 8 29 2}
+{it:real scalar}{bind:         }
+{cmd:_mm_nuniqrows(}{it:transmorphic matrix X}{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:transmorphic matrix}{bind: }
+{cmd:_mm_uniqrows(}{it:transmorphic matrix X}{cmd:)}
+{p_end}
+{p 8 29 2}
+{it:real colvector}{bind:      }
+{cmd:_mm_uniqrows_tag(}{it:transmorphic matrix X} [{cmd:,} {it:last}]{cmd:)}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_nunique()} returns the number of unique values in vector {it:X}.
+
+{pstd}
+{cmd:mm_unique()} returns a vector containing the unique values of vector
+{it:X}. By default, the values will be returned in sorted order. Specify
+{it:order} = {cmd:1} to return the values in the order of their first
+appearance in {it:X}; specify {it:order} = {cmd:2} to return the values in the
+order of their last appearance in {it:X}. To select the default behavior (sorted return),
+omit {it:order} or set {it:order} to any value other than {cmd:1} or {cmd:2}.
+
+{pstd}
+{cmd:mm_unique_tag()} returns a 0/1 vector tagging one element per group
+of unique values in vector {it:X}. Argument {it:which} determines
+how the tagged elements are selected. Specify {it:which} = {cmd:1} to tag the
+first occurrence; specify {it:which} = {cmd:2} to tag the last occurrence. Omit
+{it:which} or set {it:which} to any value other than {cmd:1} or {cmd:2} to
+tag a random element from each group.
+
+{pstd}
+{cmd:mm_nuniqrows()} returns the number of unique rows in matrix {it:X}.
+
+{pstd}
+{cmd:mm_uniqrows()} returns a matrix containing the unique rows of matrix
+{it:X}. By default, the rows will be returned in sorted order. Specify
+{it:order} = {cmd:1} to return the rows in the order of their first
+appearance in {it:X}; specify {it:order} = {cmd:2} to return the rows in the
+order of their last appearance in {it:X}. To select the default behavior (sorted return),
+omit {it:order} or set {it:order} to any value other than {cmd:1} or {cmd:2}. The
+default behavior is equivalent to official Mata's {helpb mf_uniqrows:uniqrows()}.
+
+{pstd}
+{cmd:mm_uniqrows_tag()} returns a 0/1 column vector tagging one row per group
+of unique rows in matrix {it:X}. Argument {it:which} determines
+how the tagged rows are selected. Specify {it:which} = {cmd:1} to tag the
+first occurrence; specify {it:which} = {cmd:2} to tag the last occurrence. Omit
+{it:which} or set {it:which} to any value other than {cmd:1} or {cmd:2} to
+tag a random row from each group.
+
+{pstd}
+Functions prefixed with an underscore, e.g. {cmd:_mm_nunique()}, are variants of the
+above functions that do not sort {it:X} before determining unique values or unique
+rows. Use these functions to save computer time if {it:X} is already sorted. Alternatively,
+use these functions to count, obtain, or tag sets of {it:consecutive} unique
+values, counting later repetitions as different sets. Specify
+{it:last}!=0 in {cmd:_mm_nunique_tag()} and  {cmd:_mm_nuniqrows_tag()}
+to tag the last element/row in each set; otherwise, these functions will tag the first
+element/row in each set.
+
+
+{title:Examples}
+
+    {com}: X = (1,2,3,1)
+    {res}
+    {com}: mm_nunique(X)
+    {res}  3
+
+    {com}: mm_unique(X)
+    {res}       {txt}1   2   3
+        {c TLC}{hline 13}{c TRC}
+      1 {c |}  {res}1   2   3{txt}  {c |}
+        {c BLC}{hline 13}{c BRC}
+
+    {com}: mm_unique(X,2)
+    {res}       {txt}1   2   3
+        {c TLC}{hline 13}{c TRC}
+      1 {c |}  {res}2   3   1{txt}  {c |}
+        {c BLC}{hline 13}{c BRC}
+
+    {com}: mm_unique_tag(X,1)
+    {res}       {txt}1   2   3   4
+        {c TLC}{hline 17}{c TRC}
+      1 {c |}  {res}1   1   1   0{txt}  {c |}
+        {c BLC}{hline 17}{c BRC}
+
+    {com}: mm_unique_tag(X,2)
+    {res}       {txt}1   2   3   4
+        {c TLC}{hline 17}{c TRC}
+      1 {c |}  {res}0   1   1   1{txt}  {c |}
+        {c BLC}{hline 17}{c BRC}
+
+    {com}: X = X', X'
+    {res}
+    {com}: X
+    {res}       {txt}1   2
+        {c TLC}{hline 9}{c TRC}
+      1 {c |}  {res}1   1{txt}  {c |}
+      2 {c |}  {res}2   2{txt}  {c |}
+      3 {c |}  {res}3   3{txt}  {c |}
+      4 {c |}  {res}1   1{txt}  {c |}
+        {c BLC}{hline 9}{c BRC}
+
+    {com}: mm_nuniqrows(X)
+    {res}  3
+
+    {com}: mm_uniqrows(X)
+    {res}       {txt}1   2
+        {c TLC}{hline 9}{c TRC}
+      1 {c |}  {res}1   1{txt}  {c |}
+      2 {c |}  {res}2   2{txt}  {c |}
+      3 {c |}  {res}3   3{txt}  {c |}
+        {c BLC}{hline 9}{c BRC}
+
+    {com}: mm_uniqrows(X,2)
+    {res}       {txt}1   2
+        {c TLC}{hline 9}{c TRC}
+      1 {c |}  {res}2   2{txt}  {c |}
+      2 {c |}  {res}3   3{txt}  {c |}
+      3 {c |}  {res}1   1{txt}  {c |}
+        {c BLC}{hline 9}{c BRC}
+
+    {com}: mm_uniqrows_tag(X,1)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}1{txt}  {c |}
+      2 {c |}  {res}1{txt}  {c |}
+      3 {c |}  {res}1{txt}  {c |}
+      4 {c |}  {res}0{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}
+
+    {com}: mm_uniqrows_tag(X,2)
+    {res}       {txt}1
+        {c TLC}{hline 5}{c TRC}
+      1 {c |}  {res}0{txt}  {c |}
+      2 {c |}  {res}1{txt}  {c |}
+      3 {c |}  {res}1{txt}  {c |}
+      4 {c |}  {res}1{txt}  {c |}
+        {c BLC}{hline 5}{c BRC}{txt}
+
+
+{title:Conformability}
+
+    {cmd:mm_nunique(}{it:X}{cmd:)}, {cmd:_mm_nunique(}{it:X}{cmd:)}
+                  {it:X}:  {it:r x} 1 or 1 {it:x c}
+             {it:result}:  1 {it:x} 1
+
+    {cmd:mm_unique(}{it:X}{cmd:,} {it:order}{cmd:)}
+                  {it:X}:  {it:r1 x} 1 or 1 {it:x c1}
+              {it:order}:  1 {it:x} 1
+             {it:result}:  {it:r2 x} 1, {it:r2} <= {it:r1}, or 1 {it:x c2}, {it:c2} <= {it:c1}
+
+    {cmd:mm_unique_tag(}{it:X}{cmd:,} {it:which}{cmd:)}
+                  {it:X}:  {it:r x} 1 or 1 {it:x c}
+              {it:which}:  1 {it:x} 1
+             {it:result}:  {it:r x} 1 or 1 {it:x c}
+
+    {cmd:mm_nuniqrows(}{it:X}{cmd:)}, {cmd:_mm_nuniqurows(}{it:X}{cmd:)}
+                  {it:X}:  {it:r x c}
+             {it:result}:  1 {it:x} 1
+
+    {cmd:mm_uniqrows(}{it:X}{cmd:,} {it:order}{cmd:)}
+                  {it:X}:  {it:r1 x c}
+              {it:order}:  1 {it:x} 1
+             {it:result}:  {it:r2 x c}, {it:r2} <= {it:r1}
+
+    {cmd:mm_uniqrows_tag(}{it:X}{cmd:,} {it:which}{cmd:)}
+                  {it:X}:  {it:r x c}
+              {it:which}:  1 {it:x} 1
+             {it:result}:  {it:r x} 1
+
+    {cmd:_mm_unique(}{it:X}{cmd:)}
+                  {it:X}:  {it:r1 x} 1 or 1 {it:x c1}
+             {it:result}:  {it:r2 x} 1, {it:r2} <= {it:r1}, or 1 {it:x c2}, {it:c2} <= {it:c1}
+
+    {cmd:_mm_unique_tag(}{it:X}{cmd:,} {it:last}{cmd:)}
+                  {it:X}:  {it:r x} 1 or 1 {it:x c}
+               {it:last}:  1 {it:x} 1
+             {it:result}:  {it:r x} 1 or 1 {it:x c}
+
+    {cmd:_mm_uniqrows(}{it:X}{cmd:)}
+                  {it:X}:  {it:r1 x c}
+             {it:result}:  {it:r2 x c}, {it:r2} <= {it:r1}
+
+    {cmd:_mm_uniqrows_tag(}{it:X}{cmd:,} {it:last}{cmd:)}
+                  {it:X}:  {it:r x c}
+               {it:last}:  1 {it:x} 1
+             {it:result}:  {it:r x} 1
+
+
+{title:Diagnostics}
+
+{pstd}
+{cmd:mm_nunique()} and {cmd:_mm_nunique()} return {cmd:0} if length({it:X})==0.
+
+{pstd}
+{cmd:mm_unique()}, {cmd:mm_unique_tag()}, {cmd:_mm_unique()}, and {cmd:_mm_unique_tag()}
+return void if length({it:X})==0.
+
+{pstd}
+{cmd:mm_nuniqrows()} and {cmd:_mm_nuniqrows()} return {cmd:0} if rows({it:X})==0.
+
+{pstd}
+{cmd:mm_uniqrows()}, {cmd:mm_uniqrows_tag()}, {cmd:_mm_uniqrows()}, and {cmd:_mm_uniqrows_tag()}
+return void if rows({it:X})==0.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_nunique:mm_nunique.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_uniqrows:[M-5] uniqrows()}},
+{bf:{help moremata}}
+{p_end}

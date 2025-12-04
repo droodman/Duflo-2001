@@ -1,0 +1,268 @@
+{smcl}
+{* 16may2014}{...}
+{cmd:help mata mm_finvert()}
+{hline}
+
+{title:Title}
+
+{p 4 19 2}
+{bf:mm_finvert() -- Numerical inversion of univariate function}
+
+
+{title:Syntax}
+
+{p 8 21 2}{it:real vector} {cmd:mm_finvert(}{it:y}{cmd:,} {it:f}{cmd:,}
+{it:df} [{cmd:,} {it:x0}{cmd:,} {it:tol}{cmd:,} {it:itr}{cmd:,} {it:opt}]{cmd:)}
+
+{p 8 21 2}{it:real vector} {cmd:mm_finvert(}{it:y}{cmd:,} {it:f}{cmd:,}
+{it:lo}{cmd:,} {it:up} [{cmd:,} {it:tol}{cmd:,} {it:itr}{cmd:,} {it:opt}]{cmd:)}
+
+{pstd}
+where
+
+
+{p 12 16 2}
+{it:y}:  {it:real vector} containing the values for which function
+{it:f} be inverted
+
+{p 12 16 2}
+{it:f}:  {it:pointer scalar} containing address of function to be
+inverted; usually
+this is coded {cmd:&}{it:funcname}{cmd:()}
+
+{p 11 16 2}
+{it:df}:  {it:pointer scalar} containing address of function providing
+first derivative of function {it:f} (Newton-Raphson method only)
+
+{p 11 16 2}
+{it:x0}:  {it:real vector} containing initial guess
+(Newton-Raphson method only); if {it:x0} omitted, {it:y} is used as initial
+guess
+
+{p 11 16 2}
+{it:lo}:  {it:real vector} containing lower endpoint of the search
+interval (Brent's method only)
+
+{p 11 16 2}
+{it:up}:  {it:real vector} containing upper endpoint of the search
+interval (Brent's method only)
+
+{p 10 16 2}
+{it:tol}:  {it:real scalar} specifying acceptable tolerance for the
+estimate (default is {it:tol}=0 to find the solution as
+accurate as possible)
+
+{p 10 16 2}
+{it:itr}:  {it:real scalar} specifying the maximum number of
+iterations (default is {it:itr}=1000)
+
+{p 10 16 2}
+{it:opt}:  optional argument to pass on to {it:f} and {it:df}
+
+
+{title:Description}
+
+{pstd}{cmd:mm_finvert()} numerically inverts function {it:f} for the
+outcomes {it:y}, that is, {cmd:mm_finvert()} returns an approximation
+for {it:x} given {it:y}, where
+{it:y} = {it:f}{cmd:(}{it:x}{cmd:)}.
+
+{pstd}Two methods are available:
+
+{phang2}{cmd:mm_finvert(}{it:y}{cmd:,} {it:f}{cmd:,}
+{it:df} [{cmd:,} {it:x0}{cmd:,} {it:...}]{cmd:)}: If function {it:df}, providing the
+first derivative of {it:f} is given, then the Newton-Raphson method
+implemented in {helpb mf_mm_nrroot:mm_nrroot()} is applied. {it:x0} may
+be used to specify an initial guess for {it:x}. Specify {it:x0} as a
+scalar to use the same initial guess for {it:x}
+with all outcomes in {it:y}. If {it:x0} is omitted, {it:y} is used as the initial guess.
+
+{phang2}{cmd:mm_finvert(}{it:y}{cmd:,} {it:f}{cmd:,}
+{it:lo}{cmd:,} {it:up} [{cmd:,} {it:...}]{cmd:)}: If derivatives are
+not provided, Brent's method implemented in {helpb mf_mm_root:mm_root()}
+is applied. With this method, {it:lo} and {it:up}, the lower and and
+upper endpoints of the search interval, have to be specified. Specify
+{it:lo} and {it:up} as scalars to use the same search interval for
+{it:x} with all outcomes in {it:y}.
+
+{pstd}With both methods, {it:tol} sets the acceptable tolerance for the accuracy
+of the approximation of {it:x}. See help for {helpb mf_mm_nrroot:mm_nrroot()}
+and {helpb mf_mm_root:mm_root()} for details. Furthermore, {it:itr} sets the maximum number of
+iterations. {cmd:mm_finvert()} aborts with error, if convergence is
+not reach within {it:itr} iterations for any element in {it:y}. 
+
+{pstd} Optional argument {it:opt} can be used to pass on information to
+function {it:f}. {it:opt} can contain anything, including pointers to other Mata
+objects.
+
+{pstd}{cmd:mm_finvert()} is loosely based on suggestions made by Jeff
+Pitblado on Statalist (see
+{browse "http://statacorp.com/statalist/archive/2005-09/msg00837.html"}).
+
+
+{title:Remarks}
+
+{pstd}{cmd:mm_finvert()} may be useful, for example, to generate random draws
+from a given distribution function. If the first derivative of the distribution
+function, i.e. the density function, is known, the approximation of the
+inversion can be computed using the Newton-Raphson method. For example,
+normally distributed random data could be produced as follows:
+
+        {com}: function fx(x) return(normal(x))
+
+        : function dfx(x) return(normalden(x))
+
+        : y = uniform(5,1)
+        {res}
+        {com}: mm_finvert(y, &fx(), &dfx())
+        {res}       {txt}          1
+            {c TLC}{hline 15}{c TRC}
+          1 {c |}  {res}1.935200359{txt}  {c |}
+          2 {c |}  {res}1.270466906{txt}  {c |}
+          3 {c |}  {res}1.423621095{txt}  {c |}
+          4 {c |}  {res}-.516603887{txt}  {c |}
+          5 {c |}  {res}1.213896688{txt}  {c |}
+            {c BLC}{hline 15}{c BRC}
+
+{pstd}If a function providing the first derivative is not available,
+the inversion can be computed using Brent's zero finding method.
+Brent's method works very well in a variety of contexts. However, it
+is usually slower than the Newton-Raphson method and it requires the
+user to specify a range within which the solution is to be sought
+for. Example:
+
+        {com}: mm_finvert(y, &fx(),-5, 5)
+        {res}       {txt}          1
+            {c TLC}{hline 15}{c TRC}
+          1 {c |}  {res}1.935200359{txt}  {c |}
+          2 {c |}  {res}1.270466906{txt}  {c |}
+          3 {c |}  {res}1.423621095{txt}  {c |}
+          4 {c |}  {res}-.516603887{txt}  {c |}
+          5 {c |}  {res}1.213896688{txt}  {c |}
+            {c BLC}{hline 15}{c BRC}
+
+{pstd}The above examples have only illustrative purpose. More
+accurate and much more efficient would be to use the built-in function
+{cmd:invnormal()} in this context (see help for
+{helpb mf_normal:normal()}), that is:
+
+        {com}: invnormal(y)
+        {res}       {txt}          1
+            {c TLC}{hline 15}{c TRC}
+          1 {c |}  {res}1.935200359{txt}  {c |}
+          2 {c |}  {res}1.270466906{txt}  {c |}
+          3 {c |}  {res}1.423621095{txt}  {c |}
+          4 {c |}  {res}-.516603887{txt}  {c |}
+          5 {c |}  {res}1.213896688{txt}  {c |}
+            {c BLC}{hline 15}{c BRC}
+
+{pstd}Use {it:opt} to pass on arguments to the function to be inverted. Here is 
+an example where {it:opt} is a vector containing two parameters, mean and 
+standard deviation:
+
+        {com}: function fx1(x, opt) return(normal((x-opt[1])/opt[2]))
+
+        : function dfx1(x, opt) return(normalden((x-opt[1])/opt[2]))
+
+        : mm_finvert(y, &fx1(), &dfx1(), y, 0, 1000, (1, 2))
+        {res}       {txt}          1
+            {c TLC}{hline 15}{c TRC}
+          1 {c |}  {res}4.870400719{txt}  {c |}
+          2 {c |}  {res}3.540933812{txt}  {c |}
+          3 {c |}  {res} 3.84724219{txt}  {c |}
+          4 {c |}  {res}-.033207774{txt}  {c |}
+          5 {c |}  {res}3.427793375{txt}  {c |}
+            {c BLC}{hline 15}{c BRC}
+
+        {com}: mm_finvert(y, &fx1(),-10, 10, 0, 1000, (1, 2))
+        {res}       {txt}          1
+            {c TLC}{hline 15}{c TRC}
+          1 {c |}  {res}4.870400719{txt}  {c |}
+          2 {c |}  {res}3.540933812{txt}  {c |}
+          3 {c |}  {res} 3.84724219{txt}  {c |}
+          4 {c |}  {res}-.033207774{txt}  {c |}
+          5 {c |}  {res}3.427793375{txt}  {c |}
+            {c BLC}{hline 15}{c BRC}
+
+{pstd}Here is an example where {it:opt} contains pointers:
+
+        {com}: function fx2(x, opt) return(normal((x-(*opt[1]))/(*opt[2])))
+
+        : function dfx2(x, opt) return(normalden((x-(*opt[1]))/(*opt[2])))
+
+        : m = 1
+        {res}
+        {com}: s = 2
+        {res}
+        {com}: mm_finvert(y, &fx2(), &dfx2(), y, 0, 1000, (&m, &s))
+        {res}       {txt}          1
+            {c TLC}{hline 15}{c TRC}
+          1 {c |}  {res}4.870400719{txt}  {c |}
+          2 {c |}  {res}3.540933812{txt}  {c |}
+          3 {c |}  {res} 3.84724219{txt}  {c |}
+          4 {c |}  {res}-.033207774{txt}  {c |}
+          5 {c |}  {res}3.427793375{txt}  {c |}
+            {c BLC}{hline 15}{c BRC}
+
+        {com}: mm_finvert(y, &fx2(),-10, 10, 0, 1000, (&m, &s))
+        {res}       {txt}          1
+            {c TLC}{hline 15}{c TRC}
+          1 {c |}  {res}4.870400719{txt}  {c |}
+          2 {c |}  {res}3.540933812{txt}  {c |}
+          3 {c |}  {res} 3.84724219{txt}  {c |}
+          4 {c |}  {res}-.033207774{txt}  {c |}
+          5 {c |}  {res}3.427793375{txt}  {c |}
+            {c BLC}{hline 15}{c BRC}
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_finvert(}{it:y}{cmd:,} {it:f}{cmd:,} {it:df}{cmd:,} {it:x0}{cmd:,}
+{it:tol}{cmd:,} {it:itr}{cmd:,} {it:opt}{cmd:)}:{p_end}
+           {it:y}:  {it:n x} 1 or 1 {it:x n}
+           {it:f}:  1 {it:x} 1
+          {it:df}:  1 {it:x} 1
+          {it:x0}:  {it:n x} 1 or 1 {it:x n} or 1 {it:x} 1
+         {it:tol}:  1 {it:x} 1
+         {it:itr}:  1 {it:x} 1
+         {it:opt}:  {it:r x c}
+      {it:result}:  {it:n x} 1 or 1 {it:x n}
+
+{pstd}
+{cmd:mm_finvert(}{it:y}{cmd:,} {it:f}{cmd:,} {it:lo}{cmd:,} {it:up}{cmd:,}
+{it:tol}{cmd:,} {it:itr}{cmd:,} {it:opt}{cmd:)}:{p_end}
+           {it:y}:  {it:n x} 1 or 1 {it:x n}
+           {it:f}:  1 {it:x} 1
+          {it:lo}:  {it:n x} 1 or 1 {it:x n} or 1 {it:x} 1
+          {it:up}:  {it:n x} 1 or 1 {it:x n} or 1 {it:x} 1
+         {it:tol}:  1 {it:x} 1
+         {it:itr}:  1 {it:x} 1
+         {it:opt}:  {it:r x c}
+      {it:result}:  {it:n x} 1 or 1 {it:x n}
+
+
+{title:Diagnostics}
+
+{pstd}None.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_finvert:mm_finvert.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_mm_root:mm_root()}},
+{bf:{help mf_mm_nrroot:mm_nrroot()}},
+{bf:{help m2_ftof:[M-2] ftof}},
+{bf:{help moremata}}

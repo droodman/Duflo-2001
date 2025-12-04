@@ -1,0 +1,67 @@
+{smcl}
+{* 09jul2020}{...}
+{cmd:help mata mm_colrunsum()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_colrunsum() -- Running sum of each column}
+
+
+{title:Syntax}
+
+{p 8 23 2}
+{it:numeric matrix}
+{cmd:mm_colrunsum(}{it:real matrix Z} [{cmd:,} {it:real scalar missing}{cmd:,} {it:real scalar quad}]{cmd:)}
+
+
+{title:Description}
+
+{p 4 4 2}{cmd:mm_colrunsum()} returns a matrix
+containing the running sum within each column of {it:Z}.
+
+{p 4 4 2}By default, {cmd:mm_colrunsum()} treats missing values as
+contributing zero to the running sum. Specify {it:missing}!=0 to treat missing 
+values as missing values; in this case, these values will turn the sum to missing.
+
+{p 4 4 2}
+Specify {it:quad}!=0 to request redirection to {cmd:quadrunningsum()} instead
+of {cmd:runningsum()} (only relevant in Stata 10 or newer).
+
+
+{title:Remarks}
+
+{p 4 4 2}{cmd:mm_colrunsum()} was written for Stata 9 and predates
+the release of official Stata's {helpb mf_runningsum:runningsum()}
+function in Stata 10. Changes have been made to {cmd:mm_colrunsum()} so that
+it redirects itself to {cmd:runningsum()} if used in Stata 10 or newer.
+
+
+{title:Conformability}
+
+    {cmd:mm_colrunsum(}{it:Z}{cmd:,} {it:missing}{cmd:,} {it:quad}{cmd:)}:
+             {it:Z}:  {it:r x c}
+       {it:missing}:  1 {it:x} 1
+          {it:quad}:  1 {it:x} 1
+        {it:result}:  {it:r x c}
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_colrunsum:mm_colrunsum.mata} and
+{help moremata10_source##_mm_colrunsum10:_mm_colrunsum10.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {bf:{help mf_sum:[M-5] sum()}},
+{bf:{help mf_runningsum:[M-5] runningsum()}},
+{bf:{help moremata}}

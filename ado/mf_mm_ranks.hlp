@@ -1,0 +1,148 @@
+{smcl}
+{* 23oct2020}{...}
+{cmd:help mata mm_ranks()}
+{hline}
+
+{title:Title}
+
+{p 4 17 2}
+{bf:mm_ranks() -- Compute ranks or cumulative frequencies}
+
+
+{title:Syntax}
+
+{p 8 24 2}
+{it:real matrix}{bind:    }
+{cmd:mm_ranks(}{it:X} [{cmd:,} {it:w}{cmd:,} {it:ties}{cmd:,} {it:mid}{cmd:,} {it:norm}]{cmd:)}
+
+{p 8 24 2}
+{it:real colvector}{bind: }
+{cmd:_mm_ranks(}{it:x} [{cmd:,} {it:w}{cmd:,} {it:ties}{cmd:,} {it:mid}{cmd:,} {it:norm}]{cmd:)}
+
+
+{pstd}
+where
+
+{p 14 18 2}{it:X}:  {it:real matrix} containing data (rows are observations, columns variables)
+
+{p 14 18 2}{it:x}:  {it:real colvector} containing data (single variable)
+
+{p 14 18 2}{it:w}:  {it:real colvector} containing weights
+
+{p 11 18 2}{it:ties}:  {it:real scalar} determining the treatment of ties{p_end}
+{p 18 18 2}{it:ties}=0: randomly split ties (default){p_end}
+{p 18 18 2}{it:ties}=1: use highest rank{p_end}
+{p 18 18 2}{it:ties}=2: use average rank{p_end}
+{p 18 18 2}{it:ties}=3: use lowest rank{p_end}
+{p 18 18 2}{it:ties}=4: order ties by {it:w}
+
+{p 12 18 2}{it:mid}:  {it:real scalar} requesting midpoint adjustment
+
+{p 11 18 2}{it:norm}:  {it:real scalar} requesting that the ranks be normalized
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_ranks()} returns for each column of {it:X} the ranks of the values
+in {it:X}, where the smallest value is ranked highest (i.e. rank 1
+is returned for the smallest value, rank 2 for the second smallest,
+etc.). Seen differently, {cmd:mm_ranks()} returns the absolute cumulative
+frequency distribution of each column of {it:X} or, if {it:norm}!=0 is specified,
+the relative cumulative distribution.
+
+{pstd}
+{it:w} specifies weights associated
+with the observations (rows) in {it:X}. Omit {it:w} or specify {it:w} as 1 to
+obtain unweighted results. Using {it:w}!=1 does not seem to make much sense if
+the result is to be interpreted as ranks. It is useful, however, to compute the
+cumulative frequency distribution from weighted data.
+
+{pstd}
+The default is to return ranks in random order where outcome values are
+tied. Alternatively, specify {it:ties}==1
+to assign the highest occurring rank to tied observations,
+{it:ties}==2 to assign mean ranks, or
+{it:ties}==3 to assign the lowest rank. Example:
+
+        {com}: x = (1,2,2,3)'
+        {res}
+        {com}: x, mm_ranks(x,1,0), mm_ranks(x,1,1), mm_ranks(x,1,2),
+        >    mm_ranks(x,1,3)
+        {res}       {txt}  1     2     3     4     5
+            {c TLC}{hline 31}{c TRC}
+          1 {c |}  {res}  1     1     1     1     1{txt}  {c |}
+          2 {c |}  {res}  2     2     2   2.5     3{txt}  {c |}
+          3 {c |}  {res}  2     3     2   2.5     3{txt}  {c |}
+          4 {c |}  {res}  3     4     4     4     4{txt}  {c |}
+            {c BLC}{hline 31}{c BRC}{txt}
+
+{pstd}Furthermore, {it:ties}==4 ranks tied observations in order of
+{it:w} (observations with smallest weights are ranked highest). If
+{it:w} is constant within ties, {it:ties}==4 is equivalent to {it:ties}==0.
+
+{pstd}
+Argument {it:mid}!=0 applies midpoint adjustment. In this case, at each step in the
+distribution, the value of the midpoint of the step is returned. For example,
+the first rank will be 0.5, not 1; the second rank will be 1.5, not 2, etc.
+
+{pstd}
+Argument {it:norm}!=0 normalizes the ranks by dividing them by the
+number of observations (or sum of weights, if weights have been specified).
+
+{pstd}
+{cmd:_mm_ranks()} is like {cmd:mm_ranks()}, but assumes that the data has
+already been sorted (and, consequently, only accepts a single column as data
+input). Note that {cmd:_mm_ranks()} makes no distinction between {it:ties}=0 and
+{it:ties}=4; in both cases, ties will be split in order of their
+appearance. That is, {cmd:_mm_ranks()} takes the order of the data as given and
+does not rerandomize the order of ties.
+
+
+{title:Conformability}
+
+    {cmd:mm_ranks(}{it:X}{cmd:,} {it:w}{cmd:,} {it:ties}{cmd:,} {it:mid}{cmd:,} {it:norm}{cmd:)}:
+             {it:X}:  {it:r x c}
+             {it:w}:  {it:r x} 1 or 1 {it:x} 1
+          {it:ties}:  1 {it:x} 1
+           {it:mid}:  1 {it:x} 1
+          {it:norm}:  1 {it:x} 1
+        {it:result}:  {it:r x c}
+
+    {cmd:_mm_ranks(}{it:x}{cmd:,} {it:w}{cmd:,} {it:ties}{cmd:,} {it:mid}{cmd:,} {it:norm}{cmd:)}:
+             {it:x}:  {it:r x} 1
+             {it:w}:  {it:r x} 1 or 1 {it:x} 1
+          {it:ties}:  1 {it:x} 1
+           {it:mid}:  1 {it:x} 1
+          {it:norm}:  1 {it:x} 1
+        {it:result}:  {it:r x} 1
+
+
+{title:Diagnostics}
+
+{pstd}
+The functions return all ranks as missing if the weights contain missing
+values. Missing values in {it:X} are ranked lowest.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_ranks:mm_ranks.mata}
+
+
+{title:Author}
+
+{pstd}
+Ben Jann, University of Bern, ben.jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {helpb cumul},
+{helpb egen:egen rank()},
+{helpb mf_mm_ecdf:mm_ecdf()},
+{helpb mf_mm_relrank:mm_relrank()},
+{helpb moremata}
+

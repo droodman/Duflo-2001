@@ -1,0 +1,71 @@
+*! Source of lmoremata10.mlib
+
+
+*! {smcl}
+*! {marker _mm_colrunsum10}{bf:_mm_colrunsum10.mata}{asis}
+*! version 1.0.2  09jul2020  Ben Jann
+
+version 10.0
+mata:
+
+numeric matrix _mm_colrunsum10(numeric matrix A, real scalar mis)
+{
+    //version 10
+    real scalar i
+    numeric matrix B
+
+    if (cols(A)==1) return(runningsum(A, mis))
+
+    if (isfleeting(A)) {
+        for (i=1; i<=cols(A); i++) A[,i] = runningsum(A[,i], mis)
+        return(A)
+    }
+    B = A
+    for (i=1; i<=cols(B); i++) B[,i] = runningsum(B[,i], mis)
+    return(B)
+}
+
+numeric matrix _mm_quadcolrunsum10(numeric matrix A, real scalar mis)
+{
+    //version 10
+    real scalar i
+    numeric matrix B
+
+    if (cols(A)==1) return(quadrunningsum(A, mis))
+
+    if (isfleeting(A)) {
+        for (i=1; i<=cols(A); i++) A[,i] = quadrunningsum(A[,i], mis)
+        return(A)
+    }
+    B = A
+    for (i=1; i<=cols(B); i++) B[,i] = quadrunningsum(B[,i], mis)
+    return(B)
+}
+
+end
+
+
+*! {smcl}
+*! {marker mm_prod}{bf:mm_prod.mata}{asis}
+*! version 1.0.0  Ben Jann  04aug2020
+*! based on a Statalist post by Daniel Klein, see:
+*! www.statalist.org/forums/forum/general-stata-discussion/general/1330558-product-of-row-elements
+
+version 10.1
+mata:
+
+real scalar mm_prod(real matrix x)
+{
+    if (length(x)==0) return(.)
+    return(exp(sum(ln(abs(x)), 1)) * (1:-2*mod(sum(x:<0), 2)))
+}
+
+real colvector mm_rowprod(real matrix x)
+{
+    if (length(x)==0) return(J(rows(x), 1, .))
+    return(exp(rowsum(ln(abs(x)), 1)) :* (1:-2*mod(rowsum(x:<0), 2)))
+}
+
+real rowvector mm_colprod(real matrix x) return(mm_rowprod(x')')
+
+end

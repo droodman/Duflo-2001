@@ -1,0 +1,110 @@
+{smcl}
+{* 13jul2006}{...}
+{cmd:help mata mm_polint()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf:mm_polint() -- Polynomial interpolation and extrapolation}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real vector}
+{cmd:mm_polint(}{it:x}{cmd:,} {it:y}{cmd:,} {it:xnew} [{cmd:,} {it:degree}]{cmd:)}
+
+{p 4 8 2}
+where
+
+{p 12 16 2}
+{it:x}:  {it:real vector} containing strictly monotone increasing or
+decreasing {it:x}-values
+
+{p 12 16 2}
+{it:y}:  {it:real vector} containing associated {it:y}-values
+
+{p 9 16 2}
+{it:xnew}:  {it:real vector} containing evaluation points
+
+{p 12 16 2}
+{it:d}:  {it:real scalar} specifying degree of the polynomial (default: 1)
+
+
+{title:Description}
+
+{p 4 4 2} {cmd:mm_polint()} evaluates the interpolating
+polynomial through {it:d}+1 ({it:x},{it:y})-points at the value
+{it:xnew}. {it:x} should be strictly monotone increasing or
+decreasing. The set of data points is chosen such that
+the {it:x}-values are centered around {it:xnew}. However, the set
+is bounded by 1 at the left and length({it:x}) at the right. Furthermore,
+choosing a centered set of data points is only possible if {it:d}
+is uneven. In this case ({it:d}+1)/2 points are on each side
+of {it:xnew}. If {it:d} is even and {it:x} is in ascending order, then
+{it:d}/2+1 points are below {it:xnew} and {it:d}/2 above. If
+{it:x} is in descending order {it:d}/2 points are below and {it:d}/2+1 above.
+Therefore, if {it:d} is even, the returned result depends on whether {it:x} is
+increasing or decreasing.
+
+{p 4 4 2} {it:d} is the degree of the polynomial. The default is to
+use a polynomial of degree one, i.e. to compute the linear interpolation
+({it:d}=1).
+
+
+{title:Remarks}
+
+{p 4 4 2}{cmd:mm_polint()} is based on a translation into Mata of
+the {bf:polint} rountine given in Press et al. (1992:109-110).
+
+
+{title:Conformability}
+
+    {cmd:mm_polint(}{it:x}{cmd:,} {it:y}{cmd:,} {it:xnew}{cmd:,} {it:degree}{cmd:)}:
+           {it:x}: {it:n x} 1 or 1 {it:x n}
+           {it:y}: {it:n x} 1 or 1 {it:x n}
+        {it:xnew}: {it:m x} 1 or 1 {it:x m}
+      {it:degree}: 1 {it:x} 1
+      {it:result}: {it:m x} 1 or 1 {it:x m}.
+
+
+{title:Diagnostics}
+
+{p 4 4 2}{cmd:mm_polint()} requires {it:x} be in ascending or
+descending order.
+
+{p 4 4 2}{it:d} must be an integer equal to one or larger and must be
+smaller than the number of input data points
+(i.e., {it:d}<length({it:x})).
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_polint:mm_polint.mata}
+
+
+{title:References}
+
+{phang}
+Press, William H.,
+Saul A. Teukolsky,
+William T. Vetterling,
+Brian P. Flannery (1992). Numerical Recipes in C. The Art of Scientific
+Computing. Second Edition. Cambridge University Press.
+{browse "http://www.numerical-recipes.com/"}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {bf:{help ipolate}}, {bf:{help mf_mm_ipolate:mm_ipolate()}},
+{bf:{help mf_spline3:spline3()}},
+{bf:{help m4_utility:[M-4] utility}},
+{bf:{help moremata}}

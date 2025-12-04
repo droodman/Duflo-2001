@@ -1,0 +1,144 @@
+{smcl}
+{* 07jul2006}{...}
+{cmd:help mata mm_nrroot()}
+{hline}
+
+{title:Title}
+
+{p 4 19 2}
+{bf:mm_nrroot() -- Newton-Raphson univariate zero (root) finder}
+
+
+{title:Syntax}
+
+{p 8 21 2}{it:rc} = {cmd:mm_nrroot(}{it:x}{cmd:,} {it:fdf}
+[{cmd:,} {it:tol}{cmd:,} {it:itr}{cmd:,}
+{it:...}]{cmd:)}
+
+{pstd}
+where
+
+{p 11 16 2}
+{it:rc}:  the return code; {it:rc}!=0 indicates that
+no valid solution has been found
+
+{p 12 16 2}
+{it:x}:  {it:real scalar} containing initial guess; {it:x} will be replaced
+by a {it:real scalar} containing solution
+
+{p 10 16 2}
+{it:fdf}:  {it:pointer scalar} containing address of function
+supplying the function value and the first derivative; usually
+this is coded {cmd:&}{it:funcname}{cmd:()}
+
+{p 10 16 2}
+{it:tol}:  {it:real scalar} specifying acceptable tolerance for the root
+estimate (default is {it:tol}=0 to find the root as
+accurate as possible)
+
+{p 10 16 2}
+{it:itr}:  {it:real scalar} specifying the maximum number of
+iterations (default is {it:itr}=1000)
+
+{p 10 16 2}
+{it:...}:  up to 10 additional arguments to pass on to function {it:fdf}
+
+
+{title:Description}
+
+{pstd}{cmd:mm_nrroot()} uses the Newton-Raphson method to search
+for the root of a function with respect to its first argument.
+That is, {cmd:mm_nrroot()} approximates the value {it:x} for which
+the function evaluates to zero. The
+accuracy of the approximation is 4e+4*epsilon({it:x}) + {it:tol}.
+
+{pstd}{cmd:mm_nrroot()} stores the found solution in {it:x} and issues
+return code {it:rc}. Possible return codes are:
+
+{phang2}{bind: 0:} everything went well
+
+{phang2}{bind: 1:} convergence has not been reached within the
+maximum number of iterations; {it:x} will contain the current approximation
+
+{pstd}
+{cmd:mm_nrroot()} is based on the example given in Press et
+al. (1992:365-366).
+
+
+{title:Remarks}
+
+{pstd}Example:
+
+        {com}: function myfunc(x, a) {c -(}
+        >         fn = x^2 - a
+        >         df = 2*x
+        >         return(fn, df)
+        > {c )-}
+
+        : a = 2/3
+        {res}
+        {com}: mm_nrroot(x=1, &myfunc(), 0, 1000, a)
+        {res}  0
+
+        {com}: x
+        {res}  .8164965809
+
+        {com}: mm_nrroot(x=1, &myfunc(), 0.01, 1000, a)
+        {res}  0
+
+        {com}: x
+        {res}  .8164965986
+
+        {com}: sqrt(a)
+        {res}  .8164965809{txt}
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_nrroot(}{it:x}{cmd:,} {it:fdf}{cmd:,}
+{it:tol}{cmd:,} {it:itr}{cmd:,} {it:...}{cmd:)}:{p_end}
+           {it:x}:  1 {it:x} 1
+         {it:fdf}:  1 {it:x} 1
+         {it:tol}:  1 {it:x} 1
+         {it:itr}:  1 {it:x} 1
+         {it:...}:  (depending on function {it:fdf})
+      {it:result}:  1 {it:x} 1
+
+
+{title:Diagnostics}
+
+{pstd}{it:x} will be set to missing if the function value or the
+derivative evaluates to
+missing at some point in the algorithm.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_nrroot:mm_nrroot.mata}
+
+
+{title:References}
+
+{phang}
+Press, William H.,
+Saul A. Teukolsky,
+William T. Vetterling,
+Brian P. Flannery (1992). Numerical Recipes in C. The Art of Scientific
+Computing. Second Edition. Cambridge University Press.
+{browse "http://www.numerical-recipes.com/"}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_mm_root:mm_root()}},
+{bf:{help m2_ftof:[M-2] ftof}},
+{bf:{help moremata}}

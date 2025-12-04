@@ -1,0 +1,253 @@
+{smcl}
+{* 06may2007}{...}
+{cmd:help mata mm_subset()}
+{hline}
+
+{title:Title}
+
+{p 4 8 2}
+{bf:mm_subset() -- Obtain subsets, compositions, and partitions}
+
+
+{title:Syntax}
+
+{p 13 24 2}
+{it:info} {cmd:=}
+{cmd:mm_subsetsetup(}{it:n} [{cmd:,} {it:k}]{cmd:)}
+
+{p 4 24 2}
+{it:real colvector}{space 1}
+{cmd:mm_subset(}{it:info}{cmd:)}
+
+{p 7 24 2}
+{it:real matrix}{space 1}
+{cmd:mm_subsets(}{it:n} [{cmd:,} {it:k}]{cmd:)}
+
+
+{p 13 24 2}
+{it:info} {cmd:=}
+{cmd:mm_compositionsetup(}{it:n} [{cmd:,} {it:k}{cmd:,} {it:alt}]{cmd:)}
+
+{p 4 24 2}
+{it:real colvector}{space 1}
+{cmd:mm_composition(}{it:info}{cmd:)}
+
+{p 7 24 2}
+{it:real matrix}{space 1}
+{cmd:mm_compositions(}{it:n} [{cmd:,} {it:k}{cmd:,} {it:alt}]{cmd:)}
+
+{p 7 24 2}
+{it:real scalar}{space 1}
+{cmd:mm_ncompositions(}{it:n} [{cmd:,} {it:k}]{cmd:)}
+
+
+{p 13 24 2}
+{it:info} {cmd:=}
+{cmd:mm_partitionsetup(}{it:n} [{cmd:,} {it:k}{cmd:,} {it:pad}{cmd:,} {it:alt}]{cmd:)}
+
+{p 4 24 2}
+{it:real colvector}{space 1}
+{cmd:mm_partition(}{it:info}{cmd:)}
+
+{p 7 24 2}
+{it:real matrix}{space 1}
+{cmd:mm_partitions(}{it:n} [{cmd:,} {it:k}{cmd:,} {it:alt}]{cmd:)}
+
+{p 7 24 2}
+{it:real scalar}{space 1}
+{cmd:mm_npartitions(}{it:n} [{cmd:,} {it:k}]{cmd:)}
+
+
+{p 4 24 2}
+{it:real colvector}{space 1}
+{cmd:mm_rsubset(}{it:n} [{cmd:,} {it:k}]{cmd:)}
+
+{p 4 24 2}
+{it:real colvector}{space 1}
+{cmd:mm_rcomposition(}{it:n} [{cmd:,} {it:k}]{cmd:)}
+
+
+{pstd}
+where
+
+{p 16 20 2}
+{it:n}:  {it:real scalar n}
+
+{p 16 20 2}
+{it:k}:  {it:real scalar k}
+
+{p 14 20 2}
+{it:pad}:  {it:real scalar} indicating that the partitions be padded with 
+0s to have length {it:k}
+
+{p 14 20 2}
+{it:alt}:  {it:real scalar} indicating that the alternative algorithm be used
+
+
+{pstd}
+and where {it:info} should be declared {it:transmorphic}.
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_subset(}{it:info}{cmd:)}, where {it:info} is set by {cmd:mm_subsetsetup()}, 
+returns all {it:k}-subsets (combinations) of {it:n} elements, one at a 
+time in lexicographic order. If {it:k} is omitted or if {it:k}==., 
+the {it:n}-subset is returned. Hint: The total number of subsets can be
+computed as {cmd:comb(}{it:n}{cmd:,} {it:k}{cmd:)}. Algorithm 5.8 from Reingold et
+al. (1977) is used to generate the subsets.
+
+{pstd}
+{cmd:mm_subsets()} is a wrapper for {cmd:mm_subset()} 
+and returns a matrix containing all subsets.
+
+{pstd} {cmd:mm_composition(}{it:info}{cmd:)}, where {it:info} is set by 
+{cmd:mm_compositionsetup()}, returns all {it:k}-part compositions of a 
+positive integer {it:n}, one at a time. If {it:k} is omitted or if 
+{it:k}==., then the {it:n}-part compositions of {it:n} are returned. The 
+default algorithm uses a direct approach and returns the compositions in 
+anti-lexicographic order. The alternative algorithm, which is applied if 
+{it:alt}!=0  is specified, generates the compositions indirectly (in 
+lexicographic order) by using the {cmd:mm_subset()} function (as 
+suggested by Reingold et al. 1977, p. 190-191). The default algorithm is about 
+1/3 faster than the alternative algorithm.
+
+{pstd}
+{cmd:mm_compositions()} is a wrapper for {cmd:mm_composition()} 
+and returns a matrix containing all compositions.
+
+{pstd}
+{cmd:mm_ncompositions()} returns the total number of {it:k}-part 
+compositions of {it:n}, which is equal to 
+{cmd:comb(}{it:n}+{it:k}-1{cmd:,}{it:k}-1{cmd:)}.
+
+{pstd} {cmd:mm_partition(}{it:info}{cmd:)}, where {it:info} is set by 
+{cmd:mm_partitionsetup()}, returns all partitions with {it:k} or fewer 
+addends of a positive integer {it:n}, one at a time. If {it:k} is omitted 
+or if {it:k}==., then the partitions with {it:n} or fewer addends are 
+returned. The default algorithm is based on Algorithm ZS1 by Zoghbi and 
+Stojmenovic (1998; with modifications to allow the {it:k} parameter) and 
+returns the partitions in anti-lexicographic order.  The alternative 
+algorithm, which is applied if {it:alt}!=0 is specified, is based on 
+Algorithm 5.12 in Reingold et al. (1977) and returns the partitions in 
+lexicographic order. The default algorithm is much faster than the 
+alternative algorithm, especially if {it:k} is low compared to {it:n}.
+
+{pstd}
+{cmd:mm_partitions()} is a wrapper for {cmd:mm_partition()} 
+and returns a matrix containing all partitions.
+
+{pstd}
+{cmd:mm_npartitions()} returns the total number of 
+partitions with {it:k} or fewer addends 
+of a positive integer {it:n} (based on algorithms given on 
+http://home.att.net/~numericana/answer/numbers.htm#partitions, with
+modifications to allow the {it:k} parameter). {cmd:mm_npartitions()}
+may be slow if {it:k}<{it:n} and {it:n} is large (> 1000, say).
+
+{pstd}
+{cmd:mm_rsubset()} returns a random {it:k}-subset of {it:n} 
+elements. {cmd:mm_rcomposition()} returns a random {it:k}-part 
+compositions of {it:n} (based on ideas presented in Reingold et al. 1977,
+p. 189).
+
+{pstd}
+The procedure to cycle through all combinations, compositions, or partitions 
+is to initialize {it:info} using the setup function and 
+then repeatedly call the combinatorial function until it returns 
+{cmd:J(0,1,.)}. For example:
+
+        {it:info} {cmd:= mm_subsetsetup(}{it:n}{cmd:,} {it:k}{cmd:)}
+        {cmd:while ((}{it:set}{cmd:=mm_subset(}{it:info}{cmd:)) != J(0,1,.)) {c -(}} 
+                ... {it:set} ...
+        {cmd:{c )-}}
+
+
+{title:Remarks}
+
+{pstd} Examples:
+
+        {com}: comb(4,3)
+        {res}  4
+        
+        {com}: mm_subsets(4,3)
+        {res}       {txt}1   2   3   4
+            {c TLC}{hline 17}{c TRC}
+          1 {c |}  {res}1   1   1   2{txt}  {c |}
+          2 {c |}  {res}2   2   3   3{txt}  {c |}
+          3 {c |}  {res}3   4   4   4{txt}  {c |}
+            {c BLC}{hline 17}{c BRC}
+        
+        {com}: mm_ncompositions(4,3)
+        {res}  15
+        
+        {com}: mm_compositions(4,3)
+        {res}       {txt} 1    2    3    4    5    6    7    8    9   10
+            {c TLC}{hline 51}
+          1 {c |}  {res} 4    3    3    2    2    2    1    1    1    1
+        {txt}  2 {c |}  {res} 0    1    0    2    1    0    3    2    1    0
+        {txt}  3 {c |}  {res} 0    0    1    0    1    2    0    1    2    3
+        {txt}    {c BLC}{hline 51}
+               11   12   13   14   15
+             {hline 26}{c TRC}
+          1    {res} 0    0    0    0    0{txt}  {c |}
+          2    {res} 4    3    2    1    0{txt}  {c |}
+          3    {res} 0    1    2    3    4{txt}  {c |}
+             {hline 26}{c BRC}
+        
+        {com}: mm_npartitions(4,3)
+        {res}  4
+        
+        {com}: mm_partitions(4,3)
+        {res}       {txt}1   2   3   4
+            {c TLC}{hline 17}{c TRC}
+          1 {c |}  {res}4   3   2   2{txt}  {c |}
+          2 {c |}  {res}0   1   2   1{txt}  {c |}
+          3 {c |}  {res}0   0   0   1{txt}  {c |}
+            {c BLC}{hline 17}{c BRC}
+        {txt}
+        
+{pstd}See the source code of 
+{bf:{help mf_mm_mgof:mm_mgof()}} for some applications.
+
+
+{title:Diagnostics}
+
+{pstd}
+{cmd:mm_subset()}, {cmd:mm_composition()}, and {cmd:mm_permutation()} return 
+J(0,1,.) when there are no more combinations, compositions, or permutations.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_subset:mm_subset.mata}
+
+
+{title:References}
+
+{phang}
+Reingold, E. M., J. Nievergelt, N. Deo (1977). Combinatorial 
+Algorithms: Theory and Practice. Englewood Cliffs, NJ: Prentice-Hall.
+{p_end}
+{phang}
+Zohgbi, A., I. Stojmenovic (1998). Fast Algorithms for Generating 
+Partitions. International Journal of Computer Mathematics 70: 319-332.
+{p_end}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for 
+{bf:{help mf_cvpermute:[M-5] cvpermute()}},
+{bf:{help m4_statistical:[M-4] statistical}},
+{bf:{help mf_mm_mgof:mm_mgof()}},
+{bf:{help moremata}}
+{p_end}

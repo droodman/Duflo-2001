@@ -1,0 +1,146 @@
+{smcl}
+{* 07jul2006}{...}
+{cmd:help mata mm_root()}
+{hline}
+
+{title:Title}
+
+{p 4 19 2}
+{bf:mm_root() -- Brent's univariate zero (root) finder}
+
+
+{title:Syntax}
+
+{p 8 21 2}{it:rc} = {cmd:mm_root(}{it:x}{cmd:,} {it:f}{cmd:,}
+{it:lo}{cmd:,} {it:up} [{cmd:,} {it:tol}{cmd:,} {it:itr}{cmd:,}
+{it:...}]{cmd:)}
+
+{pstd}
+where
+
+{p 11 16 2}
+{it:rc}:  the return code; {it:rc}!=0 indicates that
+no valid solution has been found
+
+{p 12 16 2}
+{it:x}:  will be replaced by a {it:real scalar} containing solution
+
+{p 12 16 2}
+{it:f}:  {it:pointer scalar} containing address of function whose zero
+will be sought for; usually
+this is coded {cmd:&}{it:funcname}{cmd:()}
+
+{p 11 16 2}
+{it:lo}:  {it:real scalar} containing lower endpoint of the search interval
+
+{p 11 16 2}
+{it:up}:  {it:real scalar} containing upper endpoint of the search interval
+
+{p 10 16 2}
+{it:tol}:  {it:real scalar} specifying acceptable tolerance for the root
+estimate (default is {it:tol}=0 to find the root as
+accurate as possible)
+
+{p 10 16 2}
+{it:itr}:  {it:real scalar} specifying the maximum number of
+iterations (default is {it:itr}=1000)
+
+{p 10 16 2}
+{it:...}:  up to 10 additional arguments to pass on to function {it:f}
+
+
+{title:Description}
+
+{pstd}{cmd:mm_root()} searches the interval from {it:lo} to {it:up}
+for the root of function {it:f} with respect to its first argument.
+That is, {cmd:mm_root()} approximates the value {it:x} for which
+{it:f}{cmd:(}{it:x} [{cmd:,} {it:...}]{cmd:)} evaluates to zero. The
+accuracy of the approximation is 4*epsilon({it:x}) + {it:tol}.
+
+{pstd}{cmd:mm_root()} stores the found solution in {it:x} and issues
+return code {it:rc}. Possible return codes are:
+
+{phang2}{bind: 0:} everything went well
+
+{phang2}{bind: 1:} convergence has not been reached within the
+maximum number of iterations; {it:x} will contain the current approximation
+
+{phang2}{bind: 2:} {it:f}{cmd:(}{it:lo}{cmd:)} and {it:f}{cmd:(}{it:up}{cmd:)} do not
+have opposite signs and {it:f}{cmd:(}{it:lo}{cmd:)} is closer to
+zero than {it:f}{cmd:(}{it:up}{cmd:)}; {it:x} will be set to {it:lo}
+
+{phang2}{bind: 3:} {it:f}{cmd:(}{it:lo}{cmd:)} and {it:f}{cmd:(}{it:up}{cmd:)} do not
+have opposite signs and {it:f}{cmd:(}{it:up}{cmd:)}  is closer to
+zero than {it:f}{cmd:(}{it:lo}{cmd:)}; {it:x} will be set to {it:up}
+
+{pstd}
+{cmd:mm_root()} is a (slightly modified) translation of the C
+realization of Brent's zero finder provided in
+{browse "http://www.netlib.org/c/brent.shar"}. A description of the
+algorithm and details on the modifications can be found in the source
+of {cmd:mm_root()} (see below).
+
+
+{title:Remarks}
+
+{pstd}Example:
+
+        {com}: function myfunc(x, a) return(x^2 - a)
+
+        : a = 2/3
+        {res}
+        {com}: mm_root(x=., &myfunc(), 0, 1, 0, 1000, a)
+        {res}  0
+
+        {com}: x
+        {res}  .8164965809
+
+        {com}: mm_root(x=., &myfunc(), 0, 1, 0.01, 1000, a)
+        {res}  0
+
+        {com}: x
+        {res}  .8168350168
+
+        {com}: sqrt(a)
+        {res}  .8164965809{txt}
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_root(}{it:x}{cmd:,} {it:f}{cmd:,} {it:lo}{cmd:,} {it:up}{cmd:,}
+{it:tol}{cmd:,} {it:itr}{cmd:,} {it:...}{cmd:)}:{p_end}
+           {it:x}:  input: anything; output: 1 {it:x} 1
+           {it:f}:  1 {it:x} 1
+          {it:lo}:  1 {it:x} 1
+          {it:up}:  1 {it:x} 1
+         {it:tol}:  1 {it:x} 1
+         {it:itr}:  1 {it:x} 1
+         {it:...}:  (depending on function {it:f})
+      {it:result}:  1 {it:x} 1
+
+
+{title:Diagnostics}
+
+{pstd}{it:x} will be set to missing if {it:f} evaluates to
+missing at some point in the algorithm.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_root:mm_root.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_mm_nrroot:mm_nrroot()}},
+{bf:{help m2_ftof:[M-2] ftof}},
+{bf:{help moremata}}

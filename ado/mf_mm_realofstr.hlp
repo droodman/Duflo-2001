@@ -1,0 +1,69 @@
+{smcl}
+{* 22may2006}{...}
+{cmd:help mata mm_realofstr()}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}
+{bf: mm_realofstr() -- Convert string to real}
+
+{hline}
+{p 2 2 2}Note: An official {cmd:strtoreal()} function was introduced in
+Stata 9.1 (see help {bf:{help mf_strtoreal:[M-5] strtoreal()}}). This makes
+{cmd:mm_realofstr()} obsolete.{p_end}
+{hline}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real matrix}
+{cmd:mm_realofstr(}{it:string matrix s}{cmd:)}
+
+
+{title:Description}
+
+{p 4 4 2}
+{cmd:mm_realofstr(}{it:s}{cmd:)} returns {it:s} as a numeric value
+or {it:missing} using
+Stata's {cmd:real()} function (see help {help string functions}).
+
+{p 4 4 2}
+When arguments are not scalars, {cmd:mm_realofstr()} returns
+element-by-element results.
+
+
+{title:Conformability}
+
+    {cmd:mm_realofstr(}{it:s}{cmd:)}:
+         {it:s}:  {it:r x c}
+    {it:result}:  {it:r x c}
+
+
+{title:Diagnostics}
+
+{p 4 4 2}
+{cmd:mm_realofstr(}{it:s}{cmd:)} returns missing if {it:s}
+cannot be converted.
+
+
+{title:Source code}
+
+{p 4 4 2}
+{help moremata_source##mm_realofstr:mm_realofstr.mata}
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{bf:{help mf_strtoreal:[M-5] strtoreal()}},
+{bf:{help mf_strofreal:[M-5] strofreal()}},
+{bf:{help m4_string:[M-4] string}},
+{bf:{help moremata}}

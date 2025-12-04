@@ -1,0 +1,106 @@
+{smcl}
+{* 03aug2006}{...}
+{cmd:help mata mm_plot()}
+{hline}
+
+{title:Title}
+
+{pstd}
+{bf:mm_plot() -- Draw plot using Stata's {helpb graph_twoway:graph twoway} command}
+
+
+{title:Syntax}
+
+{p 15 21 2}
+{it:void}{space 2}{cmd:mm_plot(}{it:X} [{cmd:,}
+{it:plottype}{cmd:,} {it:options}]{cmd:)}
+
+{p 8 21 2}
+{it:real scalar}{space 2}{cmd:_mm_plot(}{it:X} [{cmd:,}
+{it:plottype}{cmd:,} {it:options}]{cmd:)}
+
+
+{p 4 4 2}
+where
+
+{p 12 16 2}
+{it:X}:  {it:real matrix} containing data (rows are observations, columns variables)
+
+{p 5 16 2}
+{it:plottype}:  {it:string scalar} specifying type of twoway plot
+(see help {helpb twoway}; default is {cmd:"scatter"})
+
+{p 6 16 2}
+{it:options}:  {it:string scalar} specifying options to be passed on
+to the graph command
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_plot(}{it:X}{cmd:)} draws a twoway plot from the contents of
+{it:X} using Stata's {helpb graph_twoway:graph twoway} command. The
+columns of {it:X} are the variables to be
+plotted. {cmd:mm_plot()} aborts with error if the graph command
+cannot be executed successfully.
+
+{pstd}
+{cmd:_mm_plot()} performs the same action as {cmd:mm_plot()} but
+returns the appropriate Stata return code instead of aborting with
+error if the graph command cannot be executed
+successfully.
+
+
+{title:Remarks}
+
+{pstd} Examples:
+
+        {com}. {stata "mata: mm_plot(uniform(100,2))"}
+
+        {com}. {stata `"mata: mm_plot(sort(uniform(10,3),3),"line")"'}
+
+        {com}. {stata `"mata: mm_plot(uniform(100,2), "", "msymbol(Th)")"'}{txt}
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_plot(}{it:X}{cmd:,} {it:plottype}{cmd:,} {it:options}{cmd:)}:
+{p_end}
+           {it:X}:  {it:n x k}
+    {it:plottype}:  {it:1 x 1}
+     {it:options}:  {it:1 x 1}
+      {it:result}:  {it:void}
+
+{pstd}
+{cmd:_mm_plot(}{it:X}{cmd:,} {it:plottype}{cmd:,} {it:options}{cmd:)}:
+{p_end}
+           {it:X}:  {it:n x k}
+    {it:plottype}:  {it:1 x 1}
+     {it:options}:  {it:1 x 1}
+      {it:result}:  {it:1 x 1}
+
+
+{title:Diagnostics}
+
+{pstd}None.
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_plot:mm_plot.mata}
+
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help graph_twoway:graph twoway}},
+{bf:{help moremata}}
+{p_end}

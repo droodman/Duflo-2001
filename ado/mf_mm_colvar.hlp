@@ -1,0 +1,220 @@
+{smcl}
+{* 22jun2006}{...}
+{cmd:help mata mm_colvar()}
+{hline}
+
+{title:Title}
+
+{pstd}
+{bf:mm_colvar() -- Variance, by column}
+
+
+{title:Syntax}
+
+{p 8 12 2}
+{it:real rowvector}
+{cmd:mm_colvar(}{it:X} [{cmd:,} {it:w}]{cmd:)}
+
+{p 8 12 2}
+{it:real matrix}{bind:   }
+{cmd:mm_meancolvar(}{it:X} [{cmd:,} {it:w}]{cmd:)}
+
+
+{p 8 12 2}
+{it:real matrix}{bind:   }
+{cmd:mm_variance0(}{it:X} [{cmd:,} {it:w}]{cmd:)}
+
+{p 8 12 2}
+{it:real matrix}{bind:   }
+{cmd:mm_meanvariance0(}{it:X} [{cmd:,} {it:w}]{cmd:)}
+
+
+{p 8 12 2}
+{it:real matrix}{space 4}{cmd:mm_mse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)}
+
+{p 8 12 2}
+{it:real rowvector} {cmd:mm_colmse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)}
+
+
+{p 8 12 2}
+{it:real matrix}{space 4}{cmd:mm_sse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)}
+
+{p 8 12 2}
+{it:real rowvector} {cmd:mm_colsse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)}
+
+
+{p 4 4 2}
+where
+
+{p 12 16 2}
+{it:X}:  {it:real matrix X} (rows are observations, columns variables)
+
+{p 12 16 2}
+{it:w}:  {it:real colvector w}
+
+{p 11 16 2}
+{it:mu}:  {it:real rowvector mu}
+
+
+{title:Description}
+
+{pstd}
+{cmd:mm_colvar(}{it:X}{cmd:,} {it:w}{cmd:)}
+returns the variance of each column of {it:X}. Essentially,
+
+        {cmd:mm_colvar(}{it:X}{cmd:,} {it:w}{cmd:)} = {cmd:diagonal(variance(}{it:X}{cmd:,} {it:w}{cmd:))'}
+
+{pstd}
+See help for {helpb mf_mean:mean()}. However,
+{cmd:mm_colvar()} does not compute the covariances and is
+therefore much faster than {cmd:diagonal(variance())} if {it:X}
+contains more than one column. Furthermore, note
+that {cmd:mm_colvar()} omits missing values in {it:X} by
+column, whereas {cmd:variance()} omits missing values casewise.
+
+{pstd}
+{cmd:mm_meancolvar(}{it:X}{cmd:,} {it: w}{cmd:)}
+returns a matrix containing the mean and the variance of
+each column of {it:X}. (Means in row one, variances in row two.)
+
+{pstd}
+{cmd:mm_variance0(}{it:X}{cmd:,} {it:w}{cmd:)}
+returns the population variance matrix of {it:X}. {cmd:mm_variance0()}
+differs from official Stata's {helpb mf_variance:variance()} (see help
+for {helpb mf_mean:mean()}) in that
+it divides the deviation cross products by N instead of N-1, where N
+is the number of observations. Essentially,
+
+        {cmd:mm_variance0(}{it:X}{cmd:,} {it:w}{cmd:)} = {cmd:variance(}{it:X}{cmd:,} {it:w}{cmd:)} * (N-1)/N
+
+{pstd}
+However, {cmd:mm_variance0()} also produces correct results if
+N==1.
+
+{pstd}
+{cmd:mm_meanvariance0(}{it:X}{cmd:,} {it: w}{cmd:)}
+returns {cmd:mean(}{it:X}{cmd:,}{it:w}{cmd:)\mm_variance0(}{it:X}{cmd:,}{it:w}{cmd:)}.
+
+{pstd}
+{cmd:mm_mse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)} computes
+the mean squared errors matrix, where errors are defined as
+{it:X}:-{it:mu}.
+
+{pstd}
+{cmd:mm_colmse()} computes mean squared errors by column.
+
+{pstd}
+{cmd:mm_sse()} and {cmd:mm_colsse()} compute the sum of squared errors.
+
+{pstd}
+{it:w} specifies the weights.
+Specify {it:w} as 1 to obtain unweighted results.
+
+
+{title:Remarks}
+
+{pstd}
+Examples for {cmd:mm_colvar()}:
+
+        {com}: x = invnormal(uniform(10000,3))
+        {res}
+        {com}: mm_colvar(x, 1)
+        {res}       {txt}          1             2             3
+            {c TLC}{hline 43}{c TRC}
+          1 {c |}  {res} 1.00018384   1.002621747   1.003480729{txt}  {c |}
+            {c BLC}{hline 43}{c BRC}
+
+        {com}: mm_meancolvar(x, 1)
+        {res}       {txt}           1              2              3
+            {c TLC}{hline 46}{c TRC}
+          1 {c |}  {res}-.0024994158   -.0091972878   -.0035865732{txt}  {c |}
+          2 {c |}  {res}  1.00018384    1.002621747    1.003480729{txt}  {c |}
+            {c BLC}{hline 46}{c BRC}{txt}
+
+{pstd}
+The formula implemented in {cmd:mm_mse()} and {cmd:mm_colmse()} computes the
+mean squared error as the sum of squared errors divided by N,
+where N is the number of observations (or sum of weights if {it:w}!=1).
+
+
+{title:Conformability}
+
+{pstd}
+{cmd:mm_colvar(}{it:X}{cmd:,} {it:w}{cmd:)}:
+{p_end}
+		{it:X}:  {it:n x k}
+		{it:w}:  {it:n x 1} or {it:1 x 1}
+	   {it:result}:  {it:1 x k}
+
+{pstd}
+{cmd:mm_meancolvar(}{it:X}{cmd:,} {it:w}{cmd:)}:
+{p_end}
+		{it:X}:  {it:n x k}
+		{it:w}:  {it:n x} 1 or 1 {it:x} 1
+	   {it:result}:  2 {it:x} k
+
+{pstd}
+{cmd:mm_variance0(}{it:X}{cmd:,} {it:w}{cmd:)}:
+{p_end}
+		{it:X}:  {it:n x k}
+		{it:w}:  {it:n x 1} or {it:1 x 1}
+	   {it:result}:  {it:k x k}
+
+{pstd}
+{cmd:mm_meanvariance0(}{it:X}{cmd:,} {it:w}{cmd:)}:
+{p_end}
+		{it:X}:  {it:n x k}
+		{it:w}:  {it:n x} 1 or 1 {it:x} 1
+	   {it:result}:  ({it:k}+1) {it:x} k
+
+{pstd}
+{cmd:mm_mse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)},
+{cmd:mm_sse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)}:
+{p_end}
+		{it:X}:  {it:n x k}
+		{it:w}:  {it:n x 1} or {it:1 x 1}
+	       {it:mu}:  1 {it:x k}
+	   {it:result}:  {it:k x k}
+
+{pstd}
+{cmd:mm_colmse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)},
+{cmd:mm_colsse(}{it:X}{cmd:,} {it:w}{cmd:,} {it:mu}{cmd:)}:
+{p_end}
+		{it:X}:  {it:n x k}
+		{it:w}:  {it:n x} 1 or 1 {it:x} 1
+	       {it:mu}:  1 {it:x k}
+	   {it:result}:  1 {it:x} k
+
+{title:Diagnostics}
+
+{pstd} {cmd:mm_variance0()}, {cmd:mm_meanvariance0()},
+{cmd:mm_mse()}, and {cmd:mm_sse()} omit from calculation rows of
+{it:X} or {it:w} that contain missing values (casewise deletion). If
+all rows contain missing values, then the returned result contains
+all missing values.
+
+{pstd}
+Contrarily, {cmd:mm_colvar()}, {cmd:mm_meancolvar()}, {cmd:mm_colmse()}, and
+{cmd:mm_colsse()} omit missing
+values by column (i.e. not casewise).
+
+
+{title:Source code}
+
+{pstd}
+{help moremata_source##mm_colvar:mm_colvar.mata},
+{help moremata_source##mm_variance0:mm_variance0.mata},
+{help moremata_source##mm_mse:mm_mse.mata}
+
+{title:Author}
+
+{pstd} Ben Jann, University of Bern, jann@soz.unibe.ch
+
+
+{title:Also see}
+
+{psee}
+Online:  help for
+{bf:{help mf_mean:[M-5] mean()}},
+{bf:{help moremata}}
+{p_end}
