@@ -46,4 +46,8 @@ The .png files correspond to the figures as follows:
 * Figure 10: "RFAll yeducp primary spline.png"
 * Figure A-1: "hetcheck.png"
 * Figure B-1: "weightsim.png"
+* Figure D-1: "RFAll yeduc spline.png"
+* Figure D-2: "RFAll part lhwage spline.png"
+* FIgure D-3: "TSLSyeduc All.png"
+* Figure E-1: "TSLSprimary Post-1995.png"
 * Figure F-1: "cic.png"
